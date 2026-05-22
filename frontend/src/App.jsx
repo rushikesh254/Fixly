@@ -6,6 +6,7 @@ import ContactPage from "./pages/ContactPage.jsx";
 import HomePage from "./pages/HomePage";
 import ProviderPage from "./pages/ProviderPage.jsx";
 import ServicesPage from "./pages/ServicesPage.jsx";
+
 function App() {
   return (
     <Routes>

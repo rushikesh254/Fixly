@@ -1,7 +1,5 @@
-import { CiStar } from "react-icons/ci";
-import { FiSearch, FiUser } from "react-icons/fi";
-import { SlCalender } from "react-icons/sl";
-import WorkingCard from "./WorkingCard";
+import { FiCalendar, FiSearch, FiStar, FiUser } from "react-icons/fi";
+import WorkingCard from "../ui/WorkingCard";
 
 function HowItWorks() {
   const steps = [
@@ -11,7 +9,7 @@ function HowItWorks() {
       description: "Find the service you need near you quickly and easily.",
     },
     {
-      icon: <SlCalender size={24} />,
+      icon: <FiCalendar size={24} />,
       title: "Schedule Appointment",
       description: "Select a date and time.",
     },
@@ -21,7 +19,7 @@ function HowItWorks() {
       description: " Ensure your service is completed to your satisfaction.",
     },
     {
-      icon: <CiStar size={24} />,
+      icon: <FiStar size={24} />,
       title: "Review & Feedback",
       description:
         "Share your experience and help others make informed decisions.",

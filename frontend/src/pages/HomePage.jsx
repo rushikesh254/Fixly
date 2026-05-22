@@ -1,7 +1,8 @@
-import HeroSection from "../components/HeroSection";
-import HowItWorks from "../components/HowItWorks";
-import ProviderSection from "../components/ProviderSection";
-import ServiceSection from "../components/ServiceSection";
+import HeroSection from "../components/home/HeroSection";
+import HowItWorks from "../components/home/HowItWorks";
+import ProviderSection from "../components/home/ProviderSection";
+import ServiceSection from "../components/ui/ServiceSection";
+import TestimonialSection from "../components/home/TestimonialSection";
 
 function HomePage() {
   return (
@@ -10,6 +11,7 @@ function HomePage() {
       <ServiceSection />
       <HowItWorks />
       <ProviderSection />
+      <TestimonialSection />
     </div>
   );
 }

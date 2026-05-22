@@ -75,7 +75,7 @@ function Header() {
         <PrimaryBtn
           btn="Login"
           onclick={() => {
-            navigate("/auth", { state: { isFlipped: false } });
+            navigate("/auth", { state: { isFlipped: false } }); // Pass state to indicate login form (it is used in AuthPage.jsx to determine which form to show)
           }}
         />
         <SecondaryBtn

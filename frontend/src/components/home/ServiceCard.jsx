@@ -1,8 +1,9 @@
-import PrimaryBtn from "./PrimaryBtn";
+import { FaLocationDot, FaStar } from "react-icons/fa6";
+import PrimaryBtn from "../ui/PrimaryBtn";
 
 export default function ServiceCard() {
   return (
-    <div className="group w-72 bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden">
+    <div className="group w-72 shrink-0 snap-start bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden">
       <div className="relative">
         <img
           src="https://images.unsplash.com/photo-1581578731548-c64695cc6952"
@@ -10,7 +11,7 @@ export default function ServiceCard() {
           className="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-300"
         />
 
-        <span className="absolute top-3 left-3 bg-blue-600 text-white text-xs px-3 py-1 rounded-full">
+        <span className="absolute top-3 left-3 bg-[#1E4ED8] text-white text-xs px-3 py-1 rounded-full">
           Popular
         </span>
       </div>
@@ -18,7 +19,9 @@ export default function ServiceCard() {
       <div className="p-4 space-y-2">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold text-gray-800">Home Cleaning</h3>
-          <span className="text-sm text-yellow-500 font-medium">⭐ 4.8</span>
+          <span className="flex items-center gap-1 text-sm text-yellow-500 font-medium">
+            <FaStar aria-hidden="true" /> 4.8
+          </span>
         </div>
 
         <p className="text-sm text-gray-500">
@@ -26,7 +29,9 @@ export default function ServiceCard() {
         </p>
 
         <div className="flex justify-between items-center text-sm mt-2">
-          <span className="text-gray-600">📍 Delhi</span>
+          <span className="flex items-center gap-1 text-gray-600">
+            <FaLocationDot aria-hidden="true" /> Delhi
+          </span>
           <span className="text-blue-600 font-semibold">₹499</span>
         </div>
 

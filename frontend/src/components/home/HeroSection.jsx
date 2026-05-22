@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { FiMapPin, FiSearch } from "react-icons/fi";
-import bg from "../assets/bg.svg";
-import PrimaryBtn from "./PrimaryBtn";
+import bg from "../../assets/hero/bg.svg";
+import PrimaryBtn from "../ui/PrimaryBtn";
 import Trust from "./Trust";
 
 function HeroSection() {
@@ -16,7 +16,7 @@ function HeroSection() {
           className="absolute h-full w-full object-cover inset-0 brightness-75 contrast-110"
         />
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/30"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-black/80 to-black/30"></div>
         {/* Content */}
         <div className="relative z-10 flex  items-center justify-start h-full px-10">
           <div className="text-white max-w-md">
