@@ -1,4 +1,5 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
 import PrimaryBtn from "./PrimaryBtn";
 import SecondaryBtn from "./SecondaryBtn";
 
@@ -12,8 +13,8 @@ function Header() {
 
   return (
     <div className="absolute top-0 left-0  z-20 px-15 py-5  w-full flex items-center justify-between">
-      <Link className="font-bold text-2xl text-blue-600 brightness-150" to="/">
-        FIXLY
+      <Link className="brightness-150" to="/">
+        <img src={logo} alt="Logo" className="w-32 cursor-auto" />
       </Link>
 
       <div className=" text-white">
@@ -40,7 +41,7 @@ function Header() {
           </li>
           <li>
             <NavLink
-              to="/providers"
+              to="/provider"
               className={({ isActive }) =>
                 `font-semibold hover:underline ${isActive ? "text-blue-600 font-bold" : "text-white"}`
               }
@@ -75,7 +76,7 @@ function Header() {
         <PrimaryBtn
           btn="Login"
           onclick={() => {
-            navigate("/auth", { state: { isFlipped: false } }); // Pass state to indicate login form (it is used in AuthPage.jsx to determine which form to show)
+            navigate("/auth", { state: { isFlipped: false } });
           }}
         />
         <SecondaryBtn

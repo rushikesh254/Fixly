@@ -6,7 +6,7 @@ function TestimonialSection() {
       name: "John Doe",
       role: "Verified Customer",
       content:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, doloremque consequuntur rem ex provident iusto hic quasi quis cumque quibusdam est, necessitatibus, molestiae eligendi!",
+        "The service was amazing! Highly recommended.the technician was professional and efficient.",
       review: 5,
     },
     {
@@ -14,7 +14,7 @@ function TestimonialSection() {
       name: "Jane Smith",
       role: "Verified Customer",
       content:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, doloremque consequuntur rem ex provident iusto hic quasi quis cumque quibusdam est, necessitatibus, molestiae eligendi!",
+        "The service was great! I will definitely use it again.The cost was reasonable and the quality of work was excellent.",
       review: 4,
     },
     {
@@ -22,7 +22,7 @@ function TestimonialSection() {
       name: "Alice Johnson",
       role: "Professional Cleaner",
       content:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, doloremque consequuntur rem ex provident iusto hic quasi quis cumque quibusdam est, necessitatibus, molestiae eligendi!",
+        "The customer was so satisfied with the service.But the scheduling process was a bit confusing.",
       review: 5,
     },
     {
@@ -30,33 +30,33 @@ function TestimonialSection() {
       name: "Bob Williams",
       role: "Professional Plumber",
       content:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, doloremque consequuntur rem ex provident iusto hic quasi quis cumque quibusdam est, necessitatibus, molestiae eligendi!",
+        "The service was prompt and professional.but the customer support could be improved.",
       review: 4,
     },
     {
       id: 5,
-      name: "Emily Davis",
+      name: "Charlie Brown",
       role: "Verified Customer",
       content:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, doloremque consequuntur rem ex provident iusto hic quasi quis cumque quibusdam est, necessitatibus, molestiae eligendi!",
+        "Excellent service! The technician arrived on time and did a great job.",
       review: 5,
     },
     {
       id: 6,
-      name: "Michael Brown",
-      role: "Professional Electrician",
+      name: "Bob Williams",
+      role: "Professional Plumber",
       content:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, doloremque consequuntur rem ex provident iusto hic quasi quis cumque quibusdam est, necessitatibus, molestiae eligendi!",
-      review: 5,
+        "The service was prompt and professional.but the customer support could be improved.",
+      review: 4,
     },
   ];
 
   return (
-    <div className="w-full overflow-hidden">
-      <h1 className="text-2xl font-bold text-gray-800 text-center mb-7">
+    <div id="testimonials" className="w-full overflow-hidden mb-10">
+      <h1 className="text-2xl font-bold text-gray-800 text-center mb-1 mt-10">
         What Our Users Say!
       </h1>
-      <div className="flex gap-10 overflow-x-auto px-10 py-4 snap-x snap-mandatory scroll-smooth scrollbar-hide">
+      <div className="flex gap-6 overflow-x-auto px-10 py-10 scrollbar-hide">
         {testimonials.map((testimonial) => (
           <TestimonialCard key={testimonial.id} testimonial={testimonial} />
         ))}

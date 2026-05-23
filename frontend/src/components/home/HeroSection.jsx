@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { FiMapPin, FiSearch } from "react-icons/fi";
-import bg from "../../assets/hero/bg.svg";
+import bg from "../../assets/bg.svg";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import Trust from "./Trust";
 

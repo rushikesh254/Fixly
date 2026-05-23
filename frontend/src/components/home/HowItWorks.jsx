@@ -1,44 +1,49 @@
-import { FiCalendar, FiSearch, FiStar, FiUser } from "react-icons/fi";
+import { FaCalendarAlt, FaSearch, FaStar, FaUserCheck } from "react-icons/fa";
 import WorkingCard from "../ui/WorkingCard";
 
 function HowItWorks() {
   const steps = [
     {
-      icon: <FiSearch size={24} />,
+      icon: <FaSearch size={24} />,
       title: "Search Service",
       description: "Find the service you need near you quickly and easily.",
     },
     {
-      icon: <FiCalendar size={24} />,
+      icon: <FaCalendarAlt size={24} />,
       title: "Schedule Appointment",
-      description: "Select a date and time.",
+      description: "Select a convenient date and time.",
     },
     {
-      icon: <FiUser size={24} />,
+      icon: <FaUserCheck size={24} />,
       title: "Get it Done",
-      description: " Ensure your service is completed to your satisfaction.",
+      description: "Sit back while professionals complete your service.",
     },
     {
-      icon: <FiStar size={24} />,
+      icon: <FaStar size={24} />,
       title: "Review & Feedback",
-      description:
-        "Share your experience and help others make informed decisions.",
+      description: "Share your experience and help others decide.",
     },
   ];
 
   return (
-    <div className="px-10 mb-10  ">
-      <h2 className="text-2xl font-bold text-black mb-2 ">How It Works</h2>
-      <p className="text-sm text-gray-600 mb-10">
-        Simple steps to book your service{" "}
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="px-4 md:px-10 py-5">
+      <div className="text-center mb-12">
+        <h2 className="text-2xl md:text-3xl font-bold text-black">
+          How It Works
+        </h2>
+        <p className="text-sm text-gray-600 mt-2">
+          Simple steps to book your service
+        </p>
+      </div>
+
+      <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {steps.map((step, index) => (
           <WorkingCard
             key={index}
             icon={step.icon}
             title={step.title}
             description={step.description}
+            step={index + 1}
           />
         ))}
       </div>

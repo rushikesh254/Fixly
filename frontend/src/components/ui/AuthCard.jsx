@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import bg from "../../assets/hero/bg.svg";
+import bg from "../../assets/bg.svg";
 
 function AuthCard({ isFlipped, setIsFlipped }) {
   // const [isFlipped, setIsFlipped] = useState(false);
