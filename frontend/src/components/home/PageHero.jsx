@@ -1,7 +1,7 @@
 function PageHero({ img, title, subtitle, position }) {
   return (
     <div
-      className="relative h-[40vh] w-full bg-cover bg-center bg-no-repeat"
+      className="relative h-[35vh] w-full bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage: `url('${img}')`,
         backgroundPositionY: `${position}`,

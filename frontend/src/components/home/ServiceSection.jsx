@@ -58,7 +58,7 @@ function ServiceSection() {
         </div>
       </div>
 
-      <div className="flex gap-5 overflow-x-auto pb-4 mb-10 snap-x snap-mandatory scrollbar-hide scroll-smooth px-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 place-items-center">
         {services.map((service, index) => (
           <ServiceCard key={index} {...service} />
         ))}

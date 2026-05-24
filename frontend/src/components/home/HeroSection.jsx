@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { FiMapPin, FiSearch } from "react-icons/fi";
+import { FiSearch } from "react-icons/fi";
 import bg from "../../assets/bg.svg";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import Trust from "./Trust";
@@ -8,49 +8,46 @@ function HeroSection() {
   const { register, handleSubmit } = useForm();
 
   return (
-    <div className=" w-full relative mb-20">
-      <div className="relative h-[90vh] w-full overflow-hidden">
+    <div className="w-full relative mb-28 sm:mb-24 md:mb-20">
+      <div className="relative min-h-140 sm:min-h-155 md:h-[90vh] w-full overflow-hidden">
         <img
           src={bg}
-          alt=""
+          alt="Hero background"
+          loading="lazy"
           className="absolute h-full w-full object-cover inset-0 brightness-75 contrast-110"
         />
-        {/* Overlay */}
+
         <div className="absolute inset-0 bg-linear-to-r from-black/80 to-black/30"></div>
-        {/* Content */}
-        <div className="relative z-10 flex  items-center justify-start h-full px-10">
-          <div className="text-white max-w-md">
-            <h1 className="text-5xl font-bold">
-              Book Trusted Home Service Experts in Minutes
+
+        <div className="relative z-10 flex min-h-140 sm:min-h-155 md:h-full md:min-h-0 items-center justify-start px-4 sm:px-6 md:px-10 py-24 sm:py-28 md:py-0">
+          <div className="text-white max-w-md sm:max-w-lg">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold leading-tight">
+              Book Trusted Home <span className="text-[#1E4ED8]">Service</span>{" "}
+              Experts in Minutes
             </h1>
-            <p className="my-5 mb-10">
+            <p className="my-4 mb-7 sm:my-5 sm:mb-10 text-sm sm:text-base leading-relaxed">
               From daily chores to urgent repairs, find trusted professionals
               near you. Book in minutes and enjoy reliable, hassle-free service
               at your doorstep.
             </p>
-            <form onSubmit={handleSubmit((data) => console.log(data))}>
-              <div className="flex items-center bg-white rounded-xl mb-5 relative w-4/5 ">
-                <FiSearch className="absolute  left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <form
+              onSubmit={handleSubmit((data) => console.log(data))}
+              className="w-full"
+            >
+              <div className="w-full relative flex items-center mt-2">
                 <input
                   {...register("service")}
                   type="text"
                   spellCheck="false"
-                  placeholder="Search for services(e.g. AC Repair...)"
-                  className="w-full pl-10 ml-4  py-3 text-sm text-gray-800  focus:outline-none "
+                  className="w-full bg-black/20 border border-white/30 px-5 pr-18 sm:pr-20 backdrop-blur-md focus:outline-none transition-all focus:border-blue-400 hover:border-white/50 py-3 placeholder:text-gray-300 text-white text-sm rounded-full"
+                  placeholder="What service do you need ?"
                 />
-              </div>
-              <div className="flex items-center gap-3 mb-5 w-full">
-                <div className="flex items-center bg-white rounded-xl relative w-5/12">
-                  <FiMapPin className="absolute  left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <input
-                    {...register("location")}
-                    type="text"
-                    spellCheck="false"
-                    placeholder="Location"
-                    className="w-full pl-10 ml-4  py-3 text-sm text-gray-800  focus:outline-none "
+                <div className="absolute right-1 sm:right-0.5 flex items-center">
+                  <PrimaryBtn
+                    btn={<FiSearch size={30} />}
+                    className="rounded-r-full! px-4 sm:px-5 py-2 sm:py-2 flex items-center justify-center"
                   />
                 </div>
-                <PrimaryBtn btn="Find Services" />
               </div>
             </form>
           </div>

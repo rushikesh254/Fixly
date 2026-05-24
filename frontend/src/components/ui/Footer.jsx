@@ -8,17 +8,23 @@ import logo from "../../assets/logo.png";
 
 function Footer() {
   const location = useLocation();
-
-  if (location.pathname === "/auth") return null;
+  const isAuth = location.pathname === "/auth";
 
   useEffect(() => {
+    if (isAuth) return;
     if (location.hash === "#testimonials") {
       const element = document.getElementById("testimonials");
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
+      if (element) element.scrollIntoView({ behavior: "smooth" });
     }
-  }, [location]);
+  }, [location, isAuth]);
+
+  useEffect(() => {
+    if (isAuth) return;
+    if (location.hash === "#howItWorks") {
+      const element = document.getElementById("howItWorks");
+      if (element) element.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [location, isAuth]);
 
   return (
     <footer className="bg-[#0F2F66] text-gray-300 py-12 px-6 sm:px-10 lg:px-16 border-t border-gray-700/50">
@@ -31,7 +37,7 @@ function Footer() {
             <img
               src={logo}
               alt="Fixly Logo"
-              className="w-36 brightness-150 mb-4 cursor-auto"
+              className="w-32 brightness-150 mb-4 cursor-auto"
             />
           </Link>
           <p className="text-sm leading-relaxed text-gray-400 mb-6">
@@ -57,7 +63,7 @@ function Footer() {
           </div>
         </div>
 
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-8 lg:ml-20 xl:ml-32">
+        <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-8 lg:ml-20 xl:ml-32">
           <div>
             <h2 className="text-white font-semibold text-lg mb-5">Company</h2>
             <ul className="space-y-3 text-sm text-gray-400">
@@ -93,10 +99,18 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/careers"
+                  to="/#howItWorks"
                   className="hover:text-white transition-colors duration-200"
                 >
-                  Careers
+                  How It Works
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/provider"
+                  className="hover:text-white transition-colors duration-200"
+                >
+                  Be a provider
                 </Link>
               </li>
             </ul>
@@ -151,7 +165,7 @@ function Footer() {
             </ul>
           </div>
 
-          <div>
+          <div className="col-span-2 sm:col-span-1">
             <h2 className="text-white font-semibold text-lg mb-5">
               Contact Us
             </h2>
@@ -171,13 +185,13 @@ function Footer() {
                   className="flex items-center hover:text-white transition-colors"
                 >
                   <FaPhoneAlt className="w-4 h-4 mr-3 text-gray-400" />
-                  +1 (123) 456-7890
+                  +91 7410726311
                 </Link>
               </li>
               <li className="flex items-start">
                 <LuMapPin className="w-5 h-5 mr-3 text-gray-400 shrink-0" />
                 <span>
-                  123 Main Street,
+                  MNNIT Allahabad,
                   <br />
                   Prayagraj,Uttar Pradesh, India 211001
                 </span>
@@ -187,16 +201,8 @@ function Footer() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-gray-700/50 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-gray-700/50 flex flex-col justify-center items-center text-sm text-gray-500 text-center">
         <p>&copy; {new Date().getFullYear()} Fixly. All rights reserved.</p>
-        <div className="flex space-x-6 mt-4 md:mt-0">
-          <Link to="/privacy" className="hover:text-white transition-colors">
-            Privacy Policy
-          </Link>
-          <Link to="/terms" className="hover:text-white transition-colors">
-            Terms of Service
-          </Link>
-        </div>
       </div>
     </footer>
   );

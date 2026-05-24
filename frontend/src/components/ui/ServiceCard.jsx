@@ -12,7 +12,7 @@ export default function ServiceCard({
   tag,
 }) {
   return (
-    <div className="group w-72 shrink-0 snap-start bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition duration-300 overflow-hidden">
+    <div className="group w-full max-w-[18rem] bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 transition duration-300 overflow-hidden">
       <div className="relative">
         <img
           src={image}
