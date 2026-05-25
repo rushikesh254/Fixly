@@ -30,12 +30,12 @@ function Header() {
 
   return (
     <>
-      <div className="absolute top-0 left-0 z-30 px-6 sm:px-10 lg:px-14 py-5 w-full flex items-center justify-between">
+      <div className="absolute -top-3 left-0 z-30 px-6 sm:px-10 lg:px-14   w-full flex items-center justify-between">
         <Link to="/" className="z-50">
           <img src={logo} alt="Logo" className="w-24 sm:w-40" />
         </Link>
 
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <ul className="flex items-center gap-8">
             {[
               { name: "Home", path: "/" },
@@ -61,7 +61,7 @@ function Header() {
             ))}
           </ul>
         </div>
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-4">
           <button
             onClick={() => {
               navigate("/auth", { state: { isFlipped: false } });
@@ -81,7 +81,7 @@ function Header() {
         </div>
 
         <button
-          className="md:hidden z-50"
+          className="lg:hidden z-50"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           {isSidebarOpen ? (
@@ -99,7 +99,7 @@ function Header() {
       </div>
 
       <div
-        className={`fixed top-0 right-0 h-screen w-72 bg-white z-40 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed top-0 right-0 h-screen w-72 bg-white z-40 shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { CiCircleQuestion, CiMail, CiPhone } from "react-icons/ci";
 import { LuMapPin } from "react-icons/lu";
 import { Link } from "react-router-dom";
-import PageHero from "../components/home/PageHero";
+import PageHero from "../components/ui/PageHero";
 
 import PrimaryBtn from "../components/ui/PrimaryBtn";
 
