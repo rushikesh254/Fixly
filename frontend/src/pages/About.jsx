@@ -1,4 +1,4 @@
-import PageHero from "../components/home/PageHero";
+import PageHero from "../components/ui/PageHero";
 function About() {
   return (
     <div>

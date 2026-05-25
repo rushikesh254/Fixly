@@ -24,3 +24,27 @@ body {
 .backface-hidden {
   backface-visibility: hidden;
 }
+
+.range::-webkit-slider-thumb {
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #2563eb;
+  border-radius: 9999px;
+  border: 3px solid white;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: -8px;
+}
+
+.range::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.range::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #2563eb;
+
+  border-radius: 9999px;
+}
