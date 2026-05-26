@@ -6,19 +6,25 @@ import ContactPage from "./pages/ContactPage.jsx";
 import HomePage from "./pages/HomePage";
 import ProviderPage from "./pages/ProviderPage.jsx";
 import ServicesPage from "./pages/ServicesPage.jsx";
+import ViewDetails from "./pages/viewDetails.jsx";
+import { Toaster } from "sonner";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<PublicLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path="about" element={<About />} />
-        <Route path="provider" element={<ProviderPage />} />
-        <Route path="services" element={<ServicesPage />} />
-        <Route path="contact" element={<ContactPage />} />
-        <Route path="auth" element={<AuthPage />} />
-      </Route>
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<PublicLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="about" element={<About />} />
+          <Route path="provider" element={<ProviderPage />} />
+          <Route path="services" element={<ServicesPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="auth" element={<AuthPage />} />
+          <Route path="services/viewDetails/:id" element={<ViewDetails />} />
+        </Route>
+      </Routes>
+      <Toaster richColors position="bottom-right" />
+    </>
   );
 }
 

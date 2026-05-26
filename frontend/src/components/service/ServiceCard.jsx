@@ -102,7 +102,12 @@ export default function ServiceCard({ service }) {
         {/* Buttons */}
         <div className="flex gap-4 items-center mt-2">
           <div className="w-1/2">
-            <Link>
+            <Link
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              to={`/services/viewDetails/${service.id}`}
+            >
               <SecondaryBtn
                 btn="View"
                 className="w-full text-blue-700! active:bg-[#1E4ED8]! border-[#1E4ED8]!  hover:text-white! transition-colors duration-400 hover:bg-[#1E4ED8]! hover:border-[#1E4ED8]!"
