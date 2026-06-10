@@ -3,7 +3,7 @@ import { TbUserCheck } from "react-icons/tb";
 import { TiBriefcase } from "react-icons/ti";
 import PrimaryBtn from "../ui/PrimaryBtn";
 
-function ProviderCard({ provider }) {
+function ProviderCard({ provider, onBook }) {
   const expert = provider.provider || {};
 
   return (
@@ -51,7 +51,7 @@ function ProviderCard({ provider }) {
       {/* book now button */}
       <PrimaryBtn
         btn="Book Now"
-        onclick={() => console.log("Book service")}
+        onclick={onBook}
         className="mt-5 w-full py-3.5 text-base"
       />
     </div>

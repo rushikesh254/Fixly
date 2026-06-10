@@ -5,13 +5,14 @@ import { FiMapPin } from "react-icons/fi";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdElectricBolt, MdEventAvailable } from "react-icons/md";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
 import Gallery from "../components/service/Gallery";
 import ProviderCard from "../components/service/providerCard";
 import ReviewSection from "../components/service/reviewSection";
 import guarantees from "../constants/guarantees";
 import pricingNote from "../constants/pricingNote";
 import Provider from "../data/SingleProvider";
+import BookingCard from "../components/service/BookingCard";
+
 function ViewDetails() {
   // const { id } = useParams();
   // const location = useLocation();
@@ -24,11 +25,7 @@ function ViewDetails() {
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
-  function handlesaved() {
-    // logic to save provider to user's saved list (e.g. API call)
-    console.log("Saved provider:", p.providerName);
-    toast.success("Service saved to your list!");
-  }
+  const [openBooking, setOpenBooking] = useState(false);
 
   // if provider not found display message
   if (!p) {
@@ -86,7 +83,6 @@ function ViewDetails() {
         setOpen={setOpen}
         index={index}
         setIndex={setIndex}
-        handlesaved={handlesaved}
       />
 
       {/* provider desc, booking info and reviews section */}
@@ -212,12 +208,12 @@ function ViewDetails() {
           {/* reviews section */}
           <ReviewSection reviews={reviews} />
         </div>
+        {openBooking && (
+          <BookingCard key={p.id} setOpenBooking={setOpenBooking} service={p} />
+        )}
         {/* sticky provider card with booking button for larger screens */}
         <aside className="hidden w-full lg:sticky lg:top-24 lg:block lg:w-95 lg:self-start">
-          <ProviderCard
-            provider={p}
-            onBook={() => console.log("Book service")}
-          />
+          <ProviderCard provider={p} onBook={() => setOpenBooking(true)} />
         </aside>
       </div>
     </div>
