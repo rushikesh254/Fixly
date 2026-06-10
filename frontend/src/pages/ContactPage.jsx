@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { CiCircleQuestion, CiMail, CiPhone } from "react-icons/ci";
 import { LuMapPin } from "react-icons/lu";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import PageHero from "../components/ui/PageHero";
 
 import PrimaryBtn from "../components/ui/PrimaryBtn";
@@ -17,6 +18,7 @@ function ContactPage() {
   const onSubmit = (data) => {
     console.log("Form Data:", data);
     reset();
+    toast.success("Message sent successfully! We'll get back to you soon.");
   };
 
   return (

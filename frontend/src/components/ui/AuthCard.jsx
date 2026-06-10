@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import bg from "../../assets/bg.svg";
 import logo from "../../assets/logo.png";
 
@@ -46,8 +47,10 @@ function AuthCard({ isFlipped, setIsFlipped }) {
             </h2>
 
             <form
-              action=""
-              onSubmit={handleSubmit((data) => console.log(data))}
+              onSubmit={handleSubmit((data) => {
+                console.log(data);
+                toast.success("Welcome back! You have logged in successfully.");
+              })}
             >
               <div className="relative pb-2">
                 <label htmlFor="email" className="text-sm font-semibold ">
@@ -138,8 +141,10 @@ function AuthCard({ isFlipped, setIsFlipped }) {
             </Link>
 
             <form
-              action=""
-              onSubmit={handleSubmit((data) => console.log(data))}
+              onSubmit={handleSubmit((data) => {
+                console.log(data);
+                toast.success("Account created successfully! You can now log in.");
+              })}
             >
               <div className="relative pb-2">
                 <label htmlFor="name" className="text-sm font-semibold ">

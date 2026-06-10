@@ -1,10 +1,9 @@
 import { useCallback, useState } from "react";
 import providers from "../data/providers";
-
-// Haversine formula to calculate distance between two coordinates
+import axios from "axios";
 
 function getDistanceInKm(lat1, lon1, lat2, lon2) {
-  const R = 6371; //earth radius in km
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -16,10 +15,9 @@ function getDistanceInKm(lat1, lon1, lat2, lon2) {
 }
 
 export function useLocate() {
-  const [status, setStatus] = useState("idle"); //idle , loading,success,denied
+  const [status, setStatus] = useState("idle");
   const [userCoords, setUserCoords] = useState(null);
-
-  // detect if geolocation is supported and get user location
+  const [address, setAddress] = useState(null);
 
   const detect = useCallback(() => {
     if (!navigator.geolocation) {
@@ -28,7 +26,6 @@ export function useLocate() {
     }
     setStatus("loading");
     navigator.geolocation.getCurrentPosition(
-      //success callback
       async (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
@@ -36,9 +33,20 @@ export function useLocate() {
           lat,
           lon,
         });
-        setStatus("success");
+
+        try {
+          const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
+          const res = await axios.get(url);
+          console.log(res.data.address);
+          setAddress(res.data.address);
+          setStatus("success");
+        } catch (e) {
+          {
+            console.log(e);
+            setStatus("denied");
+          }
+        }
       },
-      //error callback
       () => {
         setStatus("denied");
       },
@@ -48,9 +56,8 @@ export function useLocate() {
   const clearLocation = useCallback(() => {
     setStatus("idle");
     setUserCoords(null);
+    setAddress(null);
   }, []);
-
-  //return providers with distance if user location is available
 
   const nearbyProviders = (providersList) => {
     if (!userCoords) return providersList;
@@ -64,5 +71,5 @@ export function useLocate() {
   };
   const nearbyProvidersList = nearbyProviders(providers);
 
-  return { status, detect, clearLocation, nearbyProvidersList };
+  return { status, address, detect, clearLocation, nearbyProvidersList };
 }
