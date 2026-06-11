@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide a name"],
       trim: true,
+      maxLength: 50,
     },
     email: {
       type: String,
@@ -14,11 +15,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
-      match: [
-        // this regex checks for a basic email format
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-        "Please provide a valid email",
-      ],
     },
     password: {
       type: String,
@@ -48,10 +44,10 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    verificationToken: String,
-    verificationTokenExpires: Date,
-    resetPasswordToken: String,
-    resetPasswordExpires: Date,
+    verificationToken: String, // random token emailed to user for verification(at time of registration)
+    verificationTokenExpires: Date, // expiry time for verification token (e.g., 24 hours after generation)
+    resetPasswordToken: String, // random token emailed to user for password reset
+    resetPasswordExpires: Date, // expiry time for reset password token (e.g., 1 hour after generation)
   },
   { timestamps: true },
 );

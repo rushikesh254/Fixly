@@ -1,13 +1,14 @@
 import jwt from "jsonwebtoken";
 import UserModel from "../models/user.model.js";
 
+// utility function to generate JWT token ( expiry time is 7 days)
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
 };
 
-const registerUser = async (req, res) => {
+const signup = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
@@ -36,9 +37,17 @@ const registerUser = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    // set token in httpOnly cookie for security
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // use secure cookies in production
+      sameSite: "strict", // prevent CSRF attacks (only send cookies for same site requests)
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
     res.status(201).json({
       success: true,
-      token,
       user: {
         id: user._id,
         name: user.name,
@@ -52,7 +61,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -76,9 +85,16 @@ const loginUser = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    // set token in httpOnly cookie for security
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // use secure cookies in production
+      sameSite: "strict", // prevent CSRF attacks (only send cookies for same site requests)
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
     res.status(200).json({
       success: true,
-      token,
       user: {
         _id: user._id,
         name: user.name,
@@ -92,4 +108,37 @@ const loginUser = async (req, res) => {
   }
 };
 
-export { loginUser, registerUser };
+const logout = async (req, res) => {
+  try {
+    // Clear the token cookie to log out the user
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    res.status(200).json({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error logging out user: ", error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const me = async (req, res) => {
+  try {
+    const user = req.user; // get user from auth middleware
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error("Error fetching user profile: ", error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export { login, logout, me, signup };
