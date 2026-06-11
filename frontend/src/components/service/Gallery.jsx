@@ -1,7 +1,16 @@
-import SaveBtn from "./saveBtn";
+import { FaRegBookmark } from "react-icons/fa";
 import Lightbox from "yet-another-react-lightbox";
 
-function Gallery({ p, images, galleryImages, open, setOpen, index, setIndex }) {
+function Gallery({
+  p,
+  images,
+  galleryImages,
+  open,
+  setOpen,
+  index,
+  setIndex,
+  handlesaved,
+}) {
   return (
     <>
       <div className="relative mx-auto max-w-6xl">
@@ -15,7 +24,12 @@ function Gallery({ p, images, galleryImages, open, setOpen, index, setIndex }) {
             />
           </div>
           {/* save button  */}
-          <SaveBtn />
+          <button
+            onClick={handlesaved}
+            className="group absolute right-5 top-5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-gray-600/50 bg-gray-800/50 text-gray-200 shadow-md backdrop-blur-sm transition-all duration-200 hover:bg-gray-800/70 hover:text-white"
+          >
+            <FaRegBookmark className="group-hover:scale-105 " />
+          </button>
           {galleryImages.map((img, i) => (
             <div
               key={i}

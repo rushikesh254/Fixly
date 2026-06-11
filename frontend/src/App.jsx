@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import { Toaster } from "sonner";
 import PublicLayout from "./layouts/PublicLayout";
 import About from "./pages/About.jsx";
 import AuthPage from "./pages/AuthPage.jsx";
@@ -8,6 +7,7 @@ import HomePage from "./pages/HomePage";
 import ProviderPage from "./pages/ProviderPage.jsx";
 import ServicesPage from "./pages/ServicesPage.jsx";
 import ViewDetails from "./pages/viewDetails.jsx";
+import { Toaster } from "sonner";
 
 function App() {
   return (
