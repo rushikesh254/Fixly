@@ -36,12 +36,12 @@ const createService = async (req, res) => {
       return res.status(400).json({ message: "price cannot be negative" });
     }
 
-    // Only providers and admins can create services
-    if (req.user.role !== "provider" && req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({ message: "only providers can create services" });
-    }
+    // // Only providers and admins can create services
+    // if (req.user.role !== "provider" && req.user.role !== "admin") {
+    //   return res
+    //     .status(403)
+    //     .json({ message: "only providers can create services" });
+    // }
 
     // Check if the provided category exists
     const categoryExists = await CategoryModel.findById(category);
@@ -136,6 +136,7 @@ const getServiceById = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching service:", error);
+
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
@@ -152,11 +153,11 @@ const updateService = async (req, res) => {
       return res.status(404).json({ message: "Service not found" });
     }
 
-    if (service.provider.toString() !== req.user._id.toString()) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized to update this service" });
-    }
+    // if (service.provider.toString() !== req.user._id.toString()) {
+    //   return res
+    //     .status(403)
+    //     .json({ message: "You are not authorized to update this service" });
+    // }
 
     // Extract service details from the request body
     const {
@@ -211,11 +212,11 @@ const deleteService = async (req, res) => {
     if (!service) {
       return res.status(404).json({ message: "Service not found" });
     }
-    if (service.provider.toString() !== req.user._id.toString()) {
-      return res
-        .status(403)
-        .json({ message: "You are not authorized to delete this service" });
-    }
+    // if (service.provider.toString() !== req.user._id.toString()) {
+    //   return res
+    //     .status(403)
+    //     .json({ message: "You are not authorized to delete this service" });
+    // }
 
     await ServiceModel.findByIdAndDelete(req.params.id);
 
