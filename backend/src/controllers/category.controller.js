@@ -1,4 +1,4 @@
-import CategoryModel from "../models/category.model.js"
+import CategoryModel from "../models/category.model.js";
 
 const createCategory = async (req, res) => {
   try {
@@ -51,7 +51,11 @@ const deleteCategory = async (req, res) => {
 
     res
       .status(200)
-      .json({ success: true, message: "Category deleted successfully" });
+      .json({
+        success: true,
+        message: "Category deleted successfully",
+        category,
+      });
   } catch (error) {
     console.error("Error deleting category:", error);
     res.status(500).json({ message: error.message });

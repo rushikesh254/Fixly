@@ -4,7 +4,7 @@ import express from "express";
 import errorHandler from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
-
+import serviceRoutes from "./routes/service.routes.js";
 const app = express();
 
 // middlewares
@@ -33,6 +33,10 @@ app.use("/api/auth", authRoutes);
 
 // category routes
 app.use("/api/categories", categoryRoutes);
+
+// service routes
+
+app.use("/api/services", serviceRoutes);
 
 // centralized error handling middleware
 
