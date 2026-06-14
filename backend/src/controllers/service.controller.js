@@ -97,10 +97,65 @@ const createService = async (req, res) => {
 // GET /api/services
 const getAllServices = async (req, res) => {
   try {
-    const services = await ServiceModel.find()
+    const { keyword, category, minPrice, maxPrice, lat, lng, distance, sort } =
+      req.query;
+
+    const filter = {};
+
+    // filter by keyword in name or description
+    if (keyword) {
+      filter.$or = [
+        { name: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+      ];
+    }
+    // filter by category
+    if (category) {
+      filter.category = category;
+    }
+    // filter by price range
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice) filter.price.$gte = parseFloat(minPrice);
+      if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
+    }
+
+    // default sort by newest first
+    let sortOption = { createdAt: -1 };
+
+    // sort by price if requested
+    if (sort === "price-asc") {
+      sortOption = { price: 1 };
+    } else if (sort === "price-desc") {
+      sortOption = { price: -1 };
+    }
+
+    //  add catehory ,provider and reviews data to the service data using populate
+    let query = Service.find(filter)
       .populate("category")
       .populate("provider")
-      .sort({ createdAt: -1 }); // sort by newest first
+      .populate("reviews");
+
+    // if lat and lng are provided, sort by distance from the given location using geospatial query
+
+    // show services near the given location within the specified distance (default to 10km if not provided)
+
+    if (lat && lng) {
+      sortOption = {};
+      query = query.find({
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [parseFloat(lng), parseFloat(lat)],
+            },
+            $maxDistance: (distance || 10000) * 1000,
+          },
+        },
+      });
+    }
+
+    const services = await query.sort(sortOption);
 
     // Return the services in the response
     res.status(200).json({
@@ -113,7 +168,7 @@ const getAllServices = async (req, res) => {
     console.error("Error fetching services:", error);
     res
       .status(500)
-      .json({ message: "Internal server error", error: error.message });
+      .json({ message: "Could not fetch services", error: error.message });
   }
 };
 
