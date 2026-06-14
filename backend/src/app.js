@@ -1,7 +1,10 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
-
+import errorHandler from "./middleware/error.middleware.js";
+import authRoutes from "./routes/auth.routes.js";
+import categoryRoutes from "./routes/category.routes.js";
+import serviceRoutes from "./routes/service.routes.js";
 const app = express();
 
 // middlewares
@@ -26,7 +29,17 @@ app.get("/", (req, res) => {
 });
 
 // auth routes
-import authRoutes from "./routes/auth.routes.js";
 app.use("/api/auth", authRoutes);
+
+// category routes
+app.use("/api/categories", categoryRoutes);
+
+// service routes
+
+app.use("/api/services", serviceRoutes);
+
+// centralized error handling middleware
+
+app.use(errorHandler);
 
 export default app;
