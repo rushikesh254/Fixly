@@ -5,18 +5,18 @@ import {
   getMyBookings,
   updateBookingStatus,
 } from "../controllers/booking.controller.js";
-import { autherize, protect } from "../middleware/auth.middleware.js";
+import { authorize, protect } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
 // create a new booking only user can create a booking
-router.post("/", protect, autherize("user"), createBooking);
+router.post("/", protect, authorize("user"), createBooking);
 
 // get bookings of the logged in user or provider
 router.get(
   "/my-bookings",
   protect,
-  autherize("user", "provider"),
+  authorize("user", "provider"),
   getMyBookings,
 );
 
@@ -24,7 +24,7 @@ router.get(
 router.put(
   "/:bookingId/status",
   protect,
-  autherize("provider"),
+  authorize("provider"),
   updateBookingStatus,
 );
 
@@ -32,7 +32,7 @@ router.put(
 router.put(
   "/:bookingId/cancel",
   protect,
-  autherize("user", "provider"),
+  authorize("user", "provider"),
   cancelBooking,
 );
 

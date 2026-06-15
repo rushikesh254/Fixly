@@ -7,41 +7,76 @@ const createBooking = async (req, res) => {
 
     // Validate required fields
     if (!serviceId || !bookingDate || !address || !bookingTime) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ success: false, message: "All fields are required" });
     }
 
-    const bookingDateObj = new Date(bookingDate);
-    const currentDate = new Date();
-    if (bookingDateObj < currentDate) {
-      return res
-        .status(400)
-        .json({ message: "Booking date must be in the future" });
-    }
-
+    // Validate service exists  (using serviceId from request body)
     const service = await ServiceModel.findById(serviceId);
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res.status(404).json({ success: false, message: "Service not found" });
     }
 
+    // Prevent users from booking their own services
     if (service.provider.toString() === req.user._id.toString()) {
       return res
         .status(400)
-        .json({ message: "You cannot book your own service" });
+        .json({ success: false, message: "You cannot book your own service" });
     }
 
-    // if (phoneNumber) {
-    //   await UserModel.findByIdAndUpdate(req.user._id, { phoneNumber });
-    // }
+    // convert bookingDate and bookingTime to a single Date object for comparison
+    const bookingDateTimeString = `${bookingDate}T${bookingTime}`;
+    const bookingDateTime = new Date(bookingDateTimeString);
 
+    if (bookingDateTime <= new Date()) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Booking date and time must be in the future" });
+    }
+
+    //  default 60 minutes if duration not given
+    const bookingEndTime = new Date(
+      bookingDateTime.getTime() + service.duration * 60000,
+    );
+
+    // find provider existing  bookings
+    const existingBookings = await BookingModel.find({
+      provider: service.provider,
+      status: {
+        $in: ["pending", "confirmed"], // only consider pending and confirmed bookings for conflict check
+      },
+    });
+
+    // check overlap with existing bookings
+    for (const booking of existingBookings) {
+      const existingStart = booking.bookingDate;
+
+      const existingEnd = new Date(
+        existingStart.getTime() + booking.duration * 60000,
+      );
+
+      const isOverlapping =
+        bookingDateTime < existingEnd && bookingEndTime > existingStart;
+
+      if (isOverlapping) {
+        return res.status(400).json({
+          success: false,
+          message: "Provider is already booked for the selected time slot",
+        });
+      }
+    }
+
+    // Create the booking
     const booking = await BookingModel.create({
       service: serviceId,
       user: req.user._id,
       provider: service.provider,
-      bookingDate: bookingDateObj,
+      bookingDate: bookingDateTime,
       bookingTime: bookingTime,
       address,
       amount: service.price,
+      duration: service.duration,
     });
+    // Populate the booking with related data for response
     res.status(201).json({
       success: true,
       message: "Booking created successfully",
@@ -49,16 +84,13 @@ const createBooking = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating booking:", error);
-    res.status(500).json({
-      success: false,
-      message: "Could not create booking",
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: "Could not create booking" });
   }
 };
 
 const getMyBookings = async (req, res) => {
   try {
+    //  fetch  booking if user or provider is the logged in user and populate related data  add  service, user, provider details and sort by most recent first
     const bookings = await BookingModel.find({
       $or: [{ user: req.user._id }, { provider: req.user._id }],
     })
@@ -70,9 +102,7 @@ const getMyBookings = async (req, res) => {
     res.status(200).json({ success: true, count: bookings.length, bookings });
   } catch (error) {
     console.error("Error fetching bookings:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Could not fetch bookings" });
+    res.status(500).json({ success: false, message: "Could not fetch bookings" });
   }
 };
 
@@ -81,22 +111,22 @@ const updateBookingStatus = async (req, res) => {
     const { bookingId } = req.params;
     const { status } = req.body;
 
-    const validateStatuses = ["pending", "confirmed", "completed", "cancelled"];
+    const validStatuses = ["pending", "confirmed", "completed", "cancelled"];
 
-    if (!status && !validateStatuses.includes(status)) {
-      return res.status(400).json({ message: "Invalid status value" });
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: "Invalid status value" });
     }
 
     const booking = await BookingModel.findById(bookingId);
 
     if (!booking) {
-      return res.status(404).json({ message: "Booking not found" });
+      return res.status(404).json({ success: false, message: "Booking not found" });
     }
 
     if (booking.provider.toString() !== req.user._id.toString()) {
       return res
         .status(403)
-        .json({ message: "Only the provider can update booking status" });
+        .json({ success: false, message: "Only the provider can update booking status" });
     }
     booking.status = status;
 
@@ -109,9 +139,7 @@ const updateBookingStatus = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating booking status:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Could not update booking status" });
+    res.status(500).json({ success: false, message: "Could not update booking status" });
   }
 };
 
@@ -122,7 +150,7 @@ const cancelBooking = async (req, res) => {
     const booking = await BookingModel.findById(bookingId);
 
     if (!booking) {
-      return res.status(404).json({ message: "Booking not found" });
+      return res.status(404).json({ success: false, message: "Booking not found" });
     }
 
     if (
@@ -131,17 +159,17 @@ const cancelBooking = async (req, res) => {
     ) {
       return res
         .status(403)
-        .json({ message: "You are not authorized to cancel this booking" });
+        .json({ success: false, message: "You are not authorized to cancel this booking" });
     }
 
     if (booking.status === "cancelled") {
-      return res.status(400).json({ message: "Booking is already cancelled" });
+      return res.status(400).json({ success: false, message: "Booking is already cancelled" });
     }
 
     if (booking.status === "completed") {
       return res
         .status(400)
-        .json({ message: "Completed bookings cannot be cancelled" });
+        .json({ success: false, message: "Completed bookings cannot be cancelled" });
     }
 
     booking.status = "cancelled";
@@ -155,9 +183,7 @@ const cancelBooking = async (req, res) => {
     });
   } catch (error) {
     console.error("Error cancelling booking:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Could not cancel booking" });
+    res.status(500).json({ success: false, message: "Could not cancel booking" });
   }
 };
 

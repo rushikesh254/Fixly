@@ -17,7 +17,7 @@ app.use(cookieParser()); // parse cookies in the request headers
 
 app.use(
   cors({
-    origin: process.env.CROSS_ORIGIN || "http://localhost:5174", // allow requests from this origin
+    origin: process.env.CROSS_ORIGIN || "http://localhost:5173", // allow requests from this origin
     credentials: true, // allow cookies and other credentials in the requests
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"], // allow these headers in the requests
@@ -27,7 +27,7 @@ app.use(
 // routes
 
 app.get("/", (req, res) => {
-  res.json({ message: "Fixly Server is running" });
+  res.json({ success: true, message: "Fixly Server is running" });
 });
 
 // auth routes

@@ -4,14 +4,14 @@ import {
   deleteCategory,
   getAllCategories,
 } from "../controllers/category.controller.js";
-import { autherize, protect } from "../middleware/auth.middleware.js";
+import { authorize, protect } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
 router.get("/", getAllCategories);
 
-router.post("/", protect, autherize("admin"), createCategory);
+router.post("/", protect, authorize("admin"), createCategory);
 
-router.delete("/:id", protect, autherize("admin"), deleteCategory);
+router.delete("/:id", protect, authorize("admin"), deleteCategory);
 
 export default router;
