@@ -26,7 +26,7 @@ const createCategory = async (req, res) => {
   }
 };
 
-const getCategories = async (req, res) => {
+const getAllCategories = async (req, res) => {
   try {
     const categories = await CategoryModel.find();
     res
@@ -49,17 +49,15 @@ const deleteCategory = async (req, res) => {
 
     await CategoryModel.findByIdAndDelete(id);
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Category deleted successfully",
-        category,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Category deleted successfully",
+      category,
+    });
   } catch (error) {
     console.error("Error deleting category:", error);
     res.status(500).json({ message: error.message });
   }
 };
 
-export { createCategory, deleteCategory, getCategories };
+export { createCategory, deleteCategory, getAllCategories };

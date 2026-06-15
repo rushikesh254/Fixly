@@ -3,8 +3,10 @@ import cors from "cors";
 import express from "express";
 import errorHandler from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
+import bookingRoutes from "./routes/booking.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
 import serviceRoutes from "./routes/service.routes.js";
+
 const app = express();
 
 // middlewares
@@ -37,6 +39,9 @@ app.use("/api/categories", categoryRoutes);
 // service routes
 
 app.use("/api/services", serviceRoutes);
+
+// booking routes
+app.use("/api/bookings", bookingRoutes);
 
 // centralized error handling middleware
 
