@@ -22,7 +22,8 @@ const createService = async (req, res) => {
     // Validate required fields
     if (!name || !description || !price || !category) {
       return res.status(400).json({
-        success: false, message: "name, description, price and category are required",
+        success: false,
+        message: "name, description, price and category are required",
       });
     }
 
@@ -33,7 +34,9 @@ const createService = async (req, res) => {
     }
 
     if (price < 0) {
-      return res.status(400).json({ success: false, message: "price cannot be negative" });
+      return res
+        .status(400)
+        .json({ success: false, message: "price cannot be negative" });
     }
 
     // // Only providers and admins can create services
@@ -47,7 +50,9 @@ const createService = async (req, res) => {
     const categoryExists = await CategoryModel.findById(category);
 
     if (!categoryExists) {
-      return res.status(404).json({ success: false, message: "Category not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Category not found" });
     }
 
     // If the user provided a phone number, update it in their profile
@@ -84,10 +89,16 @@ const createService = async (req, res) => {
     // Save the service to the database
     const service = await ServiceModel.create(serviceData);
 
-    res.status(201).json({ success: true, message: "Service created successfully", service });
+    res.status(201).json({
+      success: true,
+      message: "Service created successfully",
+      service,
+    });
   } catch (error) {
     console.error("Error creating service:", error);
-    res.status(500).json({ success: false, message: "Failed to create service." });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to create service." });
   }
 };
 
@@ -164,7 +175,9 @@ const getAllServices = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching services:", error);
-    res.status(500).json({ success: false, message: "Could not fetch services" });
+    res
+      .status(500)
+      .json({ success: false, message: "Could not fetch services" });
   }
 };
 
@@ -177,7 +190,9 @@ const getServiceById = async (req, res) => {
       .populate("provider");
 
     if (!service) {
-      return res.status(404).json({ success: false, message: "Service not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Service not found" });
     }
 
     res.status(200).json({
@@ -187,7 +202,9 @@ const getServiceById = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching service:", error);
-    res.status(500).json({ success: false, message: "Failed to fetch service." });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch service." });
   }
 };
 
@@ -198,13 +215,16 @@ const updateService = async (req, res) => {
     const service = await ServiceModel.findById(req.params.id);
 
     if (!service) {
-      return res.status(404).json({ success: false, message: "Service not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Service not found" });
     }
 
     if (service.provider.toString() !== req.user._id.toString()) {
-      return res
-        .status(403)
-        .json({ success: false, message: "You are not authorized to update this service" });
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this service",
+      });
     }
 
     // Extract service details from the request body
@@ -241,10 +261,16 @@ const updateService = async (req, res) => {
 
     await service.save();
 
-    res.status(200).json({ success: true, message: "Service updated successfully", service });
+    res.status(200).json({
+      success: true,
+      message: "Service updated successfully",
+      service,
+    });
   } catch (error) {
     console.error("Error updating service:", error);
-    res.status(500).json({ success: false, message: "Failed to update service." });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to update service." });
   }
 };
 
@@ -256,20 +282,40 @@ const deleteService = async (req, res) => {
     const service = await ServiceModel.findById(req.params.id);
 
     if (!service) {
-      return res.status(404).json({ success: false, message: "Service not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Service not found" });
     }
     if (service.provider.toString() !== req.user._id.toString()) {
-      return res
-        .status(403)
-        .json({ success: false, message: "You are not authorized to delete this service" });
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this service",
+      });
+    }
+
+    //
+    const activeBookings = await BookingModel.find({
+      service: req.params.id,
+      status: { $in: ["pending", "confirmed"] },
+    });
+
+    if (activeBookings.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete service with active bookings.",
+      });
     }
 
     await ServiceModel.findByIdAndDelete(req.params.id);
 
-    res.status(200).json({ success: true, message: "Service deleted successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Service deleted successfully" });
   } catch (error) {
     console.error("Error deleting service:", error);
-    res.status(500).json({ success: false, message: "Failed to delete service." });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to delete service." });
   }
 };
 

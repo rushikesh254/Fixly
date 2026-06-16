@@ -5,6 +5,7 @@ import errorHandler from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import bookingRoutes from "./routes/booking.routes.js";
 import categoryRoutes from "./routes/category.routes.js";
+import reviewRoutes from "./routes/review.routes.js";
 import serviceRoutes from "./routes/service.routes.js";
 
 const app = express();
@@ -42,6 +43,10 @@ app.use("/api/services", serviceRoutes);
 
 // booking routes
 app.use("/api/bookings", bookingRoutes);
+
+// review routes
+
+app.use("/api/reviews", reviewRoutes);
 
 // centralized error handling middleware
 
