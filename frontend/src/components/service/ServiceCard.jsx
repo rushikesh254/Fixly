@@ -2,7 +2,7 @@ import { FaStar } from "react-icons/fa";
 import { FiMapPin } from "react-icons/fi";
 import { MdElectricBolt } from "react-icons/md";
 import { Link } from "react-router-dom";
-import SaveBtn from "./saveBtn";
+import SaveBtn from "./SaveBtn";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import SecondaryBtn from "../ui/SecondaryBtn";
 import { useState } from "react";
@@ -94,9 +94,15 @@ export default function ServiceCard({ service }) {
             </Link>
           </div>
           <div className="w-1/2">
-            <PrimaryBtn btn="Book Now" className="w-full" onclick={()=>setOpenBooking(true)} />
+            <PrimaryBtn
+              btn="Book Now"
+              className="w-full"
+              onclick={() => setOpenBooking(true)}
+            />
           </div>
-          {openBooking && <BookingCard setOpenBooking={setOpenBooking}  service={service}/>}
+          {openBooking && (
+            <BookingCard setOpenBooking={setOpenBooking} service={service} />
+          )}
         </div>
       </div>
     </div>

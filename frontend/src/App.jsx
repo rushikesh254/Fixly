@@ -8,6 +8,11 @@ import HomePage from "./pages/HomePage";
 import ProviderPage from "./pages/ProviderPage.jsx";
 import ServicesPage from "./pages/ServicesPage.jsx";
 import ViewDetails from "./pages/viewDetails.jsx";
+import UserDashboard from "./pages/UserDashboard.jsx";
+import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import UserLayout from "./layouts/UserLayout.jsx";
+import MyBookings from "./pages/MyBookings.jsx";
+import SavedServices from "./pages/SavedServices.jsx";
 
 function App() {
   return (
@@ -21,6 +26,32 @@ function App() {
           <Route path="contact" element={<ContactPage />} />
           <Route path="auth" element={<AuthPage />} />
           <Route path="services/viewDetails/:id" element={<ViewDetails />} />
+        </Route>
+        <Route path="/user/" element={<UserLayout />}>
+          <Route
+            path="dashboard"
+            element={
+              <ProtectedRoute>
+                <UserDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="mybookings"
+            element={
+              <ProtectedRoute>
+                <MyBookings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="saved"
+            element={
+              <ProtectedRoute>
+                <SavedServices />
+              </ProtectedRoute>
+            }
+          />
         </Route>
       </Routes>
       <Toaster richColors position="bottom-right" />
