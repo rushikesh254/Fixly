@@ -22,6 +22,7 @@ const createService = async (req, res) => {
     // Validate required fields
     if (!name || !description || !price || !category) {
       return res.status(400).json({
+        success: false,
         message: "name, description, price and category are required",
       });
     }
@@ -29,11 +30,13 @@ const createService = async (req, res) => {
     if (name.length < 3) {
       return res
         .status(400)
-        .json({ message: "name must be atleast 3 characters" });
+        .json({ success: false, message: "name must be atleast 3 characters" });
     }
 
     if (price < 0) {
-      return res.status(400).json({ message: "price cannot be negative" });
+      return res
+        .status(400)
+        .json({ success: false, message: "price cannot be negative" });
     }
 
     // // Only providers and admins can create services
@@ -47,7 +50,9 @@ const createService = async (req, res) => {
     const categoryExists = await CategoryModel.findById(category);
 
     if (!categoryExists) {
-      return res.status(404).json({ message: "category not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Category not found" });
     }
 
     // If the user provided a phone number, update it in their profile
@@ -84,12 +89,16 @@ const createService = async (req, res) => {
     // Save the service to the database
     const service = await ServiceModel.create(serviceData);
 
-    res.status(201).json({ message: "Service created successfully", service });
+    res.status(201).json({
+      success: true,
+      message: "Service created successfully",
+      service,
+    });
   } catch (error) {
     console.error("Error creating service:", error);
     res
       .status(500)
-      .json({ message: "Internal server error", error: error.message });
+      .json({ success: false, message: "Failed to create service." });
   }
 };
 
@@ -131,7 +140,7 @@ const getAllServices = async (req, res) => {
     }
 
     //  add catehory ,provider and reviews data to the service data using populate
-    let query = Service.find(filter)
+    let query = ServiceModel.find(filter)
       .populate("category")
       .populate("provider")
       .populate("reviews");
@@ -149,7 +158,7 @@ const getAllServices = async (req, res) => {
               type: "Point",
               coordinates: [parseFloat(lng), parseFloat(lat)],
             },
-            $maxDistance: (distance || 10000) * 1000,
+            $maxDistance: (distance || 10) * 1000, // convert km to meters
           },
         },
       });
@@ -168,7 +177,7 @@ const getAllServices = async (req, res) => {
     console.error("Error fetching services:", error);
     res
       .status(500)
-      .json({ message: "Could not fetch services", error: error.message });
+      .json({ success: false, message: "Could not fetch services" });
   }
 };
 
@@ -181,7 +190,9 @@ const getServiceById = async (req, res) => {
       .populate("provider");
 
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Service not found" });
     }
 
     res.status(200).json({
@@ -191,10 +202,9 @@ const getServiceById = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching service:", error);
-
     res
       .status(500)
-      .json({ message: "Internal server error", error: error.message });
+      .json({ success: false, message: "Failed to fetch service." });
   }
 };
 
@@ -205,14 +215,17 @@ const updateService = async (req, res) => {
     const service = await ServiceModel.findById(req.params.id);
 
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Service not found" });
     }
 
-    // if (service.provider.toString() !== req.user._id.toString()) {
-    //   return res
-    //     .status(403)
-    //     .json({ message: "You are not authorized to update this service" });
-    // }
+    if (service.provider.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to update this service",
+      });
+    }
 
     // Extract service details from the request body
     const {
@@ -248,12 +261,16 @@ const updateService = async (req, res) => {
 
     await service.save();
 
-    res.status(200).json({ message: "Service updated successfully", service });
+    res.status(200).json({
+      success: true,
+      message: "Service updated successfully",
+      service,
+    });
   } catch (error) {
     console.error("Error updating service:", error);
     res
       .status(500)
-      .json({ message: "Internal server error", error: error.message });
+      .json({ success: false, message: "Failed to update service." });
   }
 };
 
@@ -265,22 +282,40 @@ const deleteService = async (req, res) => {
     const service = await ServiceModel.findById(req.params.id);
 
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Service not found" });
     }
-    // if (service.provider.toString() !== req.user._id.toString()) {
-    //   return res
-    //     .status(403)
-    //     .json({ message: "You are not authorized to delete this service" });
-    // }
+    if (service.provider.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this service",
+      });
+    }
+
+    //
+    const activeBookings = await BookingModel.find({
+      service: req.params.id,
+      status: { $in: ["pending", "confirmed"] },
+    });
+
+    if (activeBookings.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete service with active bookings.",
+      });
+    }
 
     await ServiceModel.findByIdAndDelete(req.params.id);
 
-    res.status(200).json({ message: "Service deleted successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Service deleted successfully" });
   } catch (error) {
     console.error("Error deleting service:", error);
     res
       .status(500)
-      .json({ message: "Internal server error", error: error.message });
+      .json({ success: false, message: "Failed to delete service." });
   }
 };
 

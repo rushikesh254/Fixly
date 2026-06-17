@@ -2,14 +2,16 @@ import { Router } from "express";
 import {
   createCategory,
   deleteCategory,
-  getCategories,
+  getAllCategories,
 } from "../controllers/category.controller.js";
-import { autherize, protect } from "../middleware/auth.middleware.js";
+import { authorize, protect } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-router.get("/", getCategories);
-router.post("/", protect, autherize("admin"), createCategory);
-router.delete("/:id", protect, autherize("admin"), deleteCategory);
+router.get("/", getAllCategories);
+
+router.post("/", protect, authorize("admin"), createCategory);
+
+router.delete("/:id", protect, authorize("admin"), deleteCategory);
 
 export default router;
