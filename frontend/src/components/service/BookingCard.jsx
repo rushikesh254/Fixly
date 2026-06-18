@@ -1,15 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
-import { FiMapPin } from "react-icons/fi";
+import { FiCalendar, FiMapPin } from "react-icons/fi";
 import { HiOutlineXMark } from "react-icons/hi2";
 import { toast } from "sonner";
-import AddressCard from "./AddressCard";
-import { FiCalendar } from "react-icons/fi";
-import { useEffect } from "react";
 import availableSlots from "../../constants/availableSlots";
 import PrimaryBtn from "../ui/PrimaryBtn";
+import AddressCard from "./AddressCard";
 
 //  get saved address from localStorage
 function getSavedAddress() {
@@ -51,7 +49,9 @@ function BookingCard({ service, setOpenBooking }) {
     .join(", ");
   // Update the "where" field whenever the address changes
   useEffect(() => {
-    setValue("where", addressText || "No address added");
+    setValue("where", addressText || "No address added", {
+      shouldValidate: true,
+    });
   }, [addressText, setValue]);
 
   return (
@@ -86,7 +86,7 @@ function BookingCard({ service, setOpenBooking }) {
 
           <div className="space-y-5">
             {/* Address Section  */}
-            <div className="space-y-2">
+            <div className="space-y-2 relative">
               <label
                 htmlFor="where"
                 className="text-sm text-gray-800 font-semibold "
@@ -95,7 +95,11 @@ function BookingCard({ service, setOpenBooking }) {
               </label>
               <div className="relative">
                 <input
-                  {...register("where", { required: "Address is required" })}
+                  {...register("where", {
+                    required: "Address is required",
+                    validate: (value) =>
+                      value !== "No address added" || "Address is required",
+                  })}
                   id="where"
                   type="text"
                   defaultValue={addressText || "No address added"}
@@ -104,7 +108,7 @@ function BookingCard({ service, setOpenBooking }) {
                 />
               </div>
               {errors.where && (
-                <p className="text-red-600 text-sm -mt-1">
+                <p className=" absolute top-2 right-1 text-red-600 text-[13px] -mt-1">
                   {errors.where.message}
                 </p>
               )}
@@ -127,7 +131,7 @@ function BookingCard({ service, setOpenBooking }) {
               )}
             </div>
             {/* Date Picker Section * */}
-            <div className="">
+            <div className="relative">
               <label
                 htmlFor="date"
                 className="text-sm text-gray-800 font-semibold"
@@ -143,7 +147,10 @@ function BookingCard({ service, setOpenBooking }) {
                   {...register("date", { required: "Date is required" })}
                   id="date"
                   selected={selectedDate}
-                  onChange={(date) => setSelectedDate(date)}
+                  onChange={(date) => {
+                    setSelectedDate(date);
+                    setValue("date", date, { shouldValidate: true });
+                  }}
                   minDate={today}
                   maxDate={maxDate}
                   placeholderText="Select date"
@@ -152,27 +159,36 @@ function BookingCard({ service, setOpenBooking }) {
                 />
               </div>
               {errors.date && (
-                <p className="text-red-600 text-sm -mt-1">
+                <p className="absolute right-1 top-2 text-red-600 text-[13px] -mt-1">
                   {errors.date.message}
                 </p>
               )}
             </div>
             {/*Slot selection section  */}
-            <div className="space-y-2">
+            <div className="space-y-2 relative">
               <label
                 htmlFor="time"
                 className="text-sm text-gray-800 font-semibold"
               >
                 What time do you need the service?
               </label>
-              <div className="grid grid-cols-5 gap-3 mt-3 text-xs text-gray-700">
+              <input
+                type="hidden"
+                {...register("time", { required: "Time is required" })}
+              />
+              <div
+                id="time"
+                className="grid grid-cols-5 gap-3 mt-3 text-xs text-gray-700"
+              >
                 {availableSlots.map((slot) => (
                   <button
                     key={slot}
                     type="button"
-                    onClick={() =>
-                      setSelectedSlot(selectedSlot === slot ? "" : slot)
-                    }
+                    onClick={() => {
+                      const newSlot = selectedSlot === slot ? "" : slot;
+                      setSelectedSlot(newSlot);
+                      setValue("time", newSlot, { shouldValidate: true });
+                    }}
                     className={`border rounded-lg py-1 cursor-pointer 
                       ${selectedSlot === slot ? "border-2 border-[#1E4ED8] text-[#1E4ED8] font-semibold" : "bg-white text-gray-700 border-gray-300 hover:border-[#1E4ED8] hover:text-[#1E4ED8]"}`}
                   >
@@ -180,6 +196,11 @@ function BookingCard({ service, setOpenBooking }) {
                   </button>
                 ))}
               </div>
+              {errors.time && (
+                <p className="absolute top-2 right-1 text-red-600 text-[13px] -mt-1">
+                  {errors.time.message}
+                </p>
+              )}
             </div>
             {/*Additional instructions section  */}
             <div>
@@ -202,7 +223,9 @@ function BookingCard({ service, setOpenBooking }) {
               onclick={handleSubmit((data) => {
                 console.log(data);
                 setOpenBooking(false);
-                toast.success("Booking confirmed! The provider will contact you shortly.");
+                toast.success(
+                  "Booking confirmed! The provider will contact you shortly.",
+                );
               })}
             />
           </div>

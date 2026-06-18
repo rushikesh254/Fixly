@@ -19,7 +19,7 @@ function HeroSection() {
 
         <div className="absolute inset-0 bg-linear-to-r from-black/80 to-black/30"></div>
 
-        <div className="relative z-10 flex min-h-140 sm:min-h-155 md:h-full md:min-h-0 items-center justify-start px-4 sm:px-6 md:px-10 py-24 sm:py-28 md:py-0">
+        <div className="relative z-10 flex min-h-140 sm:min-h-155 md:h-full md:min-h-0 items-center justify-start px-8 sm:px-6 md:px-10 py-24 sm:py-28 md:py-0">
           <div className="text-white max-w-md sm:max-w-lg">
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold leading-tight">
               Book Trusted Home <span className="text-[#1E4ED8]">Service</span>{" "}

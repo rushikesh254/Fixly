@@ -4,14 +4,30 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import bg from "../../assets/bg.svg";
 import logo from "../../assets/logo.png";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 function AuthCard({ isFlipped, setIsFlipped }) {
   // const [isFlipped, setIsFlipped] = useState(false);
+
+  // React Hook Form for Login
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
+    register: registerLogin,
+    handleSubmit: handleLoginSubmit,
+    formState: { errors: loginErrors },
   } = useForm();
+
+  // React Hook Form for Signup
+  const {
+    register: registerSignup,
+    handleSubmit: handleSignupSubmit,
+    formState: { errors: signupErrors },
+  } = useForm();
+
+  // Access login function from AuthContext
+  const { login } = useAuth();
+
+  const navigate = useNavigate();
 
   return (
     <div className="relative flex items-center justify-center min-h-screen">
@@ -47,8 +63,10 @@ function AuthCard({ isFlipped, setIsFlipped }) {
             </h2>
 
             <form
-              onSubmit={handleSubmit((data) => {
-                console.log(data);
+              onSubmit={handleLoginSubmit((data) => {
+                console.log("Login Data:", data);
+                login();
+                navigate("/user/dashboard");
                 toast.success("Welcome back! You have logged in successfully.");
               })}
             >
@@ -57,15 +75,16 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                   Email
                 </label>
                 <input
-                  {...register("email", { required: "Email is required" })}
+                  {...registerLogin("email", { required: "Email is required" })}
                   type="email"
                   id="email"
                   placeholder="you@gmail.com"
-                  className="w-full p-2 border rounded mt-1.5 focus:outline-none  text-sm"
+                  spellCheck="false"
+                  className="w-full p-2 border rounded mt-1.5 focus:outline-none  text-[13px]"
                 />
-                {errors.email && (
+                {loginErrors.email && (
                   <p className="absolute top-2 right-1 text-red-500 text-[13px]">
-                    {errors.email.message}
+                    {loginErrors.email.message}
                   </p>
                 )}
               </div>
@@ -74,17 +93,17 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                   Password
                 </label>
                 <input
-                  {...register("password", {
+                  {...registerLogin("password", {
                     required: "Password is required",
                   })}
                   type="password"
                   id="password"
                   placeholder="Password"
-                  className="w-full p-2  border rounded mt-1.5 focus:outline-none   text-sm"
+                  className="w-full p-2  border rounded mt-1.5 focus:outline-none   text-[13px]"
                 />
-                {errors.password && (
+                {loginErrors.password && (
                   <p className="absolute top-3 right-1 text-red-500 text-[13px]">
-                    {errors.password.message}
+                    {loginErrors.password.message}
                   </p>
                 )}
               </div>
@@ -141,9 +160,10 @@ function AuthCard({ isFlipped, setIsFlipped }) {
             </Link>
 
             <form
-              onSubmit={handleSubmit((data) => {
-                console.log(data);
-                toast.success("Account created successfully! You can now log in.");
+              onSubmit={handleSignupSubmit(() => {
+                login();
+                navigate("/user/dashboard");
+                toast.success("Account created successfully!");
               })}
             >
               <div className="relative pb-2">
@@ -151,15 +171,16 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                   Name
                 </label>
                 <input
-                  {...register("name", { required: "Name is required" })}
+                  {...registerSignup("name", { required: "Name is required" })}
                   type="text"
                   id="name"
                   placeholder="Your Name"
-                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-sm"
+                  spellCheck="false"
+                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-[13px] "
                 />
-                {errors.name && (
+                {signupErrors.name && (
                   <p className="absolute top-2 right-1 text-red-500 text-[13px]">
-                    {errors.name.message}
+                    {signupErrors.name.message}
                   </p>
                 )}
               </div>
@@ -168,15 +189,18 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                   Email
                 </label>
                 <input
-                  {...register("email", { required: "Email is required" })}
+                  {...registerSignup("email", {
+                    required: "Email is required",
+                  })}
                   type="email"
                   id="email"
                   placeholder="you@gmail.com"
-                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-sm "
+                  spellCheck="false"
+                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-[13px] "
                 />
-                {errors.email && (
+                {signupErrors.email && (
                   <p className="absolute top-2 right-1 text-red-500 text-[13px]">
-                    {errors.email.message}
+                    {signupErrors.email.message}
                   </p>
                 )}
               </div>
@@ -185,17 +209,17 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                   Password
                 </label>
                 <input
-                  {...register("password", {
+                  {...registerSignup("password", {
                     required: "Password is required",
                   })}
                   type="password"
                   id="password"
                   placeholder="Password"
-                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-sm"
+                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-[13px] "
                 />
-                {errors.password && (
+                {signupErrors.password && (
                   <p className="absolute top-2 right-1 text-red-500 text-[13px]">
-                    {errors.password.message}
+                    {signupErrors.password.message}
                   </p>
                 )}
               </div>
@@ -207,17 +231,17 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                   Confirm Password
                 </label>
                 <input
-                  {...register("confirmPassword", {
+                  {...registerSignup("confirmPassword", {
                     required: "Confirm your password",
                   })}
                   type="password"
                   id="confirmPassword"
                   placeholder="Confirm Password"
-                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-sm"
+                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-[13px]"
                 />
-                {errors.confirmPassword && (
+                {signupErrors.confirmPassword && (
                   <p className="absolute top-2 right-1 text-red-500 text-[13px]">
-                    {errors.confirmPassword.message}
+                    {signupErrors.confirmPassword.message}
                   </p>
                 )}
               </div>

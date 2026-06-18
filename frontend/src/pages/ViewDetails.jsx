@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CiCircleCheck } from "react-icons/ci";
 import { FaCheckCircle, FaInfoCircle, FaStar } from "react-icons/fa";
 import { FiMapPin } from "react-icons/fi";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdElectricBolt, MdEventAvailable } from "react-icons/md";
-import { Link } from "react-router-dom";
 import Gallery from "../components/service/Gallery";
 import ProviderCard from "../components/service/providerCard";
 import ReviewSection from "../components/service/reviewSection";
@@ -15,7 +15,7 @@ import BookingCard from "../components/service/BookingCard";
 
 function ViewDetails() {
   // const { id } = useParams();
-  // const location = useLocation();
+  const navigate = useNavigate();
 
   // find provider based on id from params or state passed via Link
   const p = Provider;
@@ -44,19 +44,24 @@ function ViewDetails() {
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-8 sm:px-6 lg:px-10">
       {/* back button */}
-      <Link
-        className="mb-6 inline-flex items-center gap-1.5 px-4 sm:px-10 md:px-20 text-sm font-bold text-gray-500 hover:text-blue-600"
-        to="/services"
-        onClick={() =>
+      <button
+        className="mb-6 inline-flex items-center gap-1.5 px-4 sm:px-10 md:px-20 text-sm font-bold text-gray-500 hover:text-blue-600 cursor-pointer"
+        onClick={() => {
+          console.log(window.history);
+          if (window.history.length > 1) {
+            navigate(-1);
+          } else {
+            navigate("/services", { replace: true });
+          }
           window.scrollTo({
             top: 0,
             behavior: "smooth",
-          })
-        }
+          });
+        }}
       >
         <IoIosArrowBack />
         <span>Go Back</span>
-      </Link>
+      </button>
 
       {/* provider name, title, location */}
       <div className="px-4 sm:px-10 md:px-20">
