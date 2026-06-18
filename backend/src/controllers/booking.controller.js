@@ -106,8 +106,8 @@ const getMyBookings = async (req, res) => {
       $or: [{ user: req.user._id }, { provider: req.user._id }],
     })
       .populate("service")
-      .populate("user")
-      .populate("provider")
+      .populate("user", "-password -verificationToken -verificationTokenExpires -resetPasswordToken -resetPasswordExpires")
+      .populate("provider", "-password -verificationToken -verificationTokenExpires -resetPasswordToken -resetPasswordExpires")
       .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, count: bookings.length, bookings });
@@ -199,6 +199,13 @@ const cancelBooking = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Completed bookings cannot be cancelled",
+      });
+    }
+
+    if (new Date(booking.bookingDate) < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: "Past bookings cannot be cancelled",
       });
     }
 

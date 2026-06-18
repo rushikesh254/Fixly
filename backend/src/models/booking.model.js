@@ -39,6 +39,11 @@ const bookingSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Amount is required"],
     },
+    duration: {
+      type: Number,
+      required: true,
+      default: 60,
+    },
     isReviewed: {
       type: Boolean,
       default: false,

@@ -11,6 +11,6 @@ const router = Router();
 
 router.get("/:serviceId", getReviews);
 router.post("/", protect, authorize("user"), createReview);
-router.delete("/:id", protect, authorize("user"), deleteReview);
+router.delete("/:reviewId", protect, authorize("user"), deleteReview);
 
 export default router;

@@ -1,3 +1,4 @@
+import BookingModel from "../models/booking.model.js";
 import CategoryModel from "../models/category.model.js";
 import ServiceModel from "../models/service.model.js";
 import UserModel from "../models/user.model.js";
@@ -142,7 +143,7 @@ const getAllServices = async (req, res) => {
     //  add catehory ,provider and reviews data to the service data using populate
     let query = ServiceModel.find(filter)
       .populate("category")
-      .populate("provider")
+      .populate("provider", "-password -verificationToken -verificationTokenExpires -resetPasswordToken -resetPasswordExpires")
       .populate("reviews");
 
     // if lat and lng are provided, sort by distance from the given location using geospatial query
@@ -187,7 +188,7 @@ const getServiceById = async (req, res) => {
   try {
     const service = await ServiceModel.findById(req.params.id)
       .populate("category")
-      .populate("provider");
+      .populate("provider", "-password -verificationToken -verificationTokenExpires -resetPasswordToken -resetPasswordExpires");
 
     if (!service) {
       return res

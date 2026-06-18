@@ -12,20 +12,20 @@ const createReview = async (req, res) => {
     if (!serviceId || !rating || !comment) {
       return res
         .status(400)
-        .json({ status: true, message: "All fields are required" });
+        .json({ success: false, message: "All fields are required" });
     }
 
     // rating must be between 1 and 5
     if (rating < 1 || rating > 5) {
       return res
         .status(400)
-        .json({ status: true, message: "Rating must be between 1 and 5" });
+        .json({ success: false, message: "Rating must be between 1 and 5" });
     }
 
     // Check if service exists
     const service = await ServiceModel.findById(serviceId);
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res.status(404).json({ success: false, message: "Service not found" });
     }
 
     // Check if user has completed a booking for this service
@@ -37,6 +37,7 @@ const createReview = async (req, res) => {
 
     if (!completedBooking) {
       return res.status(400).json({
+        success: false,
         message: "You can only review services you have booked and completed",
       });
     }
@@ -50,7 +51,7 @@ const createReview = async (req, res) => {
     if (existingReview) {
       return res
         .status(400)
-        .json({ message: "You have already reviewed this service" });
+        .json({ success: false, message: "You have already reviewed this service" });
     }
 
     // Create review
@@ -68,7 +69,7 @@ const createReview = async (req, res) => {
     // send response
     res.status(201).json({ success: true, review });
   } catch (error) {
-    res.status(500).json({ status: false, message: "Error creating review" });
+    res.status(500).json({ success: false, message: "Error creating review" });
   }
 };
 
@@ -81,7 +82,7 @@ const getReviews = async (req, res) => {
     const service = await ServiceModel.findById(serviceId);
 
     if (!service) {
-      return res.status(404).json({ message: "Service not found" });
+      return res.status(404).json({ success: false, message: "Service not found" });
     }
 
     const reviews = await ReviewModel.find({ service: serviceId })
@@ -90,7 +91,7 @@ const getReviews = async (req, res) => {
 
     res.status(200).json({ success: true, count: reviews.length, reviews });
   } catch (error) {
-    res.status(500).json({ status: false, message: "Error fetching reviews" });
+    res.status(500).json({ success: false, message: "Error fetching reviews" });
   }
 };
 
@@ -102,19 +103,19 @@ const deleteReview = async (req, res) => {
 
     const review = await ReviewModel.findById(reviewId);
     if (!review) {
-      return res.status(404).json({ message: "Review not found" });
+      return res.status(404).json({ success: false, message: "Review not found" });
     }
 
     // Only the user who created the review can delete it
     if (review.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Unauthorized" });
+      return res.status(403).json({ success: false, message: "Unauthorized" });
     }
 
-    await review.remove();
+    await review.deleteOne();
 
     res.status(200).json({ success: true, message: "Review deleted" });
   } catch (error) {
-    res.status(500).json({ status: false, message: "Error deleting review" });
+    res.status(500).json({ success: false, message: "Error deleting review" });
   }
 };
 
