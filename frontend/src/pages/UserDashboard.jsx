@@ -11,11 +11,12 @@ import {
   CiViewList,
 } from "react-icons/ci";
 import { FiArrowRight } from "react-icons/fi";
-import { TfiMoney } from "react-icons/tfi";
-import HorizontalCard from "../components/ui/horizontalCard";
-import SavedCard from "../components/ui/SavedCard";
 import { MdOutlineAccessTime } from "react-icons/md";
+import { TfiMoney } from "react-icons/tfi";
+import HorizontalCard from "../components/ui/HorizontalCard";
 import PrimaryBtn from "../components/ui/PrimaryBtn";
+import SavedCard from "../components/ui/SavedCard";
+import EmptyState from "../components/ui/EmptyState";
 
 function UserDashboard() {
   const navigate = useNavigate();
@@ -182,24 +183,14 @@ function UserDashboard() {
 
             <div className="flex flex-col gap-4 mt-5">
               {upcomingCount === 0 ? (
-                <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-gray-200 bg-white py-16 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                    <CiViewList size={28} className="text-gray-400" />
-                  </div>
-                  <p className="font-semibold text-gray-900">
-                    No Upcoming Bookings
-                  </p>
-                  <p className="text-sm text-gray-500 max-w-xs">
-                    You don't have any upcoming service bookings. Explore
-                    services and book a trusted provider.
-                  </p>
-                  <button
-                    className="mt-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-xl hover:bg-blue-700 transition"
-                    onClick={() => navigate("/services")}
-                  >
-                    Browse Services
-                  </button>
-                </div>
+                <EmptyState
+                  title="No Upcoming Bookings"
+                  description="You don't have any upcoming service bookings. Explore
+                  services and book a trusted provider."
+                  buttonLink="services"
+                  buttonText="Browse Services"
+                  className={`bg-blue-600 hover:bg-blue-700`}
+                />
               ) : (
                 upcomingBookings
                   .slice(0, 5)
@@ -231,24 +222,14 @@ function UserDashboard() {
 
             <div className="flex flex-col gap-4 mt-5">
               {savedList.length === 0 ? (
-                <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-gray-200 bg-white py-16 text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                    <CiBookmarkCheck size={28} className="text-gray-400" />
-                  </div>
-                  <p className="font-semibold text-gray-900">
-                    No Saved Services
-                  </p>
-                  <p className="text-sm text-gray-500 max-w-xs">
-                    You haven't saved any services yet. Save services to quickly
-                    access them later.
-                  </p>
-                  <button
-                    className="mt-2 px-6 py-2.5 bg-amber-500 text-white text-sm font-medium rounded-xl hover:bg-amber-600 transition"
-                    onClick={() => navigate("/services")}
-                  >
-                    Explore Services
-                  </button>
-                </div>
+                <EmptyState
+                  title="No Services Saved"
+                  description="You haven't saved any services yet. Save services to quickly
+                    access them later."
+                  buttonLink="services"
+                  buttonText="Explore Services"
+                  className={`bg-amber-500 hover:bg-amber-600`}
+                />
               ) : (
                 savedList
                   .slice(0, 3)
@@ -269,24 +250,10 @@ function UserDashboard() {
 
           <div className="mt-5 flex flex-col gap-3">
             {recentActivities.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-4 rounded-2xl bg-white py-20 text-center mt-10">
-                <img
-                  src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png"
-                  alt="No activity"
-                  className="w-24 opacity-50"
-                />
-                <p className="font-bold text-gray-800">No Recent Activity</p>
-                <p className="text-sm text-gray-500 max-w-sm">
-                  Your recent actions will appear here. Book or save a service
-                  to get started.
-                </p>
-                <button
-                  className="mt-4 px-6 py-2.5 border border-gray-200 text-gray-700 text-sm rounded-lg hover:bg-blue-50 hover:text-blue-700 transition"
-                  onClick={() => navigate("/services")}
-                >
-                  Browse Services
-                </button>
-              </div>
+              <EmptyState
+                title="No Recent Activity"
+                description="Your recent actions will appear here."
+              />
             ) : (
               recentActivities.map((activity, idx) => {
                 const colorMap = {

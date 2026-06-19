@@ -7,7 +7,7 @@ import ContactPage from "./pages/ContactPage.jsx";
 import HomePage from "./pages/HomePage";
 import ProviderPage from "./pages/ProviderPage.jsx";
 import ServicesPage from "./pages/ServicesPage.jsx";
-import ViewDetails from "./pages/viewDetails.jsx";
+import ViewDetails from "./pages/ViewDetails.jsx";
 import UserDashboard from "./pages/UserDashboard.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import UserLayout from "./layouts/UserLayout.jsx";

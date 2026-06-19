@@ -1,6 +1,6 @@
 import { FaStar } from "react-icons/fa";
 
-function reviewSection({ reviews }) {
+function ReviewSection({ reviews }) {
   return (
     <>
       {" "}
@@ -53,4 +53,4 @@ function reviewSection({ reviews }) {
   );
 }
 
-export default reviewSection;
+export default ReviewSection;
