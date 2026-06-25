@@ -12,8 +12,11 @@ function MyBookings() {
     "Completed",
     "Cancelled",
   ];
-
+  // State to track the active tab
   const [activeTab, setActiveTab] = useState("All Bookings");
+
+  // State to track the search query
+  const [searchQuery, setSearchQuery] = useState("");
 
   const confirmedBookings = totalBookings.filter(
     (booking) => booking.status === "Confirmed",
@@ -31,6 +34,7 @@ function MyBookings() {
     (booking) => booking.status === "Cancelled",
   );
 
+  // Count of bookings for each tab
   const tabCounts = {
     "All Bookings": totalBookings.length,
     Confirmed: confirmedBookings.length,
@@ -38,6 +42,22 @@ function MyBookings() {
     Completed: completedBookings.length,
     Cancelled: cancelledBookings.length,
   };
+
+  // Object to map tab names to their corresponding bookings
+  const bookingsByTab = {
+    "All Bookings": totalBookings,
+    Confirmed: confirmedBookings,
+    Pending: pendingBookings,
+    Completed: completedBookings,
+    Cancelled: cancelledBookings,
+  };
+
+  // Filter bookings based on search query
+  const displayedBookings = bookingsByTab[activeTab].filter((booking) =>
+    `${booking.title} ${booking.providerName}`
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <>
@@ -61,6 +81,8 @@ function MyBookings() {
             <input
               type="text"
               placeholder="Search bookings..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-8 pr-3 py-2  text-[12px] text-gray-700 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-50 transition-all duration-200 bg-white"
             />
           </div>
@@ -97,8 +119,8 @@ function MyBookings() {
           {/* All Bookings */}
           {activeTab === "All Bookings" && (
             <div className="flex flex-col gap-5">
-              {totalBookings.length !== 0 ? (
-                totalBookings.map((booking) => (
+              {displayedBookings.length !== 0 ? (
+                displayedBookings.map((booking) => (
                   <HorizontalCard key={booking.id} booking={booking} />
                 ))
               ) : (
@@ -116,8 +138,8 @@ function MyBookings() {
           {/* Confirmed Bookings */}
           {activeTab === "Confirmed" && (
             <div className="flex flex-col gap-5">
-              {confirmedBookings.length !== 0 ? (
-                confirmedBookings.map((booking) => (
+              {displayedBookings.length !== 0 ? (
+                displayedBookings.map((booking) => (
                   <HorizontalCard key={booking.id} booking={booking} />
                 ))
               ) : (
@@ -134,8 +156,8 @@ function MyBookings() {
           {/* Pending Bookings */}
           {activeTab === "Pending" && (
             <div className="flex flex-col gap-5">
-              {pendingBookings.length !== 0 ? (
-                pendingBookings.map((booking) => (
+              {displayedBookings.length !== 0 ? (
+                displayedBookings.map((booking) => (
                   <HorizontalCard key={booking.id} booking={booking} />
                 ))
               ) : (
@@ -149,8 +171,8 @@ function MyBookings() {
           {/* Completed Bookings */}
           {activeTab === "Completed" && (
             <div className="flex flex-col gap-5">
-              {completedBookings.length !== 0 ? (
-                completedBookings.map((booking) => (
+              {displayedBookings.length !== 0 ? (
+                displayedBookings.map((booking) => (
                   <HorizontalCard key={booking.id} booking={booking} />
                 ))
               ) : (
@@ -164,8 +186,8 @@ function MyBookings() {
           {/* Cancelled Bookings */}
           {activeTab === "Cancelled" && (
             <div className="flex flex-col gap-5">
-              {cancelledBookings.length !== 0 ? (
-                cancelledBookings.map((booking) => (
+              {displayedBookings.length !== 0 ? (
+                displayedBookings.map((booking) => (
                   <HorizontalCard key={booking.id} booking={booking} />
                 ))
               ) : (

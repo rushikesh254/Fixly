@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { FiSearch } from "react-icons/fi";
 import { RiResetRightLine } from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -15,7 +14,6 @@ import categories from "../constants/categories";
 function ServicesPage() {
   const { status, detect, nearbyProvidersList, clearLocation } = useLocate();
 
-  const { register, handleSubmit } = useForm();
   const [isCategoryExpanded, setIsCategoryExpanded] = useState(false);
   const [isServiceExpanded, setIsServiceExpanded] = useState(false);
 
@@ -30,13 +28,31 @@ function ServicesPage() {
   const instantBookingEnabled = queryParams.get("instantBooking") === "true"; //because it returns string and we want boolean
   const availableTodayEnabled = queryParams.get("availableToday") === "true";
 
+  // Get the search query from URL parameters
+  const searchQuery = queryParams.get("q") || "";
+
+  // State to track the search input value
+  const [inputValue, setInputValue] = useState(searchQuery);
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    const params = new URLSearchParams(search);
+    if (value) {
+      params.set("q", value);
+    } else {
+      params.delete("q");
+    }
+    navigate(`/services?${params.toString()}`);
+  };
+
   // Calculate min and max price for filters
   const maxPrice = providers.reduce(
     (acc, cv) => (acc > cv.price ? acc : cv.price),
     0,
   );
-  const minPrice = providers.reduce((acc, cv) =>
-    acc < cv.price ? acc : cv.price,
+  const minPrice = providers.reduce(
+    (acc, cv) => (acc < cv.price ? acc : cv.price),
+    Infinity,
   );
 
   //services in selected category
@@ -89,6 +105,13 @@ function ServicesPage() {
           .sort((a, b) => a.distance - b.distance)
       : filteredProviders;
 
+  // Filter displayed providers based on search query
+  const finalDisplayedProviders = displayedProviders.filter((provider) =>
+    `${provider.title} ${provider.category} ${provider.providerName} ${provider.location}`
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase()),
+  );
+
   return (
     <div>
       {
@@ -127,21 +150,34 @@ function ServicesPage() {
         <div className="flex-1  py-8 px-8  bg-gray-50  scrollbar-hide">
           {/* search and results header */}
           <div className="mb-8 ">
-            <form onSubmit={handleSubmit((data) => console.log(data))}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const params = new URLSearchParams(search);
+                if (inputValue) {
+                  params.set("q", inputValue);
+                } else {
+                  params.delete("q");
+                }
+                navigate(`/services?${params.toString()}`);
+              }}
+            >
               <div className="max-w-lg mb-5 text-gray-700 py-3   relative">
                 <input
-                  {...register("service", {
-                    required: "Please enter a service",
-                  })}
                   type="text"
                   spellCheck="false"
-                  className="w-full border border-gray-300 px-6 backdrop-blur-sm focus:outline-none focus:border-2 focus:border-blue-400 transition hover:border-gray-400 py-2 placeholder:text-sm text:gray-400 text-sm rounded-full"
-                  placeholder="Search for services"
+                  value={inputValue}
+                  onChange={(e) => {
+                    setInputValue(e.target.value);
+                  }}
+                  className="w-full border border-gray-300 px-6 backdrop-blur-sm focus:outline-none focus:border-2 focus:border-blue-400 transition hover:border-gray-400 py-2 placeholder:text-[13px] text:gray-400 text-sm rounded-full"
+                  placeholder="Search services, providers or location..."
                 />
 
                 <PrimaryBtn
-                  btn={<FiSearch size={18} />}
-                  className="absolute right-0 top-2 translate-y-1 px-6 py-2.5 rounded-r-full! "
+                  type="submit"
+                  btn={<FiSearch size={16} />}
+                  className="absolute right-0 top-2 translate-y-1 px-2 sm:px-6 py-2.5 rounded-r-full! "
                 />
               </div>
             </form>
@@ -152,7 +188,7 @@ function ServicesPage() {
           </div>
 
           {/* if no provider found */}
-          {displayedProviders.length === 0 && (
+          {finalDisplayedProviders.length === 0 && (
             <div className="flex flex-col bg-white rounded-2xl py-20 items-center justify-center gap-4 mt-10">
               <img
                 src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png"
@@ -181,7 +217,7 @@ function ServicesPage() {
 
           {/* providers grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-3 my-3 ">
-            {displayedProviders
+            {finalDisplayedProviders
               .filter((provider) => provider.status === "approved")
               .map((provider) => (
                 <ServiceCard key={provider.id} service={provider} />

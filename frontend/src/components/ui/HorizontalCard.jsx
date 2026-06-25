@@ -5,7 +5,6 @@ import { SlCalender } from "react-icons/sl";
 import { useNavigate } from "react-router-dom";
 import PrimaryBtn from "./PrimaryBtn";
 import SecondaryBtn from "./SecondaryBtn";
-import { useState } from "react";
 
 function HorizontalCard({ booking }) {
   const {
@@ -28,7 +27,13 @@ function HorizontalCard({ booking }) {
     <div className="group bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:border-slate-300">
       <div className="flex flex-col md:flex-row">
         {/* Image */}
-        <div className="relative w-full md:w-72 h-44 md:h-auto shrink-0 overflow-hidden">
+        <div
+          onClick={() => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            navigate(`/services/viewDetails/${id}`);
+          }}
+          className="relative w-full md:w-72 h-44 md:h-auto shrink-0 overflow-hidden cursor-pointer"
+        >
           <img
             src={image}
             alt={title}
