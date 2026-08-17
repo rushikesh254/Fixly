@@ -10,12 +10,13 @@ import {
 import logo from "../../assets/logo.png";
 import PrimaryBtn from "./PrimaryBtn";
 
+import { CiLogout, CiUser } from "react-icons/ci";
 import { FiLogIn, FiMenu, FiX } from "react-icons/fi";
 import { LuUserRoundPlus } from "react-icons/lu";
-import { CiLogout } from "react-icons/ci";
 import { toast } from "sonner";
 
 import { useAuth } from "../../context/AuthContext";
+import userData from "../../data/userData";
 
 function Header() {
   const navigate = useNavigate();
@@ -109,24 +110,45 @@ function Header() {
             </button>
           )}
           {user && (
-            <button
-              onClick={() => {
-                logout();
-                toast.error("You have logged out.");
-              }}
-              className={`cursor-pointer hover:scale-105 transition duration-300 flex items-center gap-2 font-semibold ${
-                isStickyNav
-                  ? "h-9 rounded-md px-3 text-slate-600 hover:bg-red-50 hover:text-red-600"
-                  : "text-white"
-              }`}
-            >
-              {
-                <CiLogout
-                  className={`${isStickyNav ? "hover:text-red-600" : "text-white"}`}
+            <div className="relative group/profile">
+              {/* profile */}
+              <button className="h-12 w-12 overflow-hidden rounded-full border-2 border-blue-200 bg-gray-100 shadow-sm transition-all duration-200 cursor-pointer hover:shadow-md">
+                <img
+                  src={userData.image}
+                  alt="Profile"
+                  className="h-full w-full object-cover"
                 />
-              }
-              {"Logout"}
-            </button>
+              </button>
+              {/* options */}
+              <div className="invisible group-hover/profile:visible pt-3 absolute right-0 top-full">
+                <div className="w-48 rounded-lg bg-white shadow-lg ring-1 ring-black/5 text-[13px] text-gray-700 overflow-hidden">
+                  <div className="h-0.5 bg-gradient-to-r from-blue-500 to-blue-300"></div>
+                  <NavLink
+                    to="/user/profile"
+                    className={({ isActive }) =>
+                      `flex w-full items-center gap-3 px-5 py-3 hover:bg-blue-50 hover:text-blue-700 border-b  border-gray-100 cursor-pointer transition-all ${
+                        isActive
+                          ? "bg-blue-50 text-blue-700"
+                          : "text-gray-700 bg-white"
+                      }`
+                    }
+                  >
+                    <CiUser className="shrink-0 text-base" />
+                    My Account
+                  </NavLink>
+                  <button
+                    onClick={() => {
+                      logout();
+                      toast.error("You are logged out!");
+                    }}
+                    className="flex w-full items-center gap-3 px-5 py-3 hover:bg-red-50 hover:text-red-700 cursor-pointer transition-all"
+                  >
+                    <CiLogout className="shrink-0 text-base" />
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
           {!user && (
             <PrimaryBtn

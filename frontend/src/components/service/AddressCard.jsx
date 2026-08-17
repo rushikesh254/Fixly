@@ -5,7 +5,7 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import { toast } from "sonner";
 import { useLocate } from "../../hooks/useLocate";
 
-function AddressCard({ setAddressOpen }) {
+function AddressCard({ setAddressOpen, onSave }) {
   const {
     register,
     handleSubmit,
@@ -30,11 +30,12 @@ function AddressCard({ setAddressOpen }) {
 
   return (
     <div>
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50">
-        <div className="bg-white relative rounded-lg p-5 w-full max-w-md mx-4">
+      <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50">
+        <div className="bg-white relative rounded-lg p-5 w-full max-w-md  mx-4">
+          {/* Close button */}
           <div
             onClick={() => setAddressOpen(false)}
-            className=" absolute -top-10  right-0 bg-white flex items-center justify-center  rounded-full h-8 w-8 cursor-pointer "
+            className=" absolute top-2  right-2 bg-gray-100 flex items-center justify-center  rounded-full h-8 w-8 cursor-pointer "
           >
             <HiOutlineXMark className="" size={20} />
           </div>
@@ -76,7 +77,7 @@ function AddressCard({ setAddressOpen }) {
             {status === "loading" && "Detecting..."}
             {status === "denied" && "Permission denied"}
           </button>
-          <h2 className="text-base text-center text-blue-600 font-semibold my-2">
+          <h2 className="text-base text-center text-blue-600 font-semibold my-3">
             OR
           </h2>
           {/*manual address fill form */}
@@ -182,6 +183,7 @@ function AddressCard({ setAddressOpen }) {
             <button
               onClick={handleSubmit((data) => {
                 localStorage.setItem("userAddress", JSON.stringify(data));
+                if (onSave) onSave(data);
                 setAddressOpen(false);
                 toast.success("Address saved successfully!");
               })}

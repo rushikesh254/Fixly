@@ -60,14 +60,14 @@ function BookingCard({ service, setOpenBooking }) {
         <div className="bg-white relative rounded-lg py-5 px-6 w-full max-w-md mx-4">
           <div
             onClick={() => setOpenBooking(false)}
-            className=" absolute   -right-8 -top-5 bg-white flex items-center justify-center  rounded-full h-8 w-8 cursor-pointer "
+            className=" absolute   right-2 top-2 bg-gray-100 flex items-center justify-center  rounded-full h-8 w-8 cursor-pointer "
           >
             <HiOutlineXMark className="" size={20} />
           </div>
           <div className="">
-            <h1 className=" text-2xl font-bold mb-1">{title}</h1>
+            <h1 className=" text-2xl font-bold ">{title}</h1>
 
-            <h2 className="mb-5 flex items-center text-base  font-semibold">
+            <h2 className="mb-4 flex items-center text-base  font-semibold">
               <span className="font-semibold text-blue-600">
                 {providerName}
               </span>
@@ -84,7 +84,7 @@ function BookingCard({ service, setOpenBooking }) {
             </h2>
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-4">
             {/* Address Section  */}
             <div className="space-y-2 relative">
               <label

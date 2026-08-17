@@ -14,6 +14,7 @@ function AuthCard({ isFlipped, setIsFlipped }) {
   const {
     register: registerLogin,
     handleSubmit: handleLoginSubmit,
+    getValues,
     formState: { errors: loginErrors },
   } = useForm();
 
@@ -80,7 +81,7 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                   id="email"
                   placeholder="you@gmail.com"
                   spellCheck="false"
-                  className="w-full p-2 border rounded mt-1.5 focus:outline-none  text-[13px]"
+                  className="w-full p-2 border border-gray-300 rounded mt-1.5 focus:outline-none  text-[13px]"
                 />
                 {loginErrors.email && (
                   <p className="absolute top-2 right-1 text-red-500 text-[13px]">
@@ -95,11 +96,15 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                 <input
                   {...registerLogin("password", {
                     required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
                   })}
                   type="password"
                   id="password"
                   placeholder="Password"
-                  className="w-full p-2  border rounded mt-1.5 focus:outline-none   text-[13px]"
+                  className="w-full p-2  border border-gray-300 rounded mt-1.5 focus:outline-none   text-[13px]"
                 />
                 {loginErrors.password && (
                   <p className="absolute top-3 right-1 text-red-500 text-[13px]">
@@ -176,7 +181,7 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                   id="name"
                   placeholder="Your Name"
                   spellCheck="false"
-                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-[13px] "
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none mt-1 text-[13px] "
                 />
                 {signupErrors.name && (
                   <p className="absolute top-2 right-1 text-red-500 text-[13px]">
@@ -196,7 +201,7 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                   id="email"
                   placeholder="you@gmail.com"
                   spellCheck="false"
-                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-[13px] "
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none mt-1 text-[13px] "
                 />
                 {signupErrors.email && (
                   <p className="absolute top-2 right-1 text-red-500 text-[13px]">
@@ -211,11 +216,15 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                 <input
                   {...registerSignup("password", {
                     required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
                   })}
                   type="password"
                   id="password"
                   placeholder="Password"
-                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-[13px] "
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none mt-1 text-[13px] "
                 />
                 {signupErrors.password && (
                   <p className="absolute top-2 right-1 text-red-500 text-[13px]">
@@ -233,11 +242,14 @@ function AuthCard({ isFlipped, setIsFlipped }) {
                 <input
                   {...registerSignup("confirmPassword", {
                     required: "Confirm your password",
+                    validate: (value) =>
+                      value === getValues("password") ||
+                      "Passwords do not match",
                   })}
                   type="password"
                   id="confirmPassword"
                   placeholder="Confirm Password"
-                  className="w-full p-1.5 border rounded focus:outline-none mt-1 text-[13px]"
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none mt-1 text-[13px]"
                 />
                 {signupErrors.confirmPassword && (
                   <p className="absolute top-2 right-1 text-red-500 text-[13px]">
