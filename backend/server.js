@@ -12,7 +12,7 @@ connectDB()
   .then(() => {
     app.listen(port, () => {
       console.log(
-        `Chefsense Server is running on port http://localhost:${port}`,
+        `Fixly Server is running on port http://localhost:${port}`,
       );
     });
   })
