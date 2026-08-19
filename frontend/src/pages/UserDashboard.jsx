@@ -1,8 +1,11 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import recentActivities from "../data/recentActivities";
 import savedList from "../data/savedList";
 import totalBookings from "../data/totalBookings";
 import userData from "../data/userData";
+import CancelModal from "../components/ui/CancelModal";
+import { useState } from "react";
+import DetailModal from "../components/ui/DetailModal";
 
 import {
   CiBookmarkCheck,
@@ -17,10 +20,9 @@ import HorizontalCard from "../components/ui/HorizontalCard";
 import PrimaryBtn from "../components/ui/PrimaryBtn";
 import SavedCard from "../components/ui/SavedCard";
 import EmptyState from "../components/ui/EmptyState";
+import SecondaryBtn from "../components/ui/SecondaryBtn";
 
 function UserDashboard() {
-  const navigate = useNavigate();
-
   const upcomingBookings = totalBookings.filter(
     (b) => b.status === "Pending" || b.status === "Confirmed",
   );
@@ -37,6 +39,7 @@ function UserDashboard() {
     .filter((b) => b.status === "Completed")
     .reduce((sum, b) => sum + b.price, 0);
 
+  // Stats data for the dashboard
   const statsData = [
     {
       title: "UPCOMING SERVICES",
@@ -63,6 +66,53 @@ function UserDashboard() {
       iconClass: "bg-purple-100 text-purple-600",
     },
   ];
+
+  //state for cancel modal and detail modal
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+
+  const statusConfig = {
+    Pending: {
+      banner: "bg-amber-50 border-amber-200",
+      bannerText: "text-amber-700",
+      icon: "bg-amber-100 text-amber-600",
+      message: "Awaiting Provider Confirmation",
+      description:
+        "Your booking request is waiting for the provider to accept.",
+    },
+    Confirmed: {
+      banner: "bg-emerald-50 border-emerald-200",
+      bannerText: "text-emerald-700",
+      icon: "bg-emerald-100 text-emerald-600",
+      message: "Booking Confirmed",
+      description:
+        "The provider has accepted your booking. You can contact them for any queries.",
+    },
+    Completed: {
+      banner: "bg-blue-50 border-blue-200",
+      bannerText: "text-blue-700",
+      icon: "bg-blue-100 text-blue-600",
+      message: "Service Completed",
+      description: "This service has been completed successfully.",
+    },
+    Cancelled: {
+      banner: "bg-slate-50 border-slate-200",
+      bannerText: "text-slate-700",
+      icon: "bg-slate-100 text-slate-600",
+      message: "Booking Cancelled",
+      description: "This booking was cancelled and cannot be restored.",
+    },
+    Rejected: {
+      banner: "bg-red-50 border-red-200",
+      bannerText: "text-red-700",
+      icon: "bg-red-100 text-red-600",
+      message: "Booking Rejected",
+      description:
+        "The provider was unable to take this booking. Try another provider.",
+    },
+  };
+
+  const cfg = statusConfig[nextBooking?.status] || statusConfig.Pending;
 
   return (
     <div className="min-h-screen bg-gray-50 px-5 py-8 sm:px-8 lg:px-15">
@@ -155,15 +205,34 @@ function UserDashboard() {
               </div>
 
               <div className="mt-4 flex gap-3">
-                <PrimaryBtn btn="Details" />
-                <button
-                  onClick={() => navigate("")}
-                  className="px-4 py-2 cursor-pointer text-sm font-medium border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition"
-                >
-                  Reschedule
-                </button>
+                <PrimaryBtn
+                  btn="Details"
+                  onclick={() => {
+                    setShowDetailModal(true);
+                  }}
+                />
+                <SecondaryBtn
+                  btn="Cancel"
+                  className="text-red-600! border border-red-200! hover:bg-red-50!"
+                  onclick={() => setShowCancelModal(true)}
+                />
               </div>
             </div>
+          )}
+          {showDetailModal && (
+            <DetailModal
+              booking={nextBooking}
+              showDetailModal={showDetailModal}
+              setShowDetailModal={setShowDetailModal}
+              setShowCancelModal={setShowCancelModal}
+              cfg={cfg}
+            />
+          )}
+          {showCancelModal && (
+            <CancelModal
+              showCancelModal={showCancelModal}
+              setShowCancelModal={setShowCancelModal}
+            />
           )}
           {/* Upcoming Bookings */}
           <div>

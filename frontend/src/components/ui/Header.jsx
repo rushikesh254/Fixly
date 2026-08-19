@@ -4,7 +4,6 @@ import {
   NavLink,
   useLocation,
   useNavigate,
-  useParams,
 } from "react-router-dom";
 
 import logo from "../../assets/logo.png";
@@ -16,12 +15,10 @@ import { LuUserRoundPlus } from "react-icons/lu";
 import { toast } from "sonner";
 
 import { useAuth } from "../../context/AuthContext";
-import userData from "../../data/userData";
 
 function Header() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -33,7 +30,7 @@ function Header() {
     return null;
   }
 
-  if (location.pathname === `/services/viewDetails/${id}`) {
+  if (location.pathname.startsWith("/services/viewDetails/")) {
     return null;
   }
 
@@ -114,7 +111,7 @@ function Header() {
               {/* profile */}
               <button className="h-12 w-12 overflow-hidden rounded-full border-2 border-blue-200 bg-gray-100 shadow-sm transition-all duration-200 cursor-pointer hover:shadow-md">
                 <img
-                  src={userData.image}
+                  src={user.image}
                   alt="Profile"
                   className="h-full w-full object-cover"
                 />
@@ -214,19 +211,39 @@ function Header() {
             </button>
           )}
           {user && (
-            <button
-              onClick={() => {
-                setIsSidebarOpen(false);
-                logout();
-                toast.error("You have logged out.");
-              }}
-              className="w-full  text-gray-700 text-[14px] hover:bg-gray-100 rounded-md px-8 py-3 transition"
-            >
-              <div className="flex items-center gap-2 cursor-pointer">
-                {<CiLogout />}
-                {"Logout"}
-              </div>
-            </button>
+            <>
+              <NavLink
+                to="/user/profile"
+                onClick={() => setIsSidebarOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-8 py-3 text-[14px] font-semibold transition-all ${
+                    isActive
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                  }`
+                }
+              >
+                <img
+                  src={user.image}
+                  alt="Profile"
+                  className="h-9 w-9 rounded-full object-cover border-2 border-blue-200"
+                />
+                My Account
+              </NavLink>
+              <button
+                onClick={() => {
+                  setIsSidebarOpen(false);
+                  logout();
+                  toast.error("You have logged out.");
+                }}
+                className="w-full  text-gray-700 text-[14px] font-semibold hover:bg-red-50 rounded-md px-10 py-3 transition cursor-pointer"
+              >
+                <div className="flex items-center gap-5">
+                  {<CiLogout size={18} />}
+                  {"Logout"}
+                </div>
+              </button>
+            </>
           )}
           {!user && (
             <button

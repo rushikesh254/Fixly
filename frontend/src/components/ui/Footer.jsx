@@ -132,7 +132,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/services/cleaning"
+                  to="/services?category=Cleaning"
                   className="hover:text-white transition-colors duration-200"
                 >
                   Cleaning
@@ -140,7 +140,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/services/plumbing"
+                  to="/services?category=Repairing"
                   className="hover:text-white transition-colors duration-200"
                 >
                   Plumbing
@@ -148,7 +148,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/services/electrician"
+                  to="/services?category=Repairing"
                   className="hover:text-white transition-colors duration-200"
                 >
                   Electrician
@@ -156,7 +156,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/services/cooking"
+                  to="/services?category=Food%20Services"
                   className="hover:text-white transition-colors duration-200"
                 >
                   Cooking & Chef

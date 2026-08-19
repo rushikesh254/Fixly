@@ -14,6 +14,18 @@ const upcomingBookings = [
     status: "Confirmed",
     image:
       "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&auto=format&fit=crop&q=80",
+    bookedAt: "2026-07-10T14:30:00",
+    customer: {
+      name: "Aashi Namdev",
+      email: "aashi@gmail.com",
+      phone: "9876543210",
+    },
+    payment: {
+      amount: 1200,
+      status: "Pay after Service",
+    },
+    instruction:
+      "Please ensure to bring your own cleaning supplies. I have a pet dog, so please be cautious around him. Thank you!",
   },
   {
     id: 2,
@@ -30,6 +42,18 @@ const upcomingBookings = [
     status: "Cancelled",
     image:
       "https://images.unsplash.com/photo-1555244162-803834f70033?w=600&auto=format&fit=crop&q=80",
+    bookedAt: "2026-07-15T09:00:00",
+    cancelledAt: "2026-07-17T11:20:00",
+    customer: {
+      name: "Aashi Namdev",
+      email: "aashi@gmail.com",
+      phone: "9876543210",
+    },
+    payment: {
+      amount: 500,
+      status: "Not Paid",
+    },
+    instruction: "",
   },
   {
     id: 3,
@@ -46,6 +70,18 @@ const upcomingBookings = [
     status: "Completed",
     image:
       "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=600&auto=format&fit=crop&q=80",
+    bookedAt: "2026-07-20T16:45:00",
+    customer: {
+      name: "Aashi Namdev",
+      email: "aashi@gmail.com",
+      phone: "9876543210",
+    },
+    payment: {
+      amount: 200,
+      status: "Paid",
+    },
+    instruction:
+      "The tap in the kitchen is leaking and needs immediate attention. Please bring the necessary tools for fixing it. Thank you!",
   },
   {
     id: 4,
@@ -62,6 +98,18 @@ const upcomingBookings = [
     status: "Confirmed",
     image:
       "https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=600&auto=format&fit=crop&q=80",
+    bookedAt: "2026-07-25T08:15:00",
+    customer: {
+      name: "Aashi Namdev",
+      email: "aashi@gmail.com",
+      phone: "9876543210",
+    },
+    payment: {
+      amount: 300,
+      status: "Pay after Service",
+    },
+    instruction:
+      "The AC is not cooling properly and making strange noises. Please bring the necessary tools for inspection and repair. Thank you!",
   },
   {
     id: 5,
@@ -78,6 +126,17 @@ const upcomingBookings = [
     status: "Pending",
     image:
       "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&auto=format&fit=crop&q=80",
+    bookedAt: "2026-08-01T13:00:00",
+    customer: {
+      name: "Aashi Namdev",
+      email: "aashi@gmail.com",
+      phone: "9876543210",
+    },
+    payment: {
+      amount: 1500,
+      status: "Pay after Service",
+    },
+    instruction: "",
   },
   {
     id: 6,
@@ -94,6 +153,19 @@ const upcomingBookings = [
     status: "Rejected",
     image:
       "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&auto=format&fit=crop&q=80",
+    bookedAt: "2026-08-05T10:30:00",
+    rejectedAt: "2026-08-06T09:10:00",
+    customer: {
+      name: "Aashi Namdev",
+      email: "aashi@gmail.com",
+      phone: "9876543210",
+    },
+    payment: {
+      amount: 2500,
+      status: "Not Paid",
+    },
+    instruction:
+      "I would like to have a variety of flowers planted in my garden. Please bring the necessary tools and seeds for planting. Thank you!",
   },
   {
     id: 7,
@@ -110,6 +182,17 @@ const upcomingBookings = [
     status: "Completed",
     image:
       "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600&auto=format&fit=crop&q=80",
+    bookedAt: "2026-08-10T15:20:00",
+    customer: {
+      name: "Aashi Namdev",
+      email: "aashi@gmail.com",
+      phone: "9876543210",
+    },
+    payment: {
+      amount: 1800,
+      status: "Paid",
+    },
+    instruction: "",
   },
   {
     id: 8,
@@ -126,6 +209,18 @@ const upcomingBookings = [
     status: "Confirmed",
     image:
       "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80",
+    bookedAt: "2026-08-15T11:45:00",
+    customer: {
+      name: "Aashi Namdev",
+      email: "aashi@gmail.com",
+      phone: "9876543210",
+    },
+    payment: {
+      amount: 2200,
+      status: "Pay after Service",
+    },
+    instruction:
+      "The roof is leaking and needs immediate attention. Please bring the necessary tools for fixing it. Thank you!",
   },
   {
     id: 9,
@@ -142,6 +237,17 @@ const upcomingBookings = [
     status: "Completed",
     image:
       "https://images.unsplash.com/photo-1581093588401-9c8b0e5a7c8b?w=600&auto=format&fit=crop&q=80",
+    bookedAt: "2026-08-20T14:00:00",
+    customer: {
+      name: "Aashi Namdev",
+      email: "aashi@gmail.com",
+      phone: "9876543210",
+    },
+    payment: {
+      amount: 600,
+      status: "Paid",
+    },
+    instruction: "",
   },
   {
     id: 10,
@@ -158,11 +264,18 @@ const upcomingBookings = [
     status: "Pending",
     image:
       "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&auto=format&fit=crop&q=80",
+    bookedAt: "2026-08-25T17:30:00",
+    customer: {
+      name: "Aashi Namdev",
+      email: "aashi@gmail.com",
+      phone: "9876543210",
+    },
+    payment: {
+      amount: 800,
+      status: "Pay after Service",
+    },
+    instruction: "",
   },
 ];
 
 export default upcomingBookings;
-
-// const totalBookings = [];
-
-// export default totalBookings;

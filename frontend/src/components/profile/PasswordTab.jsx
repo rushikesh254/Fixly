@@ -1,5 +1,7 @@
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { toast } from "sonner";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 export function PasswordTab() {
   const {
@@ -15,6 +17,11 @@ export function PasswordTab() {
     reset();
   };
 
+  // Password visibility state
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const fieldClass =
     "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-100";
 
@@ -26,6 +33,7 @@ export function PasswordTab() {
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+        {/* Current Password */}
         <div className="flex flex-col gap-2 relative">
           <label
             htmlFor="currentPassword"
@@ -33,15 +41,28 @@ export function PasswordTab() {
           >
             Current Password
           </label>
-          <input
-            {...register("currentPassword", {
-              required: "Current password is required",
-            })}
-            id="currentPassword"
-            type="password"
-            placeholder="Enter current password"
-            className={fieldClass}
-          />
+          <div className="relative">
+            <input
+              {...register("currentPassword", {
+                required: "Current password is required",
+              })}
+              id="currentPassword"
+              type={showCurrentPassword ? "text" : "password"}
+              placeholder="Enter current password"
+              className={fieldClass}
+            />
+            <button
+              type="button"
+              onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 transition cursor-pointer"
+            >
+              {showCurrentPassword ? (
+                <FiEyeOff size={18} />
+              ) : (
+                <FiEye size={18} />
+              )}
+            </button>
+          </div>
           {errors.currentPassword && (
             <p className="text-xs text-red-500 absolute top-1 right-0">
               {errors.currentPassword.message}
@@ -49,6 +70,7 @@ export function PasswordTab() {
           )}
         </div>
 
+        {/* New Password */}
         <div className="flex flex-col gap-2 relative">
           <label
             htmlFor="newPassword"
@@ -56,19 +78,28 @@ export function PasswordTab() {
           >
             New Password
           </label>
-          <input
-            {...register("newPassword", {
-              required: "New password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            })}
-            id="newPassword"
-            type="password"
-            placeholder="Enter new password"
-            className={fieldClass}
-          />
+          <div className="relative">
+            <input
+              {...register("newPassword", {
+                required: "New password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              })}
+              id="newPassword"
+              type={showNewPassword ? "text" : "password"}
+              placeholder="Enter new password"
+              className={fieldClass}
+            />
+            <button
+              type="button"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 transition cursor-pointer"
+            >
+              {showNewPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+            </button>
+          </div>
           {errors.newPassword && (
             <p className="text-xs text-red-500 absolute top-1 right-0">
               {errors.newPassword.message}
@@ -76,6 +107,7 @@ export function PasswordTab() {
           )}
         </div>
 
+        {/* Confirm New Password */}
         <div className="flex flex-col gap-2 relative ">
           <label
             htmlFor="confirmPassword"
@@ -83,17 +115,31 @@ export function PasswordTab() {
           >
             Confirm New Password
           </label>
-          <input
-            {...register("confirmPassword", {
-              required: "Please confirm your new password",
-              validate: (value) =>
-                value === getValues("newPassword") || "Passwords do not match",
-            })}
-            id="confirmPassword"
-            type="password"
-            placeholder="Re-enter new password"
-            className={fieldClass}
-          />
+          <div className="relative">
+            <input
+              {...register("confirmPassword", {
+                required: "Please confirm your new password",
+                validate: (value) =>
+                  value === getValues("newPassword") ||
+                  "Passwords do not match",
+              })}
+              id="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Re-enter new password"
+              className={fieldClass}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 transition cursor-pointer"
+            >
+              {showConfirmPassword ? (
+                <FiEyeOff size={18} />
+              ) : (
+                <FiEye size={18} />
+              )}
+            </button>
+          </div>
           {errors.confirmPassword && (
             <p className="text-xs text-red-500 absolute top-1 right-0">
               {errors.confirmPassword.message}

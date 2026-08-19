@@ -64,8 +64,7 @@ function AuthCard({ isFlipped, setIsFlipped }) {
             </h2>
 
             <form
-              onSubmit={handleLoginSubmit((data) => {
-                console.log("Login Data:", data);
+              onSubmit={handleLoginSubmit(() => {
                 login();
                 navigate("/user/dashboard");
                 toast.success("Welcome back! You have logged in successfully.");

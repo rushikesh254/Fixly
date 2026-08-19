@@ -46,7 +46,7 @@ function ProfilePage() {
     <div className="flex min-h-screen bg-slate-100">
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-md transition-transform duration-300 lg:static lg:h-auto lg:translate-x-0 lg:shadow-sm ${
+        className={`fixed top-20 left-0 z-20 h-[calc(100vh-5rem)] w-64 bg-white shadow-md transition-transform duration-300 lg:static  lg:translate-x-0 lg:shadow-sm ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -96,7 +96,7 @@ function ProfilePage() {
       {/* Mobile overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-x-0 top-20 bottom-0 z-10 bg-black/40 backdrop-blur-sm lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}

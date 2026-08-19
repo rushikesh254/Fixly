@@ -16,7 +16,6 @@ function ContactPage() {
   } = useForm();
 
   const onSubmit = (data) => {
-    console.log("Form Data:", data);
     reset();
     toast.success("Message sent successfully! We'll get back to you soon.");
   };

@@ -4,10 +4,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
 import { FiCalendar, FiMapPin } from "react-icons/fi";
 import { HiOutlineXMark } from "react-icons/hi2";
-import { toast } from "sonner";
 import availableSlots from "../../constants/availableSlots";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import AddressCard from "./AddressCard";
+import ConfirmModal from "../ui/ConfirmModal";
 
 //  get saved address from localStorage
 function getSavedAddress() {
@@ -33,8 +33,11 @@ function BookingCard({ service, setOpenBooking }) {
     setValue,
   } = useForm();
 
-  const { providerName, title, distance, location } = service;
+  const { providerName, title, distance, location } =
+    service;
+  const [formData, setFormData] = useState(null);
 
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState("");
   const savedAddress = getSavedAddress();
@@ -211,6 +214,7 @@ function BookingCard({ service, setOpenBooking }) {
                 Additional Details (optional)
               </label>
               <textarea
+                {...register("additional")}
                 id="additional"
                 rows={3}
                 className="text-[13px] border px-3 py-2 rounded-lg outline-none w-full text-gray-800 bg-gray-50 border-gray-300 mt-1 "
@@ -219,18 +223,18 @@ function BookingCard({ service, setOpenBooking }) {
             </div>
             {/*Confirmation button  */}
             <PrimaryBtn
-              btn="Confirm Your Booking"
+              btn="Continue "
               onclick={handleSubmit((data) => {
-                console.log(data);
-                setOpenBooking(false);
-                toast.success(
-                  "Booking confirmed! The provider will contact you shortly.",
-                );
+                 setFormData(data);
+                setConfirmModalOpen(true);
               })}
             />
           </div>
         </div>
       </div>
+      {confirmModalOpen && (
+        <ConfirmModal setConfirmModalOpen={setConfirmModalOpen} service={service} formData={formData} setOpenBooking={setOpenBooking} />
+      )}
     </div>
   );
 }

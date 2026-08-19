@@ -3,7 +3,7 @@ import { FaStar, FaUserCircle } from "react-icons/fa";
 function TestimonialCard({ testimonial }) {
   const { name, role, content, review } = testimonial;
   return (
-    <div className="bg-[#0F2F66] min-h-44 w-full  flex flex-col justify-between rounded-lg p-5 text-gray-300 shadow-lg hover:scale-05 hover:scale-105 transition-transform duration-500">
+    <div className="bg-[#0F2F66] min-h-44 w-full  flex flex-col justify-between rounded-lg p-5 text-gray-300 shadow-lg hover:scale-105 transition-transform duration-500">
       <div className="text-[13px] mb-3">{content}</div>
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center">

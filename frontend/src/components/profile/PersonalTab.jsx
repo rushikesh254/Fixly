@@ -7,6 +7,7 @@ import { FiCalendar } from "react-icons/fi";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { toast } from "sonner";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { CiCamera } from "react-icons/ci";
 
 const inputClass = (isEditing) =>
   `w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition ${
@@ -16,8 +17,21 @@ const inputClass = (isEditing) =>
   }`;
 
 export function PersonalTab({ user, sidebarItems, activeTab, onTabChange }) {
-  const { updateUser } = useAuth();
+  const { updateUser, setUser } = useAuth();
+
+  // State to track if the form is in edit mode
   const [isEditing, setIsEditing] = useState(false);
+
+  // Function to handle profile photo change
+  const handlePhotoChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const imgURL = URL.createObjectURL(file);
+    setUser((prev) => ({ ...prev, image: imgURL }));
+  };
+
+  // State for date of birth
   const [selectedDate, setSelectedDate] = useState(
     user.dob ? new Date(user.dob) : null,
   );
@@ -69,11 +83,32 @@ export function PersonalTab({ user, sidebarItems, activeTab, onTabChange }) {
       {/* Avatar + Edit header */}
       <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative inline-block">
-          <img
-            src={user.image}
-            alt="User Avatar"
-            className="h-24 w-24 rounded-full border-2 border-white object-cover shadow-md"
-          />
+          <div>
+            <img
+              src={user.image}
+              alt="User Avatar"
+              className="h-24 w-24 rounded-full border-2 border-white object-cover shadow-md"
+            />
+            {isEditing && (
+              <div>
+                <label
+                  htmlFor="profile-photo"
+                  className="absolute right-0 bottom-2 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 hover:text-blue-600"
+                  title="Change profile photo"
+                >
+                  <CiCamera size={18} />
+                </label>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  id="profile-photo"
+                  onChange={handlePhotoChange}
+                />
+              </div>
+            )}
+          </div>
 
           <div className="group/icon absolute -top-1 -right-3">
             <button className="lg:hidden flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-md transition hover:bg-slate-50 hover:text-blue-600">

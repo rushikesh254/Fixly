@@ -151,9 +151,9 @@ function AddressCard({ setAddressOpen, onSave }) {
                 placeholder="E.g., Uttar Pradesh"
                 className="w-full border border-gray-300 rounded-md pl-3 pr-3 py-2 placeholder:text-[13px] text-[13px] text-gray mb-3 focus:outline-none focus:ring-1 focus:ring-blue-400  "
               />
-              {errors.pincode && (
+              {errors.state && (
                 <p className="text-red-500 text-[11px] absolute top-1 right-0">
-                  {errors.pincode.message}
+                  {errors.state.message}
                 </p>
               )}
               <div className="relative">

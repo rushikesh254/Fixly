@@ -47,7 +47,6 @@ function ViewDetails() {
       <button
         className="mb-6 inline-flex items-center gap-1.5 px-4 sm:px-10 md:px-20 text-sm font-bold text-gray-500 hover:text-blue-600 cursor-pointer"
         onClick={() => {
-          console.log(window.history);
           if (window.history.length > 1) {
             navigate(-1);
           } else {
@@ -145,7 +144,7 @@ function ViewDetails() {
           <div className="mt-8 block lg:hidden sm:max-w-md sm:mx-auto">
             <ProviderCard
               provider={p}
-              onBook={() => console.log("Book Service")}
+              onBook={() => {}}
             />
           </div>
 
