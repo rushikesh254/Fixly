@@ -1,4 +1,4 @@
-import SaveBtn from "./SaveBtn";
+import SaveBtn from "../user/SaveBtn";
 import Lightbox from "yet-another-react-lightbox";
 
 function Gallery({ p, images, galleryImages, open, setOpen, index, setIndex }) {

@@ -3,11 +3,11 @@ import { CiCircleQuestion, CiMail, CiPhone } from "react-icons/ci";
 import { LuMapPin } from "react-icons/lu";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import PageHero from "../components/ui/PageHero";
+import PageHero from "../../components/ui/PageHero";
 
-import PrimaryBtn from "../components/ui/PrimaryBtn";
+import PrimaryBtn from "../../components/ui/PrimaryBtn";
 
-function ContactPage() {
+function Support() {
   const {
     register,
     handleSubmit,
@@ -15,7 +15,7 @@ function ContactPage() {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = () => {
     reset();
     toast.success("Message sent successfully! We'll get back to you soon.");
   };
@@ -24,8 +24,8 @@ function ContactPage() {
     <div>
       <PageHero
         img="https://images.unsplash.com/photo-1528747045269-390fe33c19f2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        title="Contact Us"
-        subtitle="Contact"
+        title="Your Support"
+        subtitle="Support"
         position="45%"
       />
       <section className="relative w-full overflow-hidden bg-slate-50 px-6 py-14 md:px-10 md:py-20 lg:px-20">
@@ -142,7 +142,9 @@ function ContactPage() {
               <ul className="space-y-6 text-sm text-gray-700">
                 <li className="flex items-center gap-3">
                   <LuMapPin className="w-5 h-5 text-gray-500" />
-                  <span>123 Main Street, Prayagraj, Uttar Pradesh, India</span>
+                  <span>
+                    MNNIT ALLAHABAD, Prayagraj, Uttar Pradesh, India,211001
+                  </span>
                 </li>
                 <li className="flex items-center gap-3">
                   <CiMail className="w-5 h-5 text-gray-500" />
@@ -153,7 +155,7 @@ function ContactPage() {
                 <li className="flex items-center gap-3">
                   <CiPhone className="w-5 h-5 text-gray-500" />
                   <span>
-                    <Link to="tel:+11234567890">+1 (123) 456-7890</Link>
+                    <Link to="tel:+11234567890">7410726319</Link>
                   </span>
                 </li>
                 <li className="flex items-center gap-3">
@@ -171,4 +173,4 @@ function ContactPage() {
   );
 }
 
-export default ContactPage;
+export default Support;

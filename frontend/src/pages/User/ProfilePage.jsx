@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { CiLocationOn, CiLock, CiSettings, CiUser } from "react-icons/ci";
 import { FiMenu, FiX } from "react-icons/fi";
-import { AddressTab } from "../components/profile/AddressTab.jsx";
-import { PasswordTab } from "../components/profile/PasswordTab.jsx";
-import { PersonalTab } from "../components/profile/PersonalTab.jsx";
-import { SettingsTab } from "../components/profile/SettingsTab.jsx";
-import { useAuth } from "../context/AuthContext.jsx";
+import { AddressTab } from "../../components/account/AddressTab.jsx";
+import { PasswordTab } from "../../components/account/PasswordTab.jsx";
+import { PersonalTab } from "../../components/account/PersonalTab.jsx";
+import { SettingsTab } from "../../components/account/SettingsTab.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const sidebarItems = [
   { id: "personal", label: "Personal Information", icon: <CiUser size={20} /> },
@@ -46,7 +46,7 @@ function ProfilePage() {
     <div className="flex min-h-screen bg-slate-100">
       {/* Sidebar */}
       <aside
-        className={`fixed top-20 left-0 z-20 h-[calc(100vh-5rem)] w-64 bg-white shadow-md transition-transform duration-300 lg:static  lg:translate-x-0 lg:shadow-sm ${
+        className={`fixed top-20 left-0 z-20  w-64 bg-white shadow-md transition-transform duration-300 lg:static  lg:translate-x-0 lg:shadow-sm ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CiCircleCheck, CiHome } from "react-icons/ci";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
-import AddressCard from "../service/AddressCard.jsx";
+import AddressCard from "../user/AddressCard.jsx";
 
 export function AddressTab() {
   const [addresses, setAddresses] = useState([]);

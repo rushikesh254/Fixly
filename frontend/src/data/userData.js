@@ -3,9 +3,10 @@ const userData = {
   id: 1,
   name: "Aashi Namdev",
   email: "aashi@gmail.com",
-  password: "12345678",
+  password: "",
   image: avatardefault,
-  phoneNumber: "7410726319",
+  phoneNumber: "",
+  role: "provider", //or user
 };
 
 export default userData;

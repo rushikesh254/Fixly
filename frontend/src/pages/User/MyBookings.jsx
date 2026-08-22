@@ -1,7 +1,7 @@
 import { useState } from "react";
-import HorizontalCard from "../components/ui/HorizontalCard";
-import totalBookings from "../data/totalBookings";
-import EmptyState from "../components/ui/EmptyState";
+import HorizontalCard from "../../components/user/HorizontalCard";
+import totalBookings from "../../data/totalBookings";
+import EmptyState from "../../components/ui/EmptyState";
 import { FiSearch } from "react-icons/fi";
 
 function MyBookings() {

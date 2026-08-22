@@ -5,13 +5,13 @@ import { FaCheckCircle, FaInfoCircle, FaStar } from "react-icons/fa";
 import { FiMapPin } from "react-icons/fi";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdElectricBolt, MdEventAvailable } from "react-icons/md";
-import Gallery from "../components/service/Gallery";
-import ProviderCard from "../components/service/ProviderCard";
-import ReviewSection from "../components/service/ReviewSection";
-import guarantees from "../constants/guarantees";
-import pricingNote from "../constants/pricingNote";
-import Provider from "../data/SingleProvider";
-import BookingCard from "../components/service/BookingCard";
+import Gallery from "../../components/ui/Gallery";
+import ProviderCard from "../../components/user/ProviderCard";
+import ReviewSection from "../../components/user/reviewSection";
+import guarantees from "../../constants/guarantees";
+import pricingNote from "../../constants/pricingNote";
+import Provider from "../../data/SingleProvider";
+import BookingCard from "../../components/user/BookingCard";
 
 function ViewDetails() {
   // const { id } = useParams();
@@ -142,10 +142,7 @@ function ViewDetails() {
             <p className="leading-6">{pricingNote}</p>
           </div>
           <div className="mt-8 block lg:hidden sm:max-w-md sm:mx-auto">
-            <ProviderCard
-              provider={p}
-              onBook={() => {}}
-            />
+            <ProviderCard provider={p} onBook={() => {}} />
           </div>
 
           {/* what's included and booking availability */}

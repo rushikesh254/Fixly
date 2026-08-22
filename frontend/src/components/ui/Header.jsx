@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  Link,
-  NavLink,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import logo from "../../assets/logo.png";
 import PrimaryBtn from "./PrimaryBtn";
@@ -24,7 +19,10 @@ function Header() {
 
   const { user, logout } = useAuth();
 
-  const isStickyNav = location.pathname.startsWith("/user/");
+  const isStickyNav =
+    location.pathname.startsWith("/user/") ||
+    location.pathname.startsWith("/provider/") ||
+    location.pathname.startsWith("/profile");
 
   if (location.pathname === "/auth") {
     return null;
@@ -35,13 +33,21 @@ function Header() {
   }
 
   const navItems = user
-    ? [
-        { name: "Home", path: "/" },
-        { name: "Services", path: "/services" },
-        { name: "Dashboard", path: "/user/dashboard" },
-        { name: "Bookings", path: "/user/mybookings" },
-        { name: "Saved", path: "/user/saved" },
-      ]
+    ? user.role == "user"
+      ? [
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+          { name: "Dashboard", path: "/user/dashboard" },
+          { name: "Bookings", path: "/user/mybookings" },
+          { name: "Saved", path: "/user/saved" },
+        ]
+      : [
+          { name: "Dashboard", path: "/provider/dashboard" },
+          { name: "New", path: "/provider/new" },
+          { name: "Upcoming", path: "/provider/upcoming" },
+          { name: "History", path: "/provider/history" },
+          { name: "Support", path: "/provider/support" },
+        ]
     : [
         { name: "Home", path: "/" },
         { name: "Services", path: "/services" },
@@ -121,7 +127,7 @@ function Header() {
                 <div className="w-48 rounded-lg bg-white shadow-lg ring-1 ring-black/5 text-[13px] text-gray-700 overflow-hidden">
                   <div className="h-0.5 bg-gradient-to-r from-blue-500 to-blue-300"></div>
                   <NavLink
-                    to="/user/profile"
+                    to={`/profile`}
                     className={({ isActive }) =>
                       `flex w-full items-center gap-3 px-5 py-3 hover:bg-blue-50 hover:text-blue-700 border-b  border-gray-100 cursor-pointer transition-all ${
                         isActive
@@ -213,7 +219,7 @@ function Header() {
           {user && (
             <>
               <NavLink
-                to="/user/profile"
+                to={`/profile`}
                 onClick={() => setIsSidebarOpen(false)}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-8 py-3 text-[14px] font-semibold transition-all ${

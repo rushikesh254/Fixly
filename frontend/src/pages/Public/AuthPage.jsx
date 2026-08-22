@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import AuthCard from "../components/ui/AuthCard";
+import AuthCard from "../../components/ui/AuthCard";
 
 function AuthPage() {
   const location = useLocation();

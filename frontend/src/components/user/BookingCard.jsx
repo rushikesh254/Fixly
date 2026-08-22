@@ -7,7 +7,7 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import availableSlots from "../../constants/availableSlots";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import AddressCard from "./AddressCard";
-import ConfirmModal from "../ui/ConfirmModal";
+import ConfirmModal from "./ConfirmModal";
 
 //  get saved address from localStorage
 function getSavedAddress() {
@@ -33,8 +33,7 @@ function BookingCard({ service, setOpenBooking }) {
     setValue,
   } = useForm();
 
-  const { providerName, title, distance, location } =
-    service;
+  const { providerName, title, distance, location } = service;
   const [formData, setFormData] = useState(null);
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
@@ -225,7 +224,7 @@ function BookingCard({ service, setOpenBooking }) {
             <PrimaryBtn
               btn="Continue "
               onclick={handleSubmit((data) => {
-                 setFormData(data);
+                setFormData(data);
                 setConfirmModalOpen(true);
               })}
             />
@@ -233,7 +232,12 @@ function BookingCard({ service, setOpenBooking }) {
         </div>
       </div>
       {confirmModalOpen && (
-        <ConfirmModal setConfirmModalOpen={setConfirmModalOpen} service={service} formData={formData} setOpenBooking={setOpenBooking} />
+        <ConfirmModal
+          setConfirmModalOpen={setConfirmModalOpen}
+          service={service}
+          formData={formData}
+          setOpenBooking={setOpenBooking}
+        />
       )}
     </div>
   );

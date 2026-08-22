@@ -1,7 +1,7 @@
 import { FiArrowLeft } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext";
-import PrimaryBtn from "./PrimaryBtn";
-import SecondaryBtn from "./SecondaryBtn";
+import PrimaryBtn from "../ui/PrimaryBtn";
+import SecondaryBtn from "../ui/SecondaryBtn";
 import { toast } from "sonner";
 
 function ConfirmModal({

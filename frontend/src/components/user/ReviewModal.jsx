@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { RxCross1 } from "react-icons/rx";
 import { toast } from "sonner";
-import PrimaryBtn from "./PrimaryBtn";
+import PrimaryBtn from "../ui/PrimaryBtn";
 
 function ReviewModal({ setShowReviewModal, providerName }) {
   const [rating, setRating] = useState(0);

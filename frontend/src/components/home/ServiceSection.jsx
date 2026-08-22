@@ -2,7 +2,7 @@ import { FiArrowRight } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import services from "../../constants/services";
 import providers from "../../data/providers";
-import ServiceCard from "../service/ServiceCard";
+import ServiceCard from "../ui/ServiceCard";
 
 function ServiceSection() {
   const topProviders = providers.slice(0, 4);

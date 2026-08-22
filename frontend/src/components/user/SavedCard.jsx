@@ -1,9 +1,9 @@
 import { useState } from "react";
-import BookingCard from "../service/BookingCard";
-import PrimaryBtn from "./PrimaryBtn";
+import BookingCard from "./BookingCard";
+import PrimaryBtn from "../ui/PrimaryBtn";
 import { useNavigate } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
-import SecondaryBtn from "./SecondaryBtn";
+import SecondaryBtn from "../ui/SecondaryBtn";
 
 function SavedCard({ booking }) {
   const { id, title, providerName, price, image } = booking;

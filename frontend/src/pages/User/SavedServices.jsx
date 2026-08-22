@@ -1,6 +1,6 @@
-import savedList from "../data/savedList";
-import EmptyState from "../components/ui/EmptyState";
-import SavedCard from "../components/ui/SavedCard";
+import savedList from "../../data/savedList";
+import EmptyState from "../../components/ui/EmptyState";
+import SavedCard from "../../components/user/SavedCard";
 
 function SavedServices() {
   return (

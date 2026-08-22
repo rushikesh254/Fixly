@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-import recentActivities from "../data/recentActivities";
-import savedList from "../data/savedList";
-import totalBookings from "../data/totalBookings";
-import userData from "../data/userData";
-import CancelModal from "../components/ui/CancelModal";
+import recentActivities from "../../data/recentActivities";
+import savedList from "../../data/savedList";
+import totalBookings from "../../data/totalBookings";
+import userData from "../../data/userData";
+import CancelModal from "../../components/user/CancelModal";
 import { useState } from "react";
-import DetailModal from "../components/ui/DetailModal";
+import DetailModal from "../../components/user/DetailModal";
 
 import {
   CiBookmarkCheck,
@@ -16,11 +16,11 @@ import {
 import { FiArrowRight } from "react-icons/fi";
 import { MdOutlineAccessTime } from "react-icons/md";
 import { TfiMoney } from "react-icons/tfi";
-import HorizontalCard from "../components/ui/HorizontalCard";
-import PrimaryBtn from "../components/ui/PrimaryBtn";
-import SavedCard from "../components/ui/SavedCard";
-import EmptyState from "../components/ui/EmptyState";
-import SecondaryBtn from "../components/ui/SecondaryBtn";
+import HorizontalCard from "../../components/user/HorizontalCard";
+import PrimaryBtn from "../../components/ui/PrimaryBtn";
+import SavedCard from "../../components/user/SavedCard";
+import EmptyState from "../../components/ui/EmptyState";
+import SecondaryBtn from "../../components/ui/SecondaryBtn";
 
 function UserDashboard() {
   const upcomingBookings = totalBookings.filter(

@@ -2,8 +2,8 @@ import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { CiCircleCheck } from "react-icons/ci";
 import { RxCross1 } from "react-icons/rx";
-import PrimaryBtn from "./PrimaryBtn";
-import SecondaryBtn from "./SecondaryBtn";
+import PrimaryBtn from "../ui/PrimaryBtn";
+import SecondaryBtn from "../ui/SecondaryBtn";
 import { GiSandsOfTime } from "react-icons/gi";
 import { useAuth } from "../../context/AuthContext";
 

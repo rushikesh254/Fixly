@@ -2,14 +2,14 @@ import { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { RiResetRightLine } from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
-import Filters from "../components/service/Filters";
-import ServiceCard from "../components/service/ServiceCard";
-import PageHero from "../components/ui/PageHero";
-import PrimaryBtn from "../components/ui/PrimaryBtn";
-import services from "../constants/services";
-import providers from "../data/providers";
-import { useLocate } from "../hooks/useLocate";
-import categories from "../constants/categories";
+import Filters from "../../components/ui/Filters";
+import ServiceCard from "../../components/ui/ServiceCard";
+import PageHero from "../../components/ui/PageHero";
+import PrimaryBtn from "../../components/ui/PrimaryBtn";
+import services from "../../constants/services";
+import providers from "../../data/providers";
+import { useLocate } from "../../hooks/useLocate";
+import categories from "../../constants/categories";
 
 function ServicesPage() {
   const { status, detect, nearbyProvidersList, clearLocation } = useLocate();
@@ -33,17 +33,6 @@ function ServicesPage() {
 
   // State to track the search input value
   const [inputValue, setInputValue] = useState(searchQuery);
-
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    const params = new URLSearchParams(search);
-    if (value) {
-      params.set("q", value);
-    } else {
-      params.delete("q");
-    }
-    navigate(`/services?${params.toString()}`);
-  };
 
   // Calculate min and max price for filters
   const maxPrice = providers.reduce(
