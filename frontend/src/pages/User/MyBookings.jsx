@@ -18,21 +18,41 @@ function MyBookings() {
   // State to track the search query
   const [searchQuery, setSearchQuery] = useState("");
 
-  const confirmedBookings = totalBookings.filter(
-    (booking) => booking.status === "Confirmed",
-  );
+  const confirmedBookings = totalBookings
+    .filter((booking) => booking.status === "Confirmed")
+    .sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      if (dateA < dateB) return -1;
+      if (dateA > dateB) return 1;
+    });
 
-  const pendingBookings = totalBookings.filter(
-    (booking) => booking.status === "Pending",
-  );
+  const pendingBookings = totalBookings
+    .filter((booking) => booking.status === "Pending")
+    .sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      if (dateA < dateB) return -1;
+      if (dateA > dateB) return 1;
+    });
 
-  const completedBookings = totalBookings.filter(
-    (booking) => booking.status === "Completed",
-  );
+  const completedBookings = totalBookings
+    .filter((booking) => booking.status === "Completed")
+    .sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      if (dateA < dateB) return -1;
+      if (dateA > dateB) return 1;
+    });
 
-  const cancelledBookings = totalBookings.filter(
-    (booking) => booking.status === "Cancelled",
-  );
+  const cancelledBookings = totalBookings
+    .filter((booking) => booking.status === "Cancelled")
+    .sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      if (dateA < dateB) return -1;
+      if (dateA > dateB) return 1;
+    });
 
   // Count of bookings for each tab
   const tabCounts = {

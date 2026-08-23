@@ -20,6 +20,7 @@ import New from "./pages/Provider/New.jsx";
 import Upcoming from "./pages/Provider/Upcoming.jsx";
 import History from "./pages/Provider/History.jsx";
 import Support from "./pages/Provider/Support.jsx";
+import Earnings from "./pages/Provider/Earnings.jsx";
 import ProtectedLayout from "./layouts/ProtectedLayout.jsx";
 
 function App() {
@@ -61,7 +62,7 @@ function App() {
           <Route path="new" element={<New />} />
           <Route path="upcoming" element={<Upcoming />} />
           <Route path="history" element={<History />} />
-          <Route path="support" element={<Support />} />
+          <Route path="earnings" element={<Earnings />} />
         </Route>
         <Route
           path="/profile"

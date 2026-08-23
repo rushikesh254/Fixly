@@ -1,5 +1,7 @@
 import { toast } from "sonner";
 function CancelModal({ setShowCancelModal }) {
+  // Update a booking's status in local state
+
   return (
     <div>
       {" "}

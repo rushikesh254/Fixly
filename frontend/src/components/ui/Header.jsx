@@ -43,10 +43,10 @@ function Header() {
         ]
       : [
           { name: "Dashboard", path: "/provider/dashboard" },
-          { name: "New", path: "/provider/new" },
+          { name: "Requests", path: "/provider/new" },
           { name: "Upcoming", path: "/provider/upcoming" },
           { name: "History", path: "/provider/history" },
-          { name: "Support", path: "/provider/support" },
+          { name: "Earnings", path: "/provider/earnings" },
         ]
     : [
         { name: "Home", path: "/" },
