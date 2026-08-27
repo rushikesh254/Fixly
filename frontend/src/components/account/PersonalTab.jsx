@@ -70,7 +70,7 @@ export function PersonalTab({ user, sidebarItems, activeTab, onTabChange }) {
       dob: data.dob,
     });
     setIsEditing(false);
-    toast.success("Profile updated successfully!");
+    toast.success("Personal details updated!");
   };
 
   const handleCancel = () => {

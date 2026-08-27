@@ -13,13 +13,13 @@ import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import UserLayout from "./layouts/UserLayout.jsx";
 import MyBookings from "./pages/User/MyBookings.jsx";
 import SavedServices from "./pages/User/SavedServices.jsx";
-import ProfilePage from "./pages/User/ProfilePage.jsx";
+import Account from "./pages/User/Account.jsx";
 import ProviderLayout from "./layouts/ProviderLayout.jsx";
 import ProviderDash from "./pages/Provider/ProviderDash.jsx";
 import New from "./pages/Provider/New.jsx";
 import Upcoming from "./pages/Provider/Upcoming.jsx";
 import History from "./pages/Provider/History.jsx";
-import Support from "./pages/Provider/Support.jsx";
+import Profile from "./pages/Provider/Profile.jsx";
 import Earnings from "./pages/Provider/Earnings.jsx";
 import ProtectedLayout from "./layouts/ProtectedLayout.jsx";
 
@@ -65,14 +65,24 @@ function App() {
           <Route path="earnings" element={<Earnings />} />
         </Route>
         <Route
-          path="/profile"
+          path="/account"
           element={
             <ProtectedRoute>
               <ProtectedLayout />
             </ProtectedRoute>
           }
         >
-          <Route index element={<ProfilePage />} />
+          <Route index element={<Account />} />
+        </Route>
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute role="provider">
+              <ProtectedLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Profile />} />
         </Route>
       </Routes>
       <Toaster richColors position="bottom-right" />

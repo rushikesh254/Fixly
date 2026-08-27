@@ -4,9 +4,9 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import PrimaryBtn from "./PrimaryBtn";
 
-import { CiLogout, CiUser } from "react-icons/ci";
+import { CiLogout } from "react-icons/ci";
 import { FiLogIn, FiMenu, FiX } from "react-icons/fi";
-import { LuUserRoundPlus } from "react-icons/lu";
+import { LuSettings, LuUserRoundPlus, LuUserRound } from "react-icons/lu";
 import { toast } from "sonner";
 
 import { useAuth } from "../../context/AuthContext";
@@ -22,6 +22,7 @@ function Header() {
   const isStickyNav =
     location.pathname.startsWith("/user/") ||
     location.pathname.startsWith("/provider/") ||
+    location.pathname.startsWith("/account") ||
     location.pathname.startsWith("/profile");
 
   if (location.pathname === "/auth") {
@@ -126,8 +127,25 @@ function Header() {
               <div className="invisible group-hover/profile:visible pt-3 absolute right-0 top-full">
                 <div className="w-48 rounded-lg bg-white shadow-lg ring-1 ring-black/5 text-[13px] text-gray-700 overflow-hidden">
                   <div className="h-0.5 bg-gradient-to-r from-blue-500 to-blue-300"></div>
+                  {user.role == "provider" ? (
+                    <NavLink
+                      to={`/profile`}
+                      className={({ isActive }) =>
+                        `flex w-full items-center gap-3 px-5 py-3 hover:bg-blue-50 hover:text-blue-700 border-b  border-gray-100 cursor-pointer transition-all ${
+                          isActive
+                            ? "bg-blue-50 text-blue-700"
+                            : "text-gray-700 bg-white"
+                        }`
+                      }
+                    >
+                      <LuUserRound className="shrink-0 text-base" />
+                      My Profile
+                    </NavLink>
+                  ) : (
+                    ""
+                  )}
                   <NavLink
-                    to={`/profile`}
+                    to={`/account`}
                     className={({ isActive }) =>
                       `flex w-full items-center gap-3 px-5 py-3 hover:bg-blue-50 hover:text-blue-700 border-b  border-gray-100 cursor-pointer transition-all ${
                         isActive
@@ -136,7 +154,7 @@ function Header() {
                       }`
                     }
                   >
-                    <CiUser className="shrink-0 text-base" />
+                    <LuSettings className="shrink-0 text-base" />
                     My Account
                   </NavLink>
                   <button
@@ -218,22 +236,36 @@ function Header() {
           )}
           {user && (
             <>
+              {user.role == "provider" ? (
+                <NavLink
+                  to={`/profile`}
+                  onClick={() => setIsSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-5 px-10 py-3 text-[14px] font-semibold transition-all ${
+                      isActive
+                        ? "text-blue-600 bg-blue-50"
+                        : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    }`
+                  }
+                >
+                  <LuUserRound size={18} />
+                  My Profile
+                </NavLink>
+              ) : (
+                ""
+              )}
               <NavLink
-                to={`/profile`}
+                to={`/account`}
                 onClick={() => setIsSidebarOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-8 py-3 text-[14px] font-semibold transition-all ${
+                  `flex items-center gap-5 px-10 py-3 text-[14px] font-semibold transition-all ${
                     isActive
                       ? "text-blue-600 bg-blue-50"
                       : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                   }`
                 }
               >
-                <img
-                  src={user.image}
-                  alt="Profile"
-                  className="h-9 w-9 rounded-full object-cover border-2 border-blue-200"
-                />
+                <LuSettings size={18} />
                 My Account
               </NavLink>
               <button
@@ -244,11 +276,12 @@ function Header() {
                 }}
                 className="w-full  text-gray-700 text-[14px] font-semibold hover:bg-red-50 rounded-md px-10 py-3 transition cursor-pointer"
               >
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-5 ">
                   {<CiLogout size={18} />}
                   {"Logout"}
                 </div>
               </button>
+              <div className="h-0.5 bg-gradient-to-r from-blue-500 to-blue-300 mt-5"></div>
             </>
           )}
           {!user && (

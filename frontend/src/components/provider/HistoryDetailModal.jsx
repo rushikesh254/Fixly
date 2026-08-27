@@ -29,6 +29,7 @@ function HistoryDetailModal({ booking, onClose }) {
     id,
     customerName,
     customerPhone,
+    customerEmail,
     serviceTitle,
     date,
     time,
@@ -89,10 +90,10 @@ function HistoryDetailModal({ booking, onClose }) {
                 >{`${status} Booking`}</p>
                 <p className="text-[11px] text-slate-500 mt-0.5">
                   {status === "Completed"
-                  ? `${customerName}'s service was completed on ${formatDate(date)} at ${time}.`
-                  : status === "Cancelled"
-                    ? `This booking was cancelled by the customer.`
-                    : `This booking was rejected.`}
+                    ? `${customerName}'s service was completed on ${formatDate(date)} at ${time}.`
+                    : status === "Cancelled"
+                      ? `This booking was cancelled by the customer.`
+                      : `This booking was rejected.`}
                 </p>
               </div>
             </div>
@@ -114,20 +115,30 @@ function HistoryDetailModal({ booking, onClose }) {
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">Phone Number</span>
+                <span className="text-slate-500">Email</span>
                 <span className="flex items-center gap-2">
                   <span className="font-medium text-slate-800">
-                    {customerPhone}
+                    {customerEmail}
                   </span>
-                  <a
-                    href={`tel:${customerPhone.replace(/\s/g, "")}`}
-                    aria-label={`Call ${customerName}`}
-                    className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700 active:scale-90"
-                  >
-                    <FiPhone size={13} />
-                  </a>
                 </span>
               </div>
+              {status === "Confirmed" && (
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Phone Number</span>
+                  <span className="flex items-center gap-2">
+                    <span className="font-medium text-slate-800">
+                      {customerPhone}
+                    </span>
+                    <a
+                      href={`tel:${customerPhone.replace(/\s/g, "")}`}
+                      aria-label={`Call ${customerName}`}
+                      className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700 active:scale-90"
+                    >
+                      <FiPhone size={13} />
+                    </a>
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 

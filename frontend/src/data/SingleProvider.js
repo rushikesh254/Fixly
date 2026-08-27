@@ -1,5 +1,6 @@
 const Provider = {
   id: "0",
+  role: "provider",
   title: "Home Cleaning",
   category: "Cleaning",
   providerName: "CleanPro Services",
@@ -34,7 +35,7 @@ const Provider = {
     experience: "5 years",
     bio: "Hi, I am Raj Sharma, a home cleaning specialist with 5 years of experience. I focus on tidy rooms, hygienic surfaces, and dependable doorstep service.",
     contactNumber: "+91 90000 10001",
-    email: "raj.sharma@cleanpro.example",
+    email: "raj.sharma@example.com",
     address: {
       area: "Flat 12, Ashok Nagar Colony, MG Marg, Civil Lines",
       city: "Allahabad",

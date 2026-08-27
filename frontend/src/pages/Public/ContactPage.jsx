@@ -142,7 +142,7 @@ function ContactPage() {
               <ul className="space-y-6 text-sm text-gray-700">
                 <li className="flex items-center gap-3">
                   <LuMapPin className="w-5 h-5 text-gray-500" />
-                  <span>123 Main Street, Prayagraj, Uttar Pradesh, India</span>
+                  <span>MNNIT Allahabad, Prayagraj, Uttar Pradesh, India</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <CiMail className="w-5 h-5 text-gray-500" />
@@ -153,7 +153,7 @@ function ContactPage() {
                 <li className="flex items-center gap-3">
                   <CiPhone className="w-5 h-5 text-gray-500" />
                   <span>
-                    <Link to="tel:+11234567890">+1 (123) 456-7890</Link>
+                    <Link to="tel:+11234567890">+91 7410726319</Link>
                   </span>
                 </li>
                 <li className="flex items-center gap-3">

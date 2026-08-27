@@ -1,12 +1,14 @@
 import avatardefault from "../assets/avatardefault.png";
 const userData = {
   id: 1,
-  name: "Aashi Namdev",
-  email: "aashi@gmail.com",
+  name: "Raj Sharma",
+  email: "raj.sharma@example.com",
   password: "",
   image: avatardefault,
   phoneNumber: "",
-  role: "provider", //or user
+  gender: "",
+  dob: "",
+  role: "user", //or provider
 };
 
 export default userData;

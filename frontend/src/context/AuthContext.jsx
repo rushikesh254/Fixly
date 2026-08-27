@@ -1,13 +1,14 @@
 import { createContext, useContext, useState } from "react";
-import userData from "../data/userData";
+// import userData from "../data/userData";
+import SingleProvider from "../data/SingleProvider";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(userData); // Initialize with userData for testing
+  const [user, setUser] = useState(SingleProvider); // Initialize with userData for testing
 
   const login = () => {
-    setUser(userData);
+    setUser(SingleProvider); // Set user to userData for testing
   };
   const logout = () => {
     setUser(null);

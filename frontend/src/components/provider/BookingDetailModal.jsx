@@ -1,7 +1,8 @@
 import { FiArrowLeft, FiCheckCircle, FiPhone } from "react-icons/fi";
 import PrimaryBtn from "../ui/PrimaryBtn";
+import SecondaryBtn from "../ui/SecondaryBtn";
 
-function BookingDetailModal({ booking, onClose, onComplete }) {
+function BookingDetailModal({ booking, onClose, onComplete, onReject }) {
   const {
     id,
     customerName,
@@ -160,7 +161,12 @@ function BookingDetailModal({ booking, onClose, onComplete }) {
         </div>
 
         {/* Action Button */}
-        <div className="border-t border-slate-100 p-4 flex items-center justify-end shrink-0">
+        <div className="border-t border-slate-100 p-4 flex gap-5 items-center justify-end shrink-0">
+          <SecondaryBtn
+            btn="Reject"
+            onclick={onReject}
+            className="py-3 border-2 border-red-300! text-red-500! hover:bg-red-50! hover:text-red-600!"
+          />
           <PrimaryBtn
             btn="Mark as Completed"
             onclick={onComplete}

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { CiLocationOn, CiLock, CiSettings, CiUser } from "react-icons/ci";
 import { FiMenu, FiX } from "react-icons/fi";
+import { MdOutlineContactSupport } from "react-icons/md";
 import { AddressTab } from "../../components/account/AddressTab.jsx";
 import { PasswordTab } from "../../components/account/PasswordTab.jsx";
 import { PersonalTab } from "../../components/account/PersonalTab.jsx";
 import { SettingsTab } from "../../components/account/SettingsTab.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+import ContactPage from "../Public/ContactPage.jsx";
 
 const sidebarItems = [
   { id: "personal", label: "Personal Information", icon: <CiUser size={20} /> },
@@ -16,6 +18,11 @@ const sidebarItems = [
   },
   { id: "password", label: "Change Password", icon: <CiLock size={20} /> },
   { id: "settings", label: "Account Settings", icon: <CiSettings size={20} /> },
+  {
+    id: "support",
+    label: "Support",
+    icon: <MdOutlineContactSupport size={20} />,
+  },
 ];
 
 const tabMeta = {
@@ -35,9 +42,13 @@ const tabMeta = {
     title: "Account Settings",
     description: "Manage your preferences and account",
   },
+  support: {
+    title: "Support",
+    description: "Contact our support team for assistance",
+  },
 };
 
-function ProfilePage() {
+function Account() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("personal");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -46,7 +57,7 @@ function ProfilePage() {
     <div className="flex min-h-screen bg-slate-100">
       {/* Sidebar */}
       <aside
-        className={`fixed top-20 left-0 z-20  w-64 bg-white shadow-md transition-transform duration-300 lg:static  lg:translate-x-0 lg:shadow-sm ${
+        className={`fixed top-20 bottom-0 left-0 z-20 w-64 overflow-y-auto bg-white shadow-md transition-transform duration-300 lg:static  lg:translate-x-0 lg:shadow-sm ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -139,6 +150,7 @@ function ProfilePage() {
             {activeTab === "address" && <AddressTab />}
             {activeTab === "password" && <PasswordTab />}
             {activeTab === "settings" && <SettingsTab />}
+            {activeTab === "support" && <ContactPage />}
           </div>
         </div>
       </main>
@@ -146,4 +158,4 @@ function ProfilePage() {
   );
 }
 
-export default ProfilePage;
+export default Account;

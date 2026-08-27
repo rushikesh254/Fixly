@@ -55,6 +55,13 @@ function Upcoming() {
     toast.success("Booking marked as completed.");
   };
 
+  // Reject Booking
+  const handleReject = () => {
+    updateStatus(selectedBooking.id, "Rejected");
+    setSelectedBooking(null);
+    toast.info("Booking rejected.");
+  };
+
   // Only confirmed bookings that are still upcoming
   const upcomingBookings = myBookings
     .filter(
@@ -138,6 +145,7 @@ function Upcoming() {
           booking={selectedBooking}
           onClose={() => setSelectedBooking(null)}
           onComplete={handleComplete}
+          onReject={handleReject}
         />
       )}
     </div>
