@@ -1,17 +1,28 @@
 import { useState } from "react";
-import { CiFileOn, CiMedicalClipboard, CiStar } from "react-icons/ci";
+import {
+  CiFileOn,
+  CiMedicalClipboard,
+  CiStar,
+  CiUser,
+} from "react-icons/ci";
 import { FiMenu, FiX } from "react-icons/fi";
-import ServiceInfo from "../../components/provider/ServiceInfo.jsx";
+import ProviderInfo from "../../components/provider/ProviderInfo.jsx";
+import MyServices from "../../components/provider/MyServices.jsx";
 import Documents from "../../components/provider/Documents.jsx";
 import ReviewsRatings from "../../components/provider/ReviewsRatings.jsx";
-import providers from "../../data/providers.js";
+import providerProfileData from "../../data/providerProfileData.js";
 
-const provider = providers[0];
+const provider = providerProfileData;
 
 const sidebarItems = [
   {
-    id: "service",
-    label: "Service Info",
+    id: "info",
+    label: "Provider Info",
+    icon: <CiUser size={20} />,
+  },
+  {
+    id: "services",
+    label: "My Services",
     icon: <CiMedicalClipboard size={20} />,
   },
   { id: "documents", label: "Documents", icon: <CiFileOn size={20} /> },
@@ -19,9 +30,13 @@ const sidebarItems = [
 ];
 
 const tabMeta = {
-  service: {
-    title: "Service Information",
-    description: "Manage your service details",
+  info: {
+    title: "Provider Information",
+    description: "Manage your business details",
+  },
+  services: {
+    title: "My Services",
+    description: "Add and manage the services you offer",
   },
   documents: {
     title: "Documents",
@@ -34,7 +49,7 @@ const tabMeta = {
 };
 
 function Profile() {
-  const [activeTab, setActiveTab] = useState("service");
+  const [activeTab, setActiveTab] = useState("info");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -57,7 +72,7 @@ function Profile() {
           </button>
 
           <img
-            src={provider.provider.image}
+            src={provider.image}
             alt="Provider Avatar"
             className="mb-3 h-14 w-14 rounded-full border-2 border-white/70 object-cover shadow-sm"
           />
@@ -67,7 +82,7 @@ function Profile() {
           </h2>
 
           <p className="mb-3 text-[13px] text-gray-100">
-            {provider.provider.email}
+            {provider.email}
           </p>
         </div>
 
@@ -127,7 +142,8 @@ function Profile() {
 
           {/* Content */}
           <div className="mt-8 sm:mt-10">
-            {activeTab === "service" && <ServiceInfo provider={provider} />}
+            {activeTab === "info" && <ProviderInfo provider={provider} />}
+            {activeTab === "services" && <MyServices provider={provider} />}
             {activeTab === "documents" && <Documents />}
             {activeTab === "reviews" && <ReviewsRatings provider={provider} />}
           </div>

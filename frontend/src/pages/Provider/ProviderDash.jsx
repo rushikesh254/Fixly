@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import bookings from "../../data/bookings";
 import providers from "../../data/providers";
 import EmptyState from "../../components/ui/EmptyState";
+import getBookingDateTime from "../../utils/getBookingDateTime";
 import {
   FiArrowRight,
   FiCalendar,
@@ -21,27 +22,6 @@ function ProviderDash() {
   const myBookings = bookings.filter((b) => b.providerId === provider.id);
   const today = new Date().toISOString().slice(0, 10);
 
-  const getBookingDateTime = (booking) => {
-    const dateTime = new Date(booking.date);
-
-    const [clock, period] = booking.time.split(" ");
-    const [hours, minutes] = clock.split(":").map(Number);
-
-    let hours24 = hours;
-
-    if (period === "PM" && hours !== 12) {
-      hours24 += 12;
-    }
-
-    if (period === "AM" && hours === 12) {
-      hours24 = 0;
-    }
-
-    dateTime.setHours(hours24, minutes, 0, 0);
-
-    return dateTime;
-  };
-
   const newRequests = myBookings
     .filter(
       (b) => b.status === "Pending" && getBookingDateTime(b) >= new Date(),
@@ -55,12 +35,19 @@ function ProviderDash() {
   );
   const completedBookings = myBookings.filter((b) => b.status === "Completed");
 
+  // Calculate earnings for today
+  const todayEarnings = completedBookings
+    .filter((b) => b.date === today)
+    .reduce((sum, b) => sum + b.price, 0);
+
   // Calculate earnings for the week and month
   const weekAgoDate = new Date();
   weekAgoDate.setDate(weekAgoDate.getDate() - 7);
 
-  const weekEarnings = completedBookings
-    .filter((b) => b.date >= weekAgoDate.toISOString().slice(0, 10))
+  const weekAgoKey = weekAgoDate.toISOString().slice(0, 10);
+
+  const last7daysEarnings = completedBookings
+    .filter((b) => b.date >= weekAgoKey)
     .reduce((sum, b) => sum + b.price, 0);
 
   const monthEarnings = completedBookings
@@ -88,8 +75,8 @@ function ProviderDash() {
       iconClass: "bg-emerald-100 text-emerald-600",
     },
     {
-      title: "THIS WEEK'S EARNINGS",
-      value: `₹ ${weekEarnings}`,
+      title: "TODAY'S EARNINGS",
+      value: `₹ ${todayEarnings}`,
       icon: <TfiMoney size={22} />,
       iconClass: "bg-purple-100 text-purple-600",
     },
@@ -286,15 +273,22 @@ function ProviderDash() {
               </div>
               <div>
                 <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                  This Week
+                  Today
                 </p>
                 <p className="text-2xl font-bold text-gray-900">
-                  ₹ {weekEarnings}
+                  ₹ {todayEarnings}
                 </p>
               </div>
             </div>
 
             <div className="my-5 border-t border-dashed border-gray-200"></div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-500">Last 7 days</p>
+              <p className="text-lg font-bold text-gray-900">
+                ₹ {last7daysEarnings}
+              </p>
+            </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-gray-500">This Month</p>
@@ -304,7 +298,7 @@ function ProviderDash() {
             </div>
 
             <Link
-              to="/provider/history"
+              to="/provider/earnings"
               className="mt-6 flex w-full items-center justify-center gap-1 rounded-xl border border-purple-200 py-2.5 text-sm font-semibold text-purple-600 transition hover:bg-purple-50"
             >
               View Details <FiArrowRight />

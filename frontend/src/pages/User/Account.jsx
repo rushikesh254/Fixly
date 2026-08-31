@@ -78,9 +78,13 @@ function Account() {
             className="mb-3 h-14 w-14 rounded-full border-2 border-white/70 object-cover shadow-sm"
           />
 
-          <h2 className="text-base font-semibold text-white">{user.name}</h2>
+          <h2 className="text-base font-semibold text-white">
+            {user.name}
+          </h2>
 
-          <p className="mb-3 text-[13px] text-gray-100">{user.email}</p>
+          <p className="mb-3 text-[13px] text-gray-100">
+            {user.email}
+          </p>
         </div>
 
         <ul className="pt-2">

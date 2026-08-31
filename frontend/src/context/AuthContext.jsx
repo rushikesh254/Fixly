@@ -1,14 +1,24 @@
 import { createContext, useContext, useState } from "react";
 // import userData from "../data/userData";
-import SingleProvider from "../data/SingleProvider";
-
+import providerProfileData from "../data/providerProfileData";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(SingleProvider); // Initialize with userData for testing
+  const [user, setUser] = useState(providerProfileData); // Initialize with userData for testing
 
   const login = () => {
-    setUser(SingleProvider); // Set user to userData for testing
+    setUser(providerProfileData);
+    return providerProfileData;
+  };
+  const signup = (role) => {
+    const newUser = {
+      id: Date.now(),
+      name: "",
+      email: "",
+      role: role,
+      image: "",
+    };
+    setUser(newUser);
   };
   const logout = () => {
     setUser(null);
@@ -17,7 +27,9 @@ export const AuthProvider = ({ children }) => {
     setUser((prev) => ({ ...prev, ...updates }));
   };
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout, updateUser }}>
+    <AuthContext.Provider
+      value={{ user, setUser, login, signup, logout, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
