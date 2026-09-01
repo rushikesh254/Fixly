@@ -108,7 +108,9 @@ function ConfirmModal({
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">Phone Number</span>
-                <span className="font-medium text-slate-800">{user.phone}</span>
+                <span className="font-medium text-slate-800">
+                  {user.phoneNumber}
+                </span>
               </div>
             </div>
           </div>

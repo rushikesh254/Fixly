@@ -5,6 +5,7 @@ import About from "./pages/Public/About.jsx";
 import AuthPage from "./pages/Public/AuthPage.jsx";
 import ContactPage from "./pages/Public/ContactPage.jsx";
 import HomePage from "./pages/Public/HomePage.jsx";
+import NotFound from "./pages/Public/NotFound.jsx";
 import ProviderPage from "./pages/Public/ProviderPage.jsx";
 import ServicesPage from "./pages/Public/ServicesPage.jsx";
 import ViewDetails from "./pages/Public/ViewDetails.jsx";
@@ -84,6 +85,7 @@ function App() {
         >
           <Route index element={<Profile />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster richColors position="bottom-right" />
     </>

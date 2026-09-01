@@ -1,25 +1,24 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { CiCircleCheck } from "react-icons/ci";
 import { FaCheckCircle, FaInfoCircle, FaStar } from "react-icons/fa";
 import { FiMapPin } from "react-icons/fi";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdElectricBolt, MdEventAvailable } from "react-icons/md";
+import { useNavigate, useParams } from "react-router-dom";
 import Gallery from "../../components/ui/Gallery";
+import BookingCard from "../../components/user/BookingCard";
 import ProviderCard from "../../components/user/ProviderCard";
 import ReviewSection from "../../components/user/reviewSection";
-import guarantees from "../../constants/guarantees";
 import pricingNote from "../../constants/pricingNote";
-import Provider from "../../data/SingleProvider";
-import BookingCard from "../../components/user/BookingCard";
+import guarantees from "../../constants/guarantees";
+import providers from "../../data/providers";
 
 function ViewDetails() {
-  // const { id } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  // find provider based on id from params or state passed via Link
-  const p = Provider;
-  // change this to api call using id from params to fetch provider details
+  const provider = providers.find((p) => p.id === id);
+  const p = provider ? { ...provider, ...provider.provider } : null;
 
   // state for lightbox
   const [open, setOpen] = useState(false);

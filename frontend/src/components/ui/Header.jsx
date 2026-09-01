@@ -6,7 +6,7 @@ import PrimaryBtn from "./PrimaryBtn";
 
 import { CiLogout } from "react-icons/ci";
 import { FiLogIn, FiMenu, FiX } from "react-icons/fi";
-import { LuSettings, LuUserRoundPlus, LuUserRound } from "react-icons/lu";
+import { LuSettings, LuUserRound, LuUserRoundPlus } from "react-icons/lu";
 import { toast } from "sonner";
 
 import { useAuth } from "../../context/AuthContext";
@@ -126,7 +126,7 @@ function Header() {
               {/* options */}
               <div className="invisible group-hover/profile:visible pt-3 absolute right-0 top-full">
                 <div className="w-48 rounded-lg bg-white shadow-lg ring-1 ring-black/5 text-[13px] text-gray-700 overflow-hidden">
-                  <div className="h-0.5 bg-gradient-to-r from-blue-500 to-blue-300"></div>
+                  <div className="h-0.5 bg-linear-to-r from-blue-500 to-blue-300"></div>
                   {user.role == "provider" ? (
                     <NavLink
                       to={`/profile`}
@@ -161,6 +161,7 @@ function Header() {
                     onClick={() => {
                       logout();
                       toast.error("You are logged out!");
+                      navigate("/");
                     }}
                     className="flex w-full items-center gap-3 px-5 py-3 hover:bg-red-50 hover:text-red-700 cursor-pointer transition-all"
                   >
@@ -273,6 +274,7 @@ function Header() {
                   setIsSidebarOpen(false);
                   logout();
                   toast.error("You have logged out.");
+                  navigate("/");
                 }}
                 className="w-full  text-gray-700 text-[14px] font-semibold hover:bg-red-50 rounded-md px-10 py-3 transition cursor-pointer"
               >
@@ -281,7 +283,7 @@ function Header() {
                   {"Logout"}
                 </div>
               </button>
-              <div className="h-0.5 bg-gradient-to-r from-blue-500 to-blue-300 mt-5"></div>
+              <div className="h-0.5 bg-linear-to-r from-blue-500 to-blue-300 mt-5"></div>
             </>
           )}
           {!user && (

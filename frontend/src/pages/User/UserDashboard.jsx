@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import recentActivities from "../../data/recentActivities";
 import savedList from "../../data/savedList";
 import totalBookings from "../../data/totalBookings";
-import userData from "../../data/userData";
 import CancelModal from "../../components/user/CancelModal";
 import { useState } from "react";
 import DetailModal from "../../components/user/DetailModal";
@@ -21,8 +20,12 @@ import PrimaryBtn from "../../components/ui/PrimaryBtn";
 import SavedCard from "../../components/user/SavedCard";
 import EmptyState from "../../components/ui/EmptyState";
 import SecondaryBtn from "../../components/ui/SecondaryBtn";
+import {  useAuth } from "../../context/AuthContext";
 
 function UserDashboard() {
+
+  const { user } = useAuth();
+
   const upcomingBookings = totalBookings.filter(
     (b) => b.status === "Pending" || b.status === "Confirmed",
   );
@@ -120,7 +123,7 @@ function UserDashboard() {
       <div className="rounded-2xl bg-blue-600 px-6 py-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:px-10">
         <div>
           <h1 className="text-2xl font-bold text-white">
-            Welcome Back, {userData.name.split(" ")[0]}!
+            Welcome Back, {user.name.split(" ")[0]}!
           </h1>
           <p className="mt-1 text-sm text-blue-100">
             Here's a quick overview of your activity and upcoming services.

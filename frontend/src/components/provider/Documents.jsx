@@ -151,7 +151,7 @@ function Documents() {
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
                 className="hidden"
-                onChange={(e) => handleUpload(e, setAddressProof)}
+                onChange={(e) => handleUpload(e, setSkillProof)}
               />
             </label>
           )}

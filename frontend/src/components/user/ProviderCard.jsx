@@ -4,7 +4,7 @@ import { TiBriefcase } from "react-icons/ti";
 import PrimaryBtn from "../ui/PrimaryBtn";
 
 function ProviderCard({ provider, onBook }) {
-  const expert = provider.provider || {};
+  const expert = provider || {};
 
   return (
     <div className="w-full rounded-2xl border border-gray-100 bg-white p-5 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">

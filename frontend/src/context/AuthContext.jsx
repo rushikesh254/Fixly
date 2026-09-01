@@ -1,14 +1,13 @@
 import { createContext, useContext, useState } from "react";
-// import userData from "../data/userData";
-import providerProfileData from "../data/providerProfileData";
+import userData from "../data/userData";
+// import providerProfileData from "../data/providerProfileData";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(providerProfileData); // Initialize with userData for testing
-
+  const [user, setUser] = useState(null);
   const login = () => {
-    setUser(providerProfileData);
-    return providerProfileData;
+    setUser(userData);
+    return userData;
   };
   const signup = (role) => {
     const newUser = {

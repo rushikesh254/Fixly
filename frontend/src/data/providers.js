@@ -228,7 +228,7 @@ const providers = [
   {
     id: "4",
     title: "Electrician Service",
-    category: "Repairing ",
+    category: "Repairing",
     providerName: "BrightSpark Electricians",
     serviceId: "5",
     rating: 4.9,
