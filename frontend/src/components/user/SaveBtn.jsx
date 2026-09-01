@@ -1,12 +1,13 @@
-import { useState } from "react";
-import { FaRegBookmark, FaBookmark } from "react-icons/fa";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { toast } from "sonner";
+import { useSaved } from "../../context/savedContext";
 
-function SaveBtn() {
-  const [saved, setSaved] = useState(false);
+function SaveBtn({ service }) {
+  const { isSaved, toggleSaved } = useSaved();
+  const saved = isSaved(service.id);
 
   const handleBookmarkClick = () => {
-    setSaved(!saved);
+    toggleSaved(service);
     if (!saved) {
       toast.success("Service saved to your list!");
     } else {

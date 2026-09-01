@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import recentActivities from "../../data/recentActivities";
-import savedList from "../../data/savedList";
+import { useSaved } from "../../context/savedContext";
 import totalBookings from "../../data/totalBookings";
 import CancelModal from "../../components/user/CancelModal";
 import { useState } from "react";
@@ -20,10 +20,10 @@ import PrimaryBtn from "../../components/ui/PrimaryBtn";
 import SavedCard from "../../components/user/SavedCard";
 import EmptyState from "../../components/ui/EmptyState";
 import SecondaryBtn from "../../components/ui/SecondaryBtn";
-import {  useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 function UserDashboard() {
-
+  const { savedServices } = useSaved();
   const { user } = useAuth();
 
   const upcomingBookings = totalBookings.filter(
@@ -58,7 +58,7 @@ function UserDashboard() {
     },
     {
       title: "SAVED SERVICES",
-      value: savedList.length,
+      value: savedServices.length,
       icon: <CiBookmarkCheck size={22} />,
       iconClass: "bg-yellow-100 text-yellow-600",
     },
@@ -293,7 +293,7 @@ function UserDashboard() {
             </div>
 
             <div className="flex flex-col gap-4 mt-5">
-              {savedList.length === 0 ? (
+              {savedServices.length === 0 ? (
                 <EmptyState
                   title="No Services Saved"
                   description="You haven't saved any services yet. Save services to quickly
@@ -303,7 +303,7 @@ function UserDashboard() {
                   className={`bg-amber-500 hover:bg-amber-600`}
                 />
               ) : (
-                savedList
+                savedServices
                   .slice(0, 3)
                   .map((booking) => (
                     <SavedCard key={booking.id} booking={booking} compact />

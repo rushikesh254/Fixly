@@ -45,7 +45,7 @@ export default function ServiceCard({ service }) {
             Instant Booking
           </span>
         )}
-        <SaveBtn />
+        <SaveBtn service={service} />
       </div>
 
       <div className="p-4 space-y-1">

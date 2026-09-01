@@ -4,12 +4,20 @@ import PrimaryBtn from "../ui/PrimaryBtn";
 import { useNavigate } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import SecondaryBtn from "../ui/SecondaryBtn";
+import { useSaved } from "../../context/savedContext";
 
 function SavedCard({ booking }) {
+  const { savedServices, setSavedServices } = useSaved();
   const { id, title, providerName, price, image } = booking;
   const [openBooking, setOpenBooking] = useState(false);
 
   const navigate = useNavigate();
+
+  // Function to handle deleting a saved service
+  const handleDeleteSaved = (id) => {
+    const updatedSavedServices = savedServices.filter((s) => s.id !== id);
+    setSavedServices(updatedSavedServices);
+  };
 
   return (
     <div className="bg-white hover:shadow-md  rounded-2xl overflow-hidden">
@@ -51,9 +59,12 @@ function SavedCard({ booking }) {
               />
               <PrimaryBtn btn="Book Now" onclick={() => setOpenBooking(true)} />
             </div>
-            <div className="h-10 w-10 rounded-full bg-slate-50 hover:bg-slate-200 cursor-pointer transition duration-200 flex items-center justify-center">
+            <button
+              onClick={() => handleDeleteSaved(id)}
+              className="h-10 w-10 rounded-full bg-slate-50 hover:bg-slate-200 cursor-pointer transition duration-200 flex items-center justify-center"
+            >
               <FaTrash className="text-gray-500" />
-            </div>
+            </button>
           </div>
         </div>
       </div>

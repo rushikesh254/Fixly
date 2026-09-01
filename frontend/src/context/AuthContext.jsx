@@ -1,10 +1,10 @@
 import { createContext, useContext, useState } from "react";
 import userData from "../data/userData";
-// import providerProfileData from "../data/providerProfileData";
+import providerProfileData from "../data/providerProfileData";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(providerProfileData);
   const login = () => {
     setUser(userData);
     return userData;

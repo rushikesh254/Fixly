@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 function HeroSection() {
-  const { register, handleSubmit } = useForm();
+  const { register } = useForm();
   const navigate = useNavigate();
 
   const { search } = useLocation();

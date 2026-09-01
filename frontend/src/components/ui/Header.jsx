@@ -327,7 +327,7 @@ function Header() {
       {/* close sidebar on clicking anywhere */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}

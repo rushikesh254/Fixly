@@ -1,7 +1,9 @@
 import SaveBtn from "../user/SaveBtn";
 import Lightbox from "yet-another-react-lightbox";
+import { useAuth } from "../../context/AuthContext";
 
 function Gallery({ p, images, galleryImages, open, setOpen, index, setIndex }) {
+  const { user } = useAuth();
   return (
     <>
       <div className="relative mx-auto max-w-6xl">
@@ -15,7 +17,7 @@ function Gallery({ p, images, galleryImages, open, setOpen, index, setIndex }) {
             />
           </div>
           {/* save button  */}
-          <SaveBtn />
+          {user && <SaveBtn service={p} />}
           {galleryImages.map((img, i) => (
             <div
               key={i}
