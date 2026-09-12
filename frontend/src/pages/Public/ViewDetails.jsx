@@ -18,7 +18,9 @@ function ViewDetails() {
   const navigate = useNavigate();
 
   const provider = providers.find((p) => p.id === id);
-  const p = provider ? { ...provider, ...provider.provider } : null;
+  const p = provider
+    ? { ...provider, ...(provider.services?.[0] || {}) }
+    : null;
 
   // state for lightbox
   const [open, setOpen] = useState(false);

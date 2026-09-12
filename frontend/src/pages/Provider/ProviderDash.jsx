@@ -16,7 +16,9 @@ import { TfiMoney } from "react-icons/tfi";
 
 function ProviderDash() {
   const provider = providers[0];
-  const [availableToday, setAvailableToday] = useState(provider.availableToday);
+  const [availableToday, setAvailableToday] = useState(
+    provider.services?.[0]?.availableToday,
+  );
 
   // Filter bookings for this provider
   const myBookings = bookings.filter((b) => b.providerId === provider.id);
@@ -99,7 +101,7 @@ function ProviderDash() {
       <div className="rounded-2xl bg-blue-600 px-6 py-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:px-10">
         <div>
           <h1 className="text-2xl font-bold text-white">
-            Welcome, {provider.provider.name.split(" ")[0]}!
+            Welcome, {provider.name.split(" ")[0]}!
           </h1>
           <p className="mt-1 text-sm text-blue-100">{todayLabel}</p>
         </div>

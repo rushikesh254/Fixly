@@ -9,7 +9,7 @@ import {
 } from "react-icons/ci";
 import { RxCross1 } from "react-icons/rx";
 import { toast } from "sonner";
-import services from "../../constants/services.js";
+import services from "../../data/services.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import DeleteConfirmModal from "./DeleteConfirmModal.jsx";
 

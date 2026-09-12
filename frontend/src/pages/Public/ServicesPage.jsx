@@ -6,10 +6,10 @@ import Filters from "../../components/ui/Filters";
 import ServiceCard from "../../components/ui/ServiceCard";
 import PageHero from "../../components/ui/PageHero";
 import PrimaryBtn from "../../components/ui/PrimaryBtn";
-import services from "../../constants/services";
+import services from "../../data/services";
 import providers from "../../data/providers";
 import { useLocate } from "../../hooks/useLocate";
-import categories from "../../constants/categories";
+import categories from "../../data/categories";
 
 function ServicesPage() {
   const { status, detect, nearbyProvidersList, clearLocation } = useLocate();
@@ -36,11 +36,11 @@ function ServicesPage() {
 
   // Calculate min and max price for filters
   const maxPrice = providers.reduce(
-    (acc, cv) => (acc > cv.price ? acc : cv.price),
+    (acc, cv) => (acc > cv.services?.[0]?.price ? acc : cv.services?.[0]?.price),
     0,
   );
   const minPrice = providers.reduce(
-    (acc, cv) => (acc < cv.price ? acc : cv.price),
+    (acc, cv) => (acc < cv.services?.[0]?.price ? acc : cv.services?.[0]?.price),
     Infinity,
   );
 
@@ -53,30 +53,38 @@ function ServicesPage() {
   //with  filters like category,service, price, rating, instant booking, available today
 
   const filteredProviders = providers.filter((provider) => {
+    const primaryService = provider.services?.[0] || {};
+
     if (selectedCategory && provider.category !== selectedCategory) {
       return false;
     }
 
     if (
       selectedServices.length > 0 &&
-      !selectedServices.includes(provider.title)
+      !selectedServices.includes(primaryService.title)
     ) {
       return false;
     }
 
-    if (instantBookingEnabled && provider.instantBooking !== true) {
+    if (instantBookingEnabled && primaryService.instantBooking !== true) {
       return false;
     }
-    if (availableTodayEnabled && provider.availableToday !== true) {
+    if (availableTodayEnabled && primaryService.availableToday !== true) {
       return false;
     }
-    if (selectedPrice && provider.price > parseInt(selectedPrice)) {
+    if (selectedPrice && primaryService.price > parseInt(selectedPrice)) {
       return false;
     }
     if (selectedRating && provider.rating < parseFloat(selectedRating)) {
       return false;
     }
     return true;
+  });
+
+  const flattenPrimaryService = (provider, extra = {}) => ({
+    ...provider,
+    ...(provider.services?.[0] || {}),
+    ...extra,
   });
 
   //with location filters
@@ -88,11 +96,13 @@ function ServicesPage() {
             const nearby = nearbyProvidersList.find(
               (p) => p.id === provider.id,
             );
-            return nearby ? { ...provider, distance: nearby.distance } : null;
+            return nearby
+              ? flattenPrimaryService(provider, { distance: nearby.distance })
+              : null;
           })
           .filter(Boolean)
           .sort((a, b) => a.distance - b.distance)
-      : filteredProviders;
+      : filteredProviders.map((provider) => flattenPrimaryService(provider));
 
   // Filter displayed providers based on search query
   const finalDisplayedProviders = displayedProviders.filter((provider) =>

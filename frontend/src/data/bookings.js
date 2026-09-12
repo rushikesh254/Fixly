@@ -1,6 +1,7 @@
 ﻿const bookings = [
   {
     id: "FXL-1001",
+    userId: "USR000",
     providerId: "PRV-0001",
     serviceId: "SVC-0001",
     title: "Home Cleaning",
@@ -19,11 +20,6 @@
     image:
       "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&auto=format&fit=crop&q=80",
     bookedAt: "2026-10-10T14:30:00",
-    customer: {
-      name: "Aashi Namdev",
-      email: "aashi@gmail.com",
-      phone: "9876543210",
-    },
     customerName: "Aashi Namdev",
     customerPhone: "9876543210",
     customerEmail: "aashi@gmail.com",
@@ -38,6 +34,7 @@
   },
   {
     id: "FXL-1002",
+    userId: "USR001",
     providerId: "PRV-0015",
     serviceId: "SVC-0013",
     title: "Catering",
@@ -57,14 +54,9 @@
       "https://images.unsplash.com/photo-1555244162-803834f70033?w=600&auto=format&fit=crop&q=80",
     bookedAt: "2026-09-02T09:00:00",
     cancelledAt: "2026-09-05T11:20:00",
-    customer: {
-      name: "Aashi Namdev",
-      email: "aashi@gmail.com",
-      phone: "9876543210",
-    },
-    customerName: "Aashi Namdev",
-    customerPhone: "9876543210",
-    customerEmail: "aashi@gmail.com",
+    customerName: "Rushikesh Bodke",
+    customerPhone: "9876543340",
+    customerEmail: "rushi@gmail.com",
     payment: {
       amount: 500,
       status: "Not Paid",
@@ -74,6 +66,7 @@
   },
   {
     id: "FXL-1003",
+    userId: "USR006",
     providerId: "PRV-0017",
     serviceId: "SVC-0004",
     title: "Plumbing Services",
@@ -92,14 +85,9 @@
     image:
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGx1bWJpbmd8ZW58MHx8MHx8fDA%3D",
     bookedAt: "2026-08-30T16:45:00",
-    customer: {
-      name: "Aashi Namdev",
-      email: "aashi@gmail.com",
-      phone: "9876543210",
-    },
-    customerName: "Aashi Namdev",
-    customerPhone: "9876543210",
-    customerEmail: "aashi@gmail.com",
+    customerName: "Annu",
+    customerPhone: "9872493880",
+    customerEmail: "annu@gmail.com",
     payment: {
       amount: 200,
       status: "Paid",
@@ -111,6 +99,7 @@
   },
   {
     id: "FXL-1004",
+    userId: "USR000",
     providerId: "PRV-0003",
     serviceId: "SVC-0006",
     title: "AC Repair",
@@ -129,11 +118,6 @@
     image:
       "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=600&auto=format&fit=crop&q=80",
     bookedAt: "2026-10-16T08:15:00",
-    customer: {
-      name: "Aashi Namdev",
-      email: "aashi@gmail.com",
-      phone: "9876543210",
-    },
     customerName: "Aashi Namdev",
     customerPhone: "9876543210",
     customerEmail: "aashi@gmail.com",
@@ -148,6 +132,7 @@
   },
   {
     id: "FXL-1005",
+    userId: "USR002",
     providerId: "PRV-0005",
     serviceId: "SVC-0005",
     title: "Electrical Services",
@@ -166,14 +151,9 @@
     image:
       "https://images.unsplash.com/photo-1555963966-b7ae5404b6ed?w=600&auto=format&fit=crop&q=80",
     bookedAt: "2026-09-30T13:00:00",
-    customer: {
-      name: "Aashi Namdev",
-      email: "aashi@gmail.com",
-      phone: "9876543210",
-    },
-    customerName: "Aashi Namdev",
-    customerPhone: "9876543210",
-    customerEmail: "aashi@gmail.com",
+    customerName: "Priya Mehra",
+    customerPhone: "9876545590",
+    customerEmail: "priya@gmail.com",
     payment: {
       amount: 1500,
       status: "Pay after Service",
@@ -183,6 +163,7 @@
   },
   {
     id: "FXL-1006",
+    userId: "USR000",
     providerId: "PRV-0002",
     serviceId: "SVC-0002",
     title: "Deep Cleaning",
@@ -202,11 +183,6 @@
       "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=600&auto=format&fit=crop&q=80",
     bookedAt: "2026-08-22T10:30:00",
     rejectedAt: "2026-08-24T09:10:00",
-    customer: {
-      name: "Aashi Namdev",
-      email: "aashi@gmail.com",
-      phone: "9876543210",
-    },
     customerName: "Aashi Namdev",
     customerPhone: "9876543210",
     customerEmail: "aashi@gmail.com",
@@ -221,6 +197,7 @@
   },
   {
     id: "FXL-1007",
+    userId: "USR000",
     providerId: "PRV-0012",
     serviceId: "SVC-0009",
     title: "Painting",
@@ -239,11 +216,6 @@
     image:
       "https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=600&auto=format&fit=crop&q=80",
     bookedAt: "2026-08-25T15:20:00",
-    customer: {
-      name: "Aashi Namdev",
-      email: "aashi@gmail.com",
-      phone: "9876543210",
-    },
     customerName: "Aashi Namdev",
     customerPhone: "9876543210",
     customerEmail: "aashi@gmail.com",
@@ -256,6 +228,7 @@
   },
   {
     id: "FXL-1008",
+    userId: "USR000",
     providerId: "PRV-0013",
     serviceId: "SVC-0008",
     title: "Carpentry",
@@ -274,11 +247,6 @@
     image:
       "https://images.unsplash.com/photo-1505798577917-a65157d3320a?w=600&auto=format&fit=crop&q=80",
     bookedAt: "2026-10-29T11:45:00",
-    customer: {
-      name: "Aashi Namdev",
-      email: "aashi@gmail.com",
-      phone: "9876543210",
-    },
     customerName: "Aashi Namdev",
     customerPhone: "9876543210",
     customerEmail: "aashi@gmail.com",
@@ -293,6 +261,7 @@
   },
   {
     id: "FXL-1009",
+    userId: "USR000",
     providerId: "PRV-0001",
     serviceId: "SVC-0001",
     title: "Home Cleaning",
@@ -311,11 +280,6 @@
     image:
       "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&auto=format&fit=crop&q=80",
     bookedAt: "2026-09-03T14:00:00",
-    customer: {
-      name: "Aashi Namdev",
-      email: "aashi@gmail.com",
-      phone: "9876543210",
-    },
     customerName: "Aashi Namdev",
     customerPhone: "9876543210",
     customerEmail: "aashi@gmail.com",
@@ -328,6 +292,7 @@
   },
   {
     id: "FXL-1010",
+    userId: "USR000",
     providerId: "PRV-0004",
     serviceId: "SVC-0007",
     title: "Washing Machine Repair",
@@ -346,11 +311,6 @@
     image:
       "https://images.unsplash.com/photo-1626806819282-2c1dc01a5e0c?w=600&auto=format&fit=crop&q=80",
     bookedAt: "2026-10-06T17:30:00",
-    customer: {
-      name: "Aashi Namdev",
-      email: "aashi@gmail.com",
-      phone: "9876543210",
-    },
     customerName: "Aashi Namdev",
     customerPhone: "9876543210",
     customerEmail: "aashi@gmail.com",
@@ -363,9 +323,7 @@
   },
 ];
 // Filter bookings for the user "Aashi Namdev"
-const userBookings = bookings.filter(
-  (b) => b.customer?.name === "Aashi Namdev",
-);
+const userBookings = bookings.filter((b) => b.customerName === "Aashi Namdev");
 
 export default bookings;
 export { userBookings };

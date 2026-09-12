@@ -22,7 +22,7 @@ import Upcoming from "./pages/Provider/Upcoming.jsx";
 import History from "./pages/Provider/History.jsx";
 import Profile from "./pages/Provider/Profile.jsx";
 import Earnings from "./pages/Provider/Earnings.jsx";
-import ProtectedLayout from "./layouts/ProtectedLayout.jsx";
+
 
 function App() {
   return (
@@ -69,7 +69,7 @@ function App() {
           path="/account"
           element={
             <ProtectedRoute>
-              <ProtectedLayout />
+              <ProviderLayout />
             </ProtectedRoute>
           }
         >
@@ -79,7 +79,7 @@ function App() {
           path="/profile"
           element={
             <ProtectedRoute role="provider">
-              <ProtectedLayout />
+              <ProviderLayout />
             </ProtectedRoute>
           }
         >

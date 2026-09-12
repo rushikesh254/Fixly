@@ -1,10 +1,12 @@
 import { createContext, useContext, useState } from "react";
 import userData from "../data/userData";
-import providerProfileData from "../data/providerProfileData";
+import providers from "../data/providers";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(providerProfileData);
+  const [user, setUser] = useState(
+    providers.find((p) => p.id === "PRV-0001"),
+  );
   const login = () => {
     setUser(userData);
     return userData;

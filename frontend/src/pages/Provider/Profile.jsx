@@ -10,9 +10,9 @@ import ProviderInfo from "../../components/provider/ProviderInfo.jsx";
 import MyServices from "../../components/provider/MyServices.jsx";
 import Documents from "../../components/provider/Documents.jsx";
 import ReviewsRatings from "../../components/provider/ReviewsRatings.jsx";
-import providerProfileData from "../../data/providerProfileData.js";
+import providers from "../../data/providers.js";
 
-const provider = providerProfileData;
+const provider = providers.find((p) => p.id === "PRV-0001");
 
 const sidebarItems = [
   {

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import bookings from "../../data/bookings";
-import EmptyState from "../../components/ui/EmptyState";
-import HistoryDetailModal from "../../components/provider/HistoryDetailModal";
 import { FiCalendar, FiMapPin, FiSearch } from "react-icons/fi";
+import HistoryDetailModal from "../../components/provider/HistoryDetailModal";
+import EmptyState from "../../components/ui/EmptyState";
+import bookings from "../../data/bookings";
 import getBookingDateTime from "../../utils/getBookingDateTime";
 
 const formatDate = (iso) =>

@@ -1,10 +1,10 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import recentActivities from "../../data/recentActivities";
+import CancelModal from "../../components/user/CancelModal";
+import DetailModal from "../../components/user/DetailModal";
 import { useSaved } from "../../context/savedContext";
 import { userBookings } from "../../data/bookings";
-import CancelModal from "../../components/user/CancelModal";
-import { useState } from "react";
-import DetailModal from "../../components/user/DetailModal";
+import recentActivities from "../../data/recentActivities";
 
 import {
   CiBookmarkCheck,
@@ -15,11 +15,11 @@ import {
 import { FiArrowRight } from "react-icons/fi";
 import { MdOutlineAccessTime } from "react-icons/md";
 import { TfiMoney } from "react-icons/tfi";
-import HorizontalCard from "../../components/user/HorizontalCard";
-import PrimaryBtn from "../../components/ui/PrimaryBtn";
-import SavedCard from "../../components/user/SavedCard";
 import EmptyState from "../../components/ui/EmptyState";
+import PrimaryBtn from "../../components/ui/PrimaryBtn";
 import SecondaryBtn from "../../components/ui/SecondaryBtn";
+import HorizontalCard from "../../components/user/HorizontalCard";
+import SavedCard from "../../components/user/SavedCard";
 import { useAuth } from "../../context/AuthContext";
 
 function UserDashboard() {
