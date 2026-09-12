@@ -1,5 +1,5 @@
-const providerProfileData = {
-  id: "0",
+﻿const providerProfileData = {
+  id: "PRV-0001",
   role: "provider",
   providerName: "CleanPro Services",
   status: "approved",
@@ -25,7 +25,7 @@ const providerProfileData = {
   },
   services: [
     {
-      serviceId: "s001",
+      serviceId: "SVC-0001",
       title: "Home Cleaning",
       category: "Cleaning",
       price: 499,
@@ -36,7 +36,7 @@ const providerProfileData = {
       instantBooking: false,
     },
     {
-      serviceId: "s002",
+      serviceId: "SVC-0003",
       title: "Pest Control",
       category: "Cleaning",
       price: 899,
@@ -52,7 +52,7 @@ const providerProfileData = {
   bookingsCompleted: 1200,
   reviews: [
     {
-      id: 1,
+      id: "REV-0001",
       user: "Amit",
       rating: 5,
       date: "12 May 2026",
@@ -60,7 +60,7 @@ const providerProfileData = {
         "Excellent cleaning service! My home has never been this spotless. Highly recommend Raj and CleanPro Services.",
     },
     {
-      id: 2,
+      id: "REV-0002",
       user: "Sneha",
       rating: 4,
       date: "15 May 2026",

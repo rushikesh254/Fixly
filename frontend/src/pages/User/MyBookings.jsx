@@ -1,6 +1,6 @@
 import { useState } from "react";
 import HorizontalCard from "../../components/user/HorizontalCard";
-import totalBookings from "../../data/totalBookings";
+import { userBookings } from "../../data/bookings";
 import EmptyState from "../../components/ui/EmptyState";
 import { FiSearch } from "react-icons/fi";
 
@@ -18,7 +18,7 @@ function MyBookings() {
   // State to track the search query
   const [searchQuery, setSearchQuery] = useState("");
 
-  const confirmedBookings = totalBookings
+  const confirmedBookings = userBookings
     .filter((booking) => booking.status === "Confirmed")
     .sort((a, b) => {
       const dateA = new Date(a.date);
@@ -27,7 +27,7 @@ function MyBookings() {
       if (dateA > dateB) return 1;
     });
 
-  const pendingBookings = totalBookings
+  const pendingBookings = userBookings
     .filter((booking) => booking.status === "Pending")
     .sort((a, b) => {
       const dateA = new Date(a.date);
@@ -36,7 +36,7 @@ function MyBookings() {
       if (dateA > dateB) return 1;
     });
 
-  const completedBookings = totalBookings
+  const completedBookings = userBookings
     .filter((booking) => booking.status === "Completed")
     .sort((a, b) => {
       const dateA = new Date(a.date);
@@ -45,7 +45,7 @@ function MyBookings() {
       if (dateA > dateB) return 1;
     });
 
-  const cancelledBookings = totalBookings
+  const cancelledBookings = userBookings
     .filter((booking) => booking.status === "Cancelled")
     .sort((a, b) => {
       const dateA = new Date(a.date);
@@ -56,7 +56,7 @@ function MyBookings() {
 
   // Count of bookings for each tab
   const tabCounts = {
-    "All Bookings": totalBookings.length,
+    "All Bookings": userBookings.length,
     Confirmed: confirmedBookings.length,
     Pending: pendingBookings.length,
     Completed: completedBookings.length,
@@ -65,7 +65,7 @@ function MyBookings() {
 
   // Object to map tab names to their corresponding bookings
   const bookingsByTab = {
-    "All Bookings": totalBookings,
+    "All Bookings": userBookings,
     Confirmed: confirmedBookings,
     Pending: pendingBookings,
     Completed: completedBookings,

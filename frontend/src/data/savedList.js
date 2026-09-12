@@ -1,7 +1,9 @@
-const savedList = [
+﻿const savedList = [
   {
-    id: "1",
-    title: "Catering Service",
+    id: "PRV-0015",
+    serviceId: "SVC-0013",
+    providerId: "PRV-0015",
+    title: "Catering",
     providerName: "Royal Caterers",
     image:
       "https://images.unsplash.com/photo-1555244162-803834f70033?w=600&auto=format&fit=crop&q=80",
@@ -17,9 +19,11 @@ const savedList = [
   },
 
   {
-    id: "2",
+    id: "PRV-0003",
+    serviceId: "SVC-0006",
+    providerId: "PRV-0003",
     title: "AC Repair",
-    providerName: "CoolFix Solutions",
+    providerName: "CoolAir Experts",
     image:
       "https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=600&auto=format&fit=crop&q=80",
 
@@ -35,7 +39,9 @@ const savedList = [
   },
 
   {
-    id: "3",
+    id: "PRV-0001",
+    serviceId: "SVC-0001",
+    providerId: "PRV-0001",
     title: "Home Cleaning",
     providerName: "CleanPro Services",
     image:
@@ -52,8 +58,10 @@ const savedList = [
     instantBooking: false,
   },
   {
-    id: "4",
-    title: "Plumbing Service",
+    id: "PRV-0017",
+    serviceId: "SVC-0004",
+    providerId: "PRV-0017",
+    title: "Plumbing Services",
     providerName: "PipeFix Experts",
     image:
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGx1bWJpbmd8ZW58MHx8MHx8fDA%3D",

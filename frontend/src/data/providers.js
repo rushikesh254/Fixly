@@ -1,10 +1,10 @@
-const providers = [
+﻿const providers = [
   {
-    id: "0",
+    id: "PRV-0001",
     title: "Home Cleaning",
     category: "Cleaning",
     providerName: "CleanPro Services",
-    serviceId: "0",
+    serviceId: "SVC-0001",
     rating: 4.2,
     totalReviews: 320,
     bookingsCompleted: 1200,
@@ -45,7 +45,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0001",
         user: "Amit",
         rating: 5,
         date: "12 May 2026",
@@ -53,7 +53,7 @@ const providers = [
           "Excellent cleaning service! My home has never been this spotless. Highly recommend Raj and CleanPro Services.",
       },
       {
-        id: 2,
+        id: "REV-0002",
         user: "Sneha",
         rating: 4,
         date: "15 May 2026",
@@ -66,11 +66,11 @@ const providers = [
   },
 
   {
-    id: "1",
+    id: "PRV-0002",
     title: "Deep Cleaning",
     category: "Cleaning",
     providerName: "Sparkle Cleaners",
-    serviceId: "1",
+    serviceId: "SVC-0002",
     rating: 3.9,
     totalReviews: 210,
     bookingsCompleted: 980,
@@ -105,7 +105,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0003",
         user: "Priya",
         rating: 5,
         date: "10 May 2026",
@@ -120,11 +120,11 @@ const providers = [
   },
 
   {
-    id: "2",
+    id: "PRV-0003",
     title: "AC Repair",
     category: "Repairing",
     providerName: "CoolAir Experts",
-    serviceId: "6",
+    serviceId: "SVC-0006",
     rating: 4.0,
     totalReviews: 180,
     bookingsCompleted: 760,
@@ -159,7 +159,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0004",
         user: "Rohit",
         rating: 5,
         date: "9 May 2026",
@@ -173,11 +173,11 @@ const providers = [
   },
 
   {
-    id: "3",
+    id: "PRV-0004",
     title: "Washing Machine Repair",
     category: "Repairing",
     providerName: "WashFix Experts",
-    serviceId: "7",
+    serviceId: "SVC-0007",
     rating: 4.5,
     totalReviews: 140,
     bookingsCompleted: 640,
@@ -212,7 +212,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0005",
         user: "Anjali",
         rating: 4,
         date: "8 May 2026",
@@ -226,11 +226,11 @@ const providers = [
   },
 
   {
-    id: "4",
-    title: "Electrician Service",
+    id: "PRV-0005",
+    title: "Electrical Services",
     category: "Repairing",
     providerName: "BrightSpark Electricians",
-    serviceId: "5",
+    serviceId: "SVC-0005",
     rating: 4.9,
     totalReviews: 420,
     bookingsCompleted: 1800,
@@ -266,7 +266,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0006",
         user: "Karan",
         rating: 5,
         date: "6 May 2026",
@@ -280,11 +280,11 @@ const providers = [
   },
 
   {
-    id: "5",
+    id: "PRV-0006",
     title: "TV Installation",
     category: "Installation",
     providerName: "TV Mount Experts",
-    serviceId: "14",
+    serviceId: "SVC-0010",
     rating: 4.7,
     totalReviews: 160,
     bookingsCompleted: 720,
@@ -319,7 +319,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0007",
         user: "Riya",
         rating: 5,
         date: "5 May 2026",
@@ -333,11 +333,11 @@ const providers = [
   },
 
   {
-    id: "6",
+    id: "PRV-0007",
     title: "RO Installation",
     category: "Installation",
     providerName: "PureWater Experts",
-    serviceId: "16",
+    serviceId: "SVC-0011",
     rating: 4.8,
     totalReviews: 250,
     bookingsCompleted: 980,
@@ -372,7 +372,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0008",
         user: "Pooja",
         rating: 5,
         date: "7 May 2026",
@@ -386,11 +386,11 @@ const providers = [
   },
 
   {
-    id: "7",
+    id: "PRV-0008",
     title: "Laptop Repair",
     category: "Tech services",
     providerName: "TechFix Solutions",
-    serviceId: "25",
+    serviceId: "SVC-0018",
     rating: 4.7,
     totalReviews: 190,
     bookingsCompleted: 870,
@@ -425,7 +425,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0009",
         user: "Mohit",
         rating: 5,
         date: "4 May 2026",
@@ -439,11 +439,11 @@ const providers = [
   },
 
   {
-    id: "8",
+    id: "PRV-0009",
     title: "WiFi Setup",
     category: "Tech services",
     providerName: "NetSetup Services",
-    serviceId: "24",
+    serviceId: "SVC-0017",
     rating: 4.5,
     totalReviews: 120,
     bookingsCompleted: 560,
@@ -478,7 +478,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0010",
         user: "Neha",
         rating: 4,
         date: "3 May 2026",
@@ -492,11 +492,11 @@ const providers = [
   },
 
   {
-    id: "9",
+    id: "PRV-0010",
     title: "Haircut & Grooming",
     category: "Personal Services",
     providerName: "StyleHub Salon",
-    serviceId: "22",
+    serviceId: "SVC-0015",
     rating: 4.8,
     totalReviews: 360,
     bookingsCompleted: 1700,
@@ -531,7 +531,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0011",
         user: "Rohan",
         rating: 5,
         date: "5 May 2026",
@@ -545,11 +545,11 @@ const providers = [
   },
 
   {
-    id: "10",
+    id: "PRV-0011",
     title: "Spa Therapy",
     category: "Personal Services",
     providerName: "Relax Spa",
-    serviceId: "23",
+    serviceId: "SVC-0016",
     rating: 4.7,
     totalReviews: 220,
     bookingsCompleted: 950,
@@ -584,7 +584,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0012",
         user: "Priyanshi",
         rating: 5,
         date: "6 May 2026",
@@ -598,11 +598,11 @@ const providers = [
   },
 
   {
-    id: "11",
-    title: "Wall Painting",
+    id: "PRV-0012",
+    title: "Painting",
     category: "Home Improvement",
     providerName: "ColorCraft Painters",
-    serviceId: "12",
+    serviceId: "SVC-0009",
     rating: 4.6,
     totalReviews: 180,
     bookingsCompleted: 840,
@@ -637,7 +637,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0013",
         user: "Sakshi",
         rating: 5,
         date: "8 May 2026",
@@ -651,11 +651,11 @@ const providers = [
   },
 
   {
-    id: "12",
-    title: "Carpentry Work",
+    id: "PRV-0013",
+    title: "Carpentry",
     category: "Home Improvement",
     providerName: "WoodFix Experts",
-    serviceId: "11",
+    serviceId: "SVC-0008",
     rating: 4.7,
     totalReviews: 150,
     bookingsCompleted: 700,
@@ -690,7 +690,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0014",
         user: "Divya",
         rating: 5,
         date: "7 May 2026",
@@ -704,11 +704,11 @@ const providers = [
   },
 
   {
-    id: "13",
-    title: "Home Cook Service",
+    id: "PRV-0014",
+    title: "Cooking",
     category: "Food Services",
     providerName: "HomeChef Services",
-    serviceId: "18",
+    serviceId: "SVC-0012",
     rating: 4.9,
     totalReviews: 410,
     bookingsCompleted: 2200,
@@ -743,7 +743,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0015",
         user: "Nidhi",
         rating: 5,
         date: "9 May 2026",
@@ -757,11 +757,11 @@ const providers = [
   },
 
   {
-    id: "14",
-    title: "Catering Service",
+    id: "PRV-0015",
+    title: "Catering",
     category: "Food Services",
     providerName: "Royal Caterers",
-    serviceId: "19",
+    serviceId: "SVC-0013",
     rating: 4.8,
     totalReviews: 330,
     bookingsCompleted: 1500,
@@ -796,7 +796,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0016",
         user: "Aarav",
         rating: 5,
         date: "10 May 2026",
@@ -809,11 +809,11 @@ const providers = [
     instantBooking: false,
   },
   {
-    id: "15",
-    title: "Elderly Care",
+    id: "PRV-0016",
+    title: "Elder Care",
     category: "Personal Services",
     providerName: "CareGivers Inc.",
-    serviceId: "21",
+    serviceId: "SVC-0014",
     rating: 4.9,
     totalReviews: 500,
     bookingsCompleted: 1200,
@@ -848,7 +848,7 @@ const providers = [
     },
     reviews: [
       {
-        id: 1,
+        id: "REV-0017",
         user: "Rajesh",
         rating: 5,
         date: "12 May 2026",
@@ -859,6 +859,113 @@ const providers = [
     availableTomorrow: true,
     availableNextDay: false,
     instantBooking: true,
+  },
+  {
+    id: "PRV-0017",
+    title: "Plumbing Services",
+    category: "Repairing",
+    providerName: "PipeFix Experts",
+    serviceId: "SVC-0004",
+    rating: 4.6,
+    totalReviews: 150,
+    bookingsCompleted: 800,
+    location: "Allahabad",
+    lat: 25.426947,
+    lon: 81.852652,
+    price: 999,
+    status: "approved",
+    estimatedDuration: "2-3 hours",
+    coverImage:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGx1bWJpbmd8ZW58MHx8MHx8fDA%3D",
+    galleryImages: [],
+    description: "Professional plumbing repair and installation services.",
+    includes: [
+      "Leak repair",
+      "Tap & fixture installation",
+      "Bathroom fittings",
+      "Drain cleaning",
+    ],
+    provider: {
+      name: "Rakesh Mishra",
+      image: "https://randomuser.me/api/portraits/men/58.jpg",
+      gender: "male",
+      experience: "7 years",
+      bio: "Hi, I am Rakesh Mishra, a certified plumber with 7 years of experience. I handle leak repairs, fixture installations, and complete bathroom fittings with clean and reliable workmanship.",
+      contactNumber: "+91 90000 10017",
+      email: "rakesh.mishra@pipefix.example",
+      address: {
+        area: "Shop 5, Old GT Road, Daraganj",
+        city: "Allahabad",
+        state: "Uttar Pradesh",
+        pincode: "211006",
+      },
+    },
+    reviews: [
+      {
+        id: "REV-0018",
+        user: "Vikram",
+        rating: 5,
+        date: "14 May 2026",
+        comment:
+          "Fixed a leaking kitchen tap quickly at a fair price. Highly recommended.",
+      },
+    ],
+    availableToday: true,
+    availableTomorrow: true,
+    availableNextDay: false,
+    instantBooking: true,
+  },
+  {
+    id: "PRV-0018",
+    title: "Pest Control",
+    category: "Cleaning",
+    providerName: "PestCure Services",
+    serviceId: "SVC-0003",
+    rating: 4.4,
+    totalReviews: 170,
+    bookingsCompleted: 950,
+    location: "Allahabad",
+    lat: 25.460938,
+    lon: 81.845803,
+    price: 749,
+    status: "approved",
+    estimatedDuration: "3-4 hours",
+    coverImage:
+      "https://images.unsplash.com/photo-1584143458601-7f8bb09cb57c?w=600&auto=format&fit=crop&q=80",
+    galleryImages: [
+      "https://images.unsplash.com/photo-1584467541268-b040f83be3fd?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop&q=80",
+    ],
+    description: "Safe and effective pest control treatment for homes and offices.",
+    includes: ["Spray treatment", "Rodent control", "Termite check", "Inspection"],
+    provider: {
+      name: "Amit Chaudhary",
+      image: "https://randomuser.me/api/portraits/men/29.jpg",
+      gender: "male",
+      experience: "6 years",
+      bio: "Hi, I am Amit Chaudhary, a certified pest control expert with 6 years of experience. I use safe sprays and eco-friendly methods for rodents, termites, and crawlers.",
+      contactNumber: "+91 90000 10018",
+      email: "amit.chaudhary@pestcure.example",
+      address: {
+        area: "Shop 22, Teliyarganj Colony, Leader Road, Chowk",
+        city: "Allahabad",
+        state: "Uttar Pradesh",
+        pincode: "211002",
+      },
+    },
+    reviews: [
+      {
+        id: "REV-0019",
+        user: "Farhan",
+        rating: 5,
+        date: "16 May 2026",
+        comment: "Roaches gone after a single treatment. Very thorough service.",
+      },
+    ],
+    availableToday: true,
+    availableTomorrow: true,
+    availableNextDay: true,
+    instantBooking: false,
   },
 ];
 

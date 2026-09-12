@@ -31,7 +31,7 @@ function History() {
   const historyBookings = bookings
     .filter(
       (b) =>
-        b.providerId === "0" &&
+        b.providerId === "PRV-0001" &&
         ["Completed", "Cancelled", "Rejected"].includes(b.status),
     )
     .sort((a, b) => getBookingDateTime(b) - getBookingDateTime(a));

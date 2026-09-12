@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import recentActivities from "../../data/recentActivities";
 import { useSaved } from "../../context/savedContext";
-import totalBookings from "../../data/totalBookings";
+import { userBookings } from "../../data/bookings";
 import CancelModal from "../../components/user/CancelModal";
 import { useState } from "react";
 import DetailModal from "../../components/user/DetailModal";
@@ -26,7 +26,7 @@ function UserDashboard() {
   const { savedServices } = useSaved();
   const { user } = useAuth();
 
-  const upcomingBookings = totalBookings.filter(
+  const upcomingBookings = userBookings.filter(
     (b) => b.status === "Pending" || b.status === "Confirmed",
   );
 
@@ -34,11 +34,11 @@ function UserDashboard() {
 
   const upcomingCount = upcomingBookings.length;
 
-  const completedCount = totalBookings.filter(
+  const completedCount = userBookings.filter(
     (b) => b.status === "Completed",
   ).length;
 
-  const totalSpent = totalBookings
+  const totalSpent = userBookings
     .filter((b) => b.status === "Completed")
     .reduce((sum, b) => sum + b.price, 0);
 

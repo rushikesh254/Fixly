@@ -1,6 +1,6 @@
 import avatardefault from "../assets/avatardefault.png";
 const userData = {
-  id: 1,
+  id: "USR-0001",
   name: "Raj Sharma",
   email: "raj.sharma@example.com",
   password: "",

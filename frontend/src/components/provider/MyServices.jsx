@@ -108,9 +108,10 @@ function ServiceForm({ service, onClose }) {
       updateUser({ services: updated });
       toast.success("Service updated successfully!");
     } else {
+      const catalogService = services.find((s) => s.name === data.title);
       const newService = {
         ...yourData,
-        serviceId: `s${user.services.length + 1}`,
+        serviceId: catalogService ? catalogService.id : null,
       };
       updateUser({ services: [...user.services, newService] });
       toast.success("Service added successfully!");

@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   };
   const signup = (role) => {
     const newUser = {
-      id: Date.now(),
+      id: "USR-0002",
       name: "",
       email: "",
       role: role,

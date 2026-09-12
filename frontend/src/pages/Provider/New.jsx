@@ -16,7 +16,7 @@ const formatDate = (iso) =>
 function New() {
   // copy of this provider's bookings
   const [myBookings, setMyBookings] = useState(
-    bookings.filter((b) => b.providerId === "0"),
+    bookings.filter((b) => b.providerId === "PRV-0001"),
   );
 
   const [selectedBooking, setSelectedBooking] = useState(null);
@@ -120,7 +120,7 @@ function New() {
                   </span>
                   <span className="flex items-center gap-1">
                     <FiClock size={12} /> Requested on{" "}
-                    {formatDate(req.requestedOn)}
+                    {formatDate(req.bookedAt)}
                   </span>
                 </div>
 

@@ -395,7 +395,7 @@ function DetailModal({
                   className="text-blue-600! border border-blue-200! hover:bg-blue-50! py-3"
                   onclick={() => {
                     setShowDetailModal(false);
-                    navigate(`/services/viewDetails/${id}`);
+navigate(`/services/viewDetails/${booking.providerId}`);
                   }}
                 />
                 <PrimaryBtn
@@ -410,7 +410,7 @@ function DetailModal({
                 btn="Book Again"
                 onclick={() => {
                   setShowDetailModal(false);
-                  navigate(`/services/viewDetails/${id}`);
+                  navigate(`/services/viewDetails/${booking.providerId}`);
                 }}
                 className="px-5 py-3"
               />
@@ -420,7 +420,7 @@ function DetailModal({
                 btn="Book Again"
                 onclick={() => {
                   setShowDetailModal(false);
-                  navigate(`/services/viewDetails/${id}`);
+                  navigate(`/services/viewDetails/${booking.providerId}`);
                 }}
                 className="py-3 px-5"
               />

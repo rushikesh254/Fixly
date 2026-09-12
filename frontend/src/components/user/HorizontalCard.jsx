@@ -12,7 +12,6 @@ import ReviewModal from "./ReviewModal";
 
 function HorizontalCard({ booking }) {
   const {
-    id,
     userAddress,
     title,
     providerName,
@@ -81,7 +80,7 @@ function HorizontalCard({ booking }) {
           <div
             onClick={() => {
               window.scrollTo({ top: 0, behavior: "smooth" });
-              navigate(`/services/viewDetails/${id}`);
+              navigate(`/services/viewDetails/${booking.providerId}`);
             }}
             className="relative w-full md:w-72 h-44 md:h-auto shrink-0 overflow-hidden cursor-pointer"
           >
@@ -181,7 +180,7 @@ function HorizontalCard({ booking }) {
                     btn="Book Again"
                     className="text-emerald-600! border border-emerald-400! hover:bg-emerald-50!"
                     onclick={() => {
-                      navigate(`/services/viewDetails/${id}`);
+navigate(`/services/viewDetails/${booking.providerId}`);
                     }}
                   />
                 )}
