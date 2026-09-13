@@ -150,7 +150,7 @@ function About() {
             />
             <button
               onClick={() => {
-                navigate("/provider");
+                navigate("/join");
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
               className="text-white border border-white px-8 py-3 rounded-xl bg-white/10 text-sm font-semibold hover:bg-white/20 active:bg-white/30 duration-200 cursor-pointer"

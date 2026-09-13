@@ -21,9 +21,7 @@ function Header() {
 
   const isStickyNav =
     location.pathname.startsWith("/user/") ||
-    location.pathname.startsWith("/provider/") ||
-    location.pathname.startsWith("/account") ||
-    location.pathname.startsWith("/profile");
+    location.pathname.startsWith("/provider/");
 
   if (location.pathname === "/auth") {
     return null;
@@ -52,7 +50,7 @@ function Header() {
     : [
         { name: "Home", path: "/" },
         { name: "Services", path: "/services" },
-        { name: "Providers", path: "/provider" },
+        { name: "Providers", path: "/join" },
         { name: "About", path: "/about" },
         { name: "Contact", path: "/contact" },
       ];
@@ -129,7 +127,7 @@ function Header() {
                   <div className="h-0.5 bg-linear-to-r from-blue-500 to-blue-300"></div>
                   {user.role == "provider" ? (
                     <NavLink
-                      to={`/profile`}
+to={`/provider/profile`}
                       className={({ isActive }) =>
                         `flex w-full items-center gap-3 px-5 py-3 hover:bg-blue-50 hover:text-blue-700 border-b  border-gray-100 cursor-pointer transition-all ${
                           isActive
@@ -239,7 +237,7 @@ function Header() {
             <>
               {user.role == "provider" ? (
                 <NavLink
-                  to={`/profile`}
+                  to={`/provider/profile`}
                   onClick={() => setIsSidebarOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center gap-5 px-10 py-3 text-[14px] font-semibold transition-all ${

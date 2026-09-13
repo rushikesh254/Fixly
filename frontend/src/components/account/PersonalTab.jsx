@@ -2,12 +2,11 @@ import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
+import { CiCamera } from "react-icons/ci";
 import { FaRegEdit } from "react-icons/fa";
 import { FiCalendar } from "react-icons/fi";
-import { RiArrowDropDownLine } from "react-icons/ri";
 import { toast } from "sonner";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { CiCamera } from "react-icons/ci";
 
 const inputClass = (isEditing) =>
   `w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition ${
@@ -16,7 +15,7 @@ const inputClass = (isEditing) =>
       : "cursor-auto"
   }`;
 
-export function PersonalTab({ user, sidebarItems, activeTab, onTabChange }) {
+export function PersonalTab({ user }) {
   const { updateUser, setUser } = useAuth();
 
   // State to track if the form is in edit mode
@@ -108,32 +107,6 @@ export function PersonalTab({ user, sidebarItems, activeTab, onTabChange }) {
                 />
               </div>
             )}
-          </div>
-
-          <div className="group/icon absolute -top-1 -right-3">
-            <button className="lg:hidden flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-md transition hover:bg-slate-50 hover:text-blue-600">
-              <RiArrowDropDownLine size={22} />
-            </button>
-
-            <div className="invisible absolute top-full left-1/2 z-20 mt-2 -translate-x-1/2 group-hover/icon:visible">
-              <div className="w-48 overflow-hidden rounded-lg bg-white text-[13px] text-gray-700 shadow-lg ring-1 ring-black/5">
-                <div className="h-0.5 bg-linear-to-r from-blue-500 to-blue-300"></div>
-                {sidebarItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => onTabChange(item.id)}
-                    className={`flex w-full cursor-pointer items-center gap-3 border-b border-gray-100 px-5 py-3 text-[12px] transition-all ${
-                      activeTab === item.id
-                        ? "bg-blue-100 text-blue-600"
-                        : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
-                    }`}
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
 

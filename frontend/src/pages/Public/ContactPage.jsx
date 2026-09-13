@@ -7,7 +7,7 @@ import PageHero from "../../components/ui/PageHero";
 
 import PrimaryBtn from "../../components/ui/PrimaryBtn";
 
-function ContactPage() {
+function ContactPage({ hideHero = false }) {
   const {
     register,
     handleSubmit,
@@ -22,12 +22,14 @@ function ContactPage() {
 
   return (
     <div>
-      <PageHero
-        img="https://images.unsplash.com/photo-1528747045269-390fe33c19f2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        title="Contact Us"
-        subtitle="Contact"
-        position="45%"
-      />
+      {!hideHero && (
+        <PageHero
+          img="https://images.unsplash.com/photo-1528747045269-390fe33c19f2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          title="Contact Us"
+          subtitle="Contact"
+          position="45%"
+        />
+      )}
       <section className="relative w-full overflow-hidden bg-slate-50 px-6 py-14 md:px-10 md:py-20 lg:px-20">
         <div className="pointer-events-none absolute -left-20 top-10 h-72 w-72 rounded-full bg-sky-200/60 blur-3xl"></div>
         <div className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-blue-300/50 blur-3xl"></div>

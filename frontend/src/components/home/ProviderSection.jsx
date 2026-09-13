@@ -45,7 +45,7 @@ function ProviderSection() {
 
               <PrimaryBtn
                 onclick={() => {
-                  navigate("/provider");
+                  navigate("/join");
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 btn="Join as a Provider"

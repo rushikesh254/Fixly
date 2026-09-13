@@ -107,7 +107,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/provider"
+                  to="/join"
                   className="hover:text-white transition-colors duration-200"
                 >
                   Be a provider
