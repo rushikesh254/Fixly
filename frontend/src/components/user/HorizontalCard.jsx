@@ -13,7 +13,7 @@ import ReviewModal from "./ReviewModal";
 function HorizontalCard({ booking }) {
   const {
     userAddress,
-    title,
+    serviceTitle,
     providerName,
     price,
     rating,
@@ -86,7 +86,7 @@ function HorizontalCard({ booking }) {
           >
             <img
               src={image}
-              alt={title}
+              alt={serviceTitle}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             {/* status badge */}
@@ -115,7 +115,7 @@ function HorizontalCard({ booking }) {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900 leading-snug">
-                    {title}
+                    {serviceTitle}
                   </h3>
 
                   <div className="flex items-center gap-1.5 mt-1 mb-3 text-[13px]">

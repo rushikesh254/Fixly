@@ -74,7 +74,7 @@ function MyBookings() {
 
   // Filter bookings based on search query
   const displayedBookings = bookingsByTab[activeTab].filter((booking) =>
-    `${booking.title} ${booking.providerName}`
+    `${booking.serviceTitle} ${booking.providerName}`
       .toLowerCase()
       .includes(searchQuery.toLowerCase()),
   );

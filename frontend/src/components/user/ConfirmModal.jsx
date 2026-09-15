@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import SecondaryBtn from "../ui/SecondaryBtn";
 import { toast } from "sonner";
+import formatDate from "../../utils/formatDate";
 
 function ConfirmModal({
   setConfirmModalOpen,
@@ -13,15 +14,6 @@ function ConfirmModal({
   const { user } = useAuth();
 
   const { title, providerName, price, estimatedDuration } = service;
-
-  const formatDate = (date) => {
-    if (!date) return "";
-    return new Date(date).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">

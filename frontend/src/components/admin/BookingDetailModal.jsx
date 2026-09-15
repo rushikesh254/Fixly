@@ -1,21 +1,41 @@
 import { FiArrowLeft } from "react-icons/fi";
-import { GiSandsOfTime } from "react-icons/gi";
-import PrimaryBtn from "../ui/PrimaryBtn";
-import SecondaryBtn from "../ui/SecondaryBtn";
 import formatDate from "../../utils/formatDate";
 
-function RequestDetailModal({ booking, onClose, onAccept, onDecline }) {
+const badgeStyles = {
+  Pending: "bg-amber-50 text-amber-600",
+  Confirmed: "bg-emerald-50 text-emerald-600",
+  Completed: "bg-blue-50 text-blue-600",
+  Cancelled: "bg-gray-50 text-gray-600",
+  Rejected: "bg-red-50 text-red-600",
+};
+
+const accentStyles = {
+  Pending: "bg-amber-500",
+  Confirmed: "bg-emerald-500",
+  Completed: "bg-blue-500",
+  Cancelled: "bg-gray-500",
+  Rejected: "bg-red-500",
+};
+
+function BookingDetailModal({ booking, onClose }) {
   const {
     id,
+    status,
     customerName,
+    customerPhone,
     customerEmail,
     serviceTitle,
+    providerName,
     date,
     time,
     address,
     price,
+    payment,
     specialInstructions,
+    instruction,
   } = booking;
+
+  const instructions = specialInstructions || instruction;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
@@ -31,46 +51,43 @@ function RequestDetailModal({ booking, onClose, onAccept, onDecline }) {
             </button>
             <div>
               <h2 className="text-base font-semibold text-slate-900">
-                {customerName}
+                Booking Details
               </h2>
-              <p className="text-xs text-slate-500">{serviceTitle}</p>
+              <p className="text-xs text-slate-400">{id}</p>
             </div>
           </div>
-          <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-600">
-            Pending
+          <span
+            className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${
+              badgeStyles[status] || "bg-slate-100 text-slate-500"
+            }`}
+          >
+            {status}
           </span>
         </div>
 
         {/* body */}
         <div className="flex-1 overflow-y-auto scrollbar-hide">
-          {/* Status Banner */}
-          <div className="px-5 py-3 bg-amber-50 border-amber-200">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm bg-amber-100 text-amber-600">
-                <GiSandsOfTime />
-              </div>
-              <div>
-                <p className="text-[12px] font-semibold text-amber-700">
-                  New Booking Request
-                </p>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  {customerName} is waiting for your confirmation.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Customer Details */}
+          {/* Customer */}
           <div className="px-5 py-4 border-b border-slate-100">
             <h2 className="font-semibold text-[13px] flex items-center gap-2 mb-3">
-              <span className="w-1 h-5 rounded-full inline-block bg-amber-600"></span>
+              <span
+                className={`w-1 h-5 rounded-full inline-block ${
+                  accentStyles[status] || "bg-blue-600"
+                }`}
+              ></span>
               CUSTOMER DETAILS
             </h2>
-            <div className="space-y-2 text-[12px]">
+            <div className="space-y-2.5 text-[12px]">
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">Name</span>
                 <span className="font-medium text-slate-800">
                   {customerName}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">Phone Number</span>
+                <span className="font-medium text-slate-800">
+                  {customerPhone}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -85,7 +102,11 @@ function RequestDetailModal({ booking, onClose, onAccept, onDecline }) {
           {/* Service Address */}
           <div className="px-5 py-4 border-b border-slate-100">
             <h2 className="font-semibold text-[13px] flex items-center gap-2 mb-3">
-              <span className="w-1 h-5 rounded-full inline-block bg-amber-600"></span>
+              <span
+                className={`w-1 h-5 rounded-full inline-block ${
+                  accentStyles[status] || "bg-blue-600"
+                }`}
+              ></span>
               SERVICE ADDRESS
             </h2>
             <p className="text-[12px] text-slate-700">{address}</p>
@@ -94,7 +115,11 @@ function RequestDetailModal({ booking, onClose, onAccept, onDecline }) {
           {/* Service Details */}
           <div className="px-5 py-4 border-b border-slate-100">
             <h2 className="font-semibold text-[13px] flex items-center gap-2 mb-3">
-              <span className="w-1 h-5 rounded-full inline-block bg-amber-600"></span>
+              <span
+                className={`w-1 h-5 rounded-full inline-block ${
+                  accentStyles[status] || "bg-blue-600"
+                }`}
+              ></span>
               SERVICE DETAILS
             </h2>
             <div className="space-y-2 text-[12px]">
@@ -109,8 +134,20 @@ function RequestDetailModal({ booking, onClose, onAccept, onDecline }) {
                 </span>
               </div>
               <div className="flex items-center justify-between">
+                <span className="text-slate-500">Provider</span>
+                <span className="font-medium text-slate-800">
+                  {providerName}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
                 <span className="text-slate-500">Price</span>
-                <span className="font-medium text-slate-800">₹ {price}</span>
+                <span className="font-medium text-slate-800">{`₹${price}`}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">Payment Status</span>
+                <span className="font-medium text-slate-800">
+                  {payment?.status || "-"}
+                </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">Date</span>
@@ -125,32 +162,34 @@ function RequestDetailModal({ booking, onClose, onAccept, onDecline }) {
             </div>
           </div>
 
-          {/* Special Instructions */}
-          {specialInstructions && (
-            <div className="px-5 py-4">
-              <h2 className="font-semibold text-[13px] flex items-center gap-2 mb-3">
-                <span className="w-1 h-5 rounded-full inline-block bg-amber-600"></span>
-                SPECIAL INSTRUCTIONS
-              </h2>
-              <p className="text-[12px] text-slate-700">
-                {specialInstructions}
-              </p>
-            </div>
-          )}
+          {/* Customer Instruction */}
+          <div className="px-5 py-4">
+            <h2 className="font-semibold text-[13px] flex items-center gap-2 mb-3">
+              <span
+                className={`w-1 h-5 rounded-full inline-block ${
+                  accentStyles[status] || "bg-blue-600"
+                }`}
+              ></span>
+              CUSTOMER INSTRUCTION
+            </h2>
+            <p className="text-[12px] text-slate-700">
+              {instructions || "No special instructions."}
+            </p>
+          </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="border-t border-slate-100 p-4 flex items-center justify-end gap-3 shrink-0">
-          <SecondaryBtn
-            btn="Decline"
-            className="text-red-600! border border-red-200! hover:bg-red-50! py-3"
-            onclick={onDecline}
-          />
-          <PrimaryBtn btn="Accept" onclick={onAccept} className="py-3" />
+        {/* Close */}
+        <div className="border-t border-slate-100 p-4 flex justify-end shrink-0">
+          <button
+            onClick={onClose}
+            className="cursor-pointer rounded-xl border border-gray-200 bg-gray-50 px-6 py-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-100 hover:text-gray-800"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-export default RequestDetailModal;
+export default BookingDetailModal;

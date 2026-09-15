@@ -1,4 +1,5 @@
 import { FiArrowLeft, FiCheckCircle, FiPhone, FiXCircle } from "react-icons/fi";
+import formatDate from "../../utils/formatDate";
 
 const statusStyles = {
   Completed: {
@@ -40,13 +41,6 @@ function HistoryDetailModal({ booking, onClose }) {
   } = booking;
 
   const styles = statusStyles[status] || statusStyles.Completed;
-
-  const formatDate = (iso) =>
-    new Date(iso).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">

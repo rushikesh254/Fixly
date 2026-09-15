@@ -4,13 +4,7 @@ import HistoryDetailModal from "../../components/provider/HistoryDetailModal";
 import EmptyState from "../../components/ui/EmptyState";
 import bookings from "../../data/bookings";
 import getBookingDateTime from "../../utils/getBookingDateTime";
-
-const formatDate = (iso) =>
-  new Date(iso).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+import formatDate from "../../utils/formatDate";
 
 const badgeStyles = {
   Completed: "bg-green-100 text-green-700",

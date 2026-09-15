@@ -6,6 +6,7 @@ import PrimaryBtn from "../ui/PrimaryBtn";
 import SecondaryBtn from "../ui/SecondaryBtn";
 import { GiSandsOfTime } from "react-icons/gi";
 import { useAuth } from "../../context/AuthContext";
+import formatDate from "../../utils/formatDate";
 
 function DetailModal({
   showDetailModal,
@@ -19,7 +20,7 @@ function DetailModal({
 
   const {
     id,
-    title,
+    serviceTitle,
     providerName,
     price,
     status,
@@ -34,15 +35,6 @@ function DetailModal({
     rejectedAt,
     instruction,
   } = booking;
-
-  const formatDate = (iso) => {
-    if (!iso) return "";
-    return new Date(iso).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
 
   const formatTime = (iso) => {
     if (!iso) return "";
@@ -68,7 +60,7 @@ function DetailModal({
             </button>
             <div>
               <h2 className="text-base font-semibold text-slate-900">
-                {title}
+                {serviceTitle}
               </h2>
               <p className="text-xs text-slate-500">{providerName}</p>
             </div>

@@ -5,13 +5,7 @@ import EmptyState from "../../components/ui/EmptyState";
 import RequestDetailModal from "../../components/provider/RequestDetailModal";
 import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
 import getBookingDateTime from "../../utils/getBookingDateTime";
-
-const formatDate = (iso) =>
-  new Date(iso).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+import formatDate from "../../utils/formatDate";
 
 function New() {
   // copy of this provider's bookings

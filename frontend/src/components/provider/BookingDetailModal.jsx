@@ -1,6 +1,7 @@
 import { FiArrowLeft, FiCheckCircle, FiPhone } from "react-icons/fi";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import SecondaryBtn from "../ui/SecondaryBtn";
+import formatDate from "../../utils/formatDate";
 
 function BookingDetailModal({ booking, onClose, onComplete, onReject }) {
   const {
@@ -15,13 +16,6 @@ function BookingDetailModal({ booking, onClose, onComplete, onReject }) {
     price,
     specialInstructions,
   } = booking;
-
-  const formatDate = (iso) =>
-    new Date(iso).toLocaleDateString("en-IN", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
