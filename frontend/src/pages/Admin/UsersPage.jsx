@@ -1,0 +1,262 @@
+import { useState } from "react";
+import { FiSearch } from "react-icons/fi";
+import { users as usersData } from "../../data/users";
+import EmptyState from "../../components/ui/EmptyState";
+import UserDetailModal from "../../components/admin/UserDetailModal";
+import SecondaryBtn from "../../components/ui/SecondaryBtn";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import defaultAvatar from "../../assets/avatardefault.png";
+
+function UsersPage() {
+  const tabs = ["active", "blocked"];
+
+  const [users, setUsers] = useState(usersData);
+  const [activeTab, setActiveTab] = useState("active");
+  const [selected, setSelected] = useState(null);
+  const [blockTarget, setBlockTarget] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // counts for each tab
+  const tabCounts = {
+    active: users.filter((u) => u.status === "active").length,
+    blocked: users.filter((u) => u.status === "blocked").length,
+  };
+
+  // users based on the active tab
+  const listFor = (status) => {
+    const list = users.filter((u) => u.status === status);
+    if (status === "active") {
+      return [...list].sort((a, b) => b.totalBookings - a.totalBookings);
+    }
+    return [...list].sort(
+      (a, b) => new Date(b.joinedAt) - new Date(a.joinedAt),
+    );
+  };
+
+  const currentList = listFor(activeTab);
+
+  // filtered providers based on search query
+  const filteredList = currentList.filter(
+    (u) =>
+      u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      u.phone.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
+  // set user status
+  const setStatus = (id, status) => {
+    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status } : u)));
+    setSelected(null);
+  };
+
+  const handleUnblock = () => setStatus(selected.id, "active");
+
+  const handleBlock = () => {
+    setStatus(blockTarget.id, "blocked");
+    setBlockTarget(null);
+  };
+
+  const Avatar = ({ user }) => (
+    <img
+      src={user.image || defaultAvatar}
+      alt={user.name}
+      className="h-10 w-10 rounded-full object-cover"
+    />
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50 px-5 py-8 sm:px-8 lg:px-15">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="flex items-center gap-2 text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
+            All Users
+            <span className="rounded-full bg-blue-100 px-3 py-1 text-[12px] font-semibold text-blue-600">
+              {users.length}
+            </span>
+          </h1>
+          <p className="text-gray-500 text-[13px] sm:text-sm mt-0.5">
+            Review and manage registered users.
+          </p>
+        </div>
+        <div className="relative w-full sm:w-64 shrink-0">
+          <FiSearch
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          />
+          <input
+            type="text"
+            placeholder="Search name or email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-3 py-2 text-[12px] text-gray-700 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-50 transition-all duration-200 bg-white"
+          />
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex mt-6 items-center gap-0 sm:gap-5 border-b border-gray-200 overflow-x-auto scrollbar-hide">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-3 flex items-center gap-2 sm:px-4 py-2 text-[11px] sm:text-[13px] font-medium whitespace-nowrap transition-all duration-200 cursor-pointer border-b-2 ${
+              activeTab === tab
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            }`}
+          >
+            <span className="capitalize">{tab}</span>
+            {tabCounts[tab] > 0 && (
+              <span
+                className={`text-[10px] flex items-center justify-center w-5 h-5 rounded-full font-semibold ${
+                  activeTab === tab
+                    ? "bg-blue-100 text-blue-600"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                {tabCounts[tab]}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Content */}
+      {filteredList.length === 0 ? (
+        <div className="mt-8">
+          <EmptyState
+            title="No users found"
+            description="No users match your current search or status filter."
+          />
+        </div>
+      ) : (
+        <>
+          {/* Table */}
+          <div className="hidden md:block mt-6 overflow-x-auto rounded-2xl border border-gray-200 bg-white">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-gray-200 bg-gray-50 text-[11px] uppercase tracking-wide text-gray-500">
+                  <th className="px-4 py-3 font-semibold whitespace-nowrap text-left">
+                    User
+                  </th>
+                  <th className="px-4 py-3 font-semibold whitespace-nowrap text-left">
+                    Email
+                  </th>
+                  <th className="px-4 py-3 font-semibold whitespace-nowrap text-left">
+                    Bookings
+                  </th>
+                  <th className="px-4 py-3 font-semibold whitespace-nowrap text-left">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredList.map((u) => (
+                  <tr
+                    key={u.id}
+                    className="border-b border-gray-100 last:border-0 transition hover:bg-blue-50/40"
+                  >
+                    <td className="px-4 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <Avatar user={u} />
+                        <p className="text-[13px] font-semibold text-gray-900 whitespace-nowrap">
+                          {u.name}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3.5 text-[13px] text-gray-600 whitespace-nowrap">
+                      {u.email}
+                    </td>
+                    <td className="px-4 py-3.5 text-[13px] text-gray-500 whitespace-nowrap">
+                      {u.totalBookings}
+                    </td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">
+                      <SecondaryBtn
+                        btn="View"
+                        onclick={() => setSelected(u)}
+                        className="text-blue-600! border-blue-100! bg-blue-50! hover:bg-blue-600! hover:text-white!"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile cards */}
+          <div className="mt-6 flex flex-col gap-4 md:hidden">
+            {filteredList.map((u) => (
+              <div
+                key={u.id}
+                className="rounded-2xl border border-gray-200 bg-white p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Avatar user={u} />
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-gray-900">
+                        {u.name}
+                      </p>
+                      <p className="truncate text-xs text-gray-500">
+                        {u.email}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${
+                      u.status === "active"
+                        ? "bg-green-100 text-green-600"
+                        : "bg-red-100 text-red-600"
+                    }`}
+                  >
+                    <span className="capitalize">{u.status}</span>
+                  </span>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-gray-500">
+                  <span> &bull; {u.totalBookings} Bookings</span>
+                </div>
+
+                <div className="mt-3">
+                  <SecondaryBtn
+                    btn="View Details"
+                    onclick={() => setSelected(u)}
+                    className="w-full text-blue-600! border-blue-100! bg-blue-50! hover:bg-blue-600! hover:text-white!"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Detail Modal */}
+      {selected && (
+        <UserDetailModal
+          user={selected}
+          onClose={() => setSelected(null)}
+          onBlock={() => {
+            setBlockTarget(selected);
+            setSelected(null);
+          }}
+          onUnblock={handleUnblock}
+        />
+      )}
+
+      {/* Block confirmation */}
+      {blockTarget && (
+        <ConfirmDialog
+          title={`Block ${blockTarget.name}?`}
+          message="This user will no longer be able to use the platform."
+          cancelLabel="Cancel"
+          confirmLabel="Block"
+          onCancel={() => setBlockTarget(null)}
+          onConfirm={handleBlock}
+        />
+      )}
+    </div>
+  );
+}
+
+export default UsersPage;

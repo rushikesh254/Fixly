@@ -11,7 +11,6 @@ function Footer() {
   const isAuth = location.pathname === "/auth";
 
   useEffect(() => {
-    if (isAuth) return;
     if (location.hash === "#testimonials") {
       const element = document.getElementById("testimonials");
       if (element) element.scrollIntoView({ behavior: "smooth" });
@@ -19,12 +18,13 @@ function Footer() {
   }, [location, isAuth]);
 
   useEffect(() => {
-    if (isAuth) return;
     if (location.hash === "#howItWorks") {
       const element = document.getElementById("howItWorks");
       if (element) element.scrollIntoView({ behavior: "smooth" });
     }
   }, [location, isAuth]);
+
+  if (isAuth) return null;
 
   return (
     <footer className="bg-[#0F2F66] text-gray-300 py-12 px-6 sm:px-10 lg:px-16 border-t border-gray-700/50">
@@ -107,7 +107,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/provider"
+                  to="/join"
                   className="hover:text-white transition-colors duration-200"
                 >
                   Be a provider
@@ -132,7 +132,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/services/cleaning"
+                  to="/services?category=Cleaning"
                   className="hover:text-white transition-colors duration-200"
                 >
                   Cleaning
@@ -140,7 +140,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/services/plumbing"
+                  to="/services?category=Repairing"
                   className="hover:text-white transition-colors duration-200"
                 >
                   Plumbing
@@ -148,7 +148,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/services/electrician"
+                  to="/services?category=Repairing"
                   className="hover:text-white transition-colors duration-200"
                 >
                   Electrician
@@ -156,7 +156,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="/services/cooking"
+                  to="/services?category=Food%20Services"
                   className="hover:text-white transition-colors duration-200"
                 >
                   Cooking & Chef
@@ -181,11 +181,11 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  to="tel:+11234567890"
+                  to="tel:+917410726319"
                   className="flex items-center hover:text-white transition-colors"
                 >
                   <FaPhoneAlt className="w-4 h-4 mr-3 text-gray-400" />
-                  +91 7410726311
+                  +91 7410726319
                 </Link>
               </li>
               <li className="flex items-start">

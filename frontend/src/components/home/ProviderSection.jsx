@@ -45,7 +45,8 @@ function ProviderSection() {
 
               <PrimaryBtn
                 onclick={() => {
-                  navigate("/provider");
+                  navigate("/join");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 btn="Join as a Provider"
                 className="mt-5 ml-0 py-3 sm:ml-3 mb-4 bg-[#1E4ED8]"

@@ -1,18 +1,23 @@
 import { FiArrowRight } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import services from "../../constants/services";
+import services from "../../data/services";
 import providers from "../../data/providers";
-import ServiceCard from "../service/ServiceCard";
+import ServiceCard from "../ui/ServiceCard";
 
 function ServiceSection() {
   const topProviders = providers.slice(0, 4);
   const serviceNameById = Object.fromEntries(
     services.map((service) => [service.id, service.name]),
   );
-  const providersWithServiceName = topProviders.map((provider) => ({
-    ...provider,
-    service: serviceNameById[provider.serviceId] ?? provider.serviceId,
-  }));
+  const providersWithServiceName = topProviders.map((provider) => {
+    const primaryService = provider.services?.[0] || {};
+    return {
+      ...provider,
+      ...primaryService,
+      service:
+        serviceNameById[primaryService.serviceId] ?? primaryService.title,
+    };
+  });
 
   return (
     <div className="px-4 sm:px-6 md:px-10 py-8 sm:py-10">

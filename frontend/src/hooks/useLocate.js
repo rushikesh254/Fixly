@@ -37,14 +37,10 @@ export function useLocate() {
         try {
           const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
           const res = await axios.get(url);
-          console.log(res.data.address);
           setAddress(res.data.address);
           setStatus("success");
-        } catch (e) {
-          {
-            console.log(e);
-            setStatus("denied");
-          }
+        } catch {
+          setStatus("denied");
         }
       },
       () => {
