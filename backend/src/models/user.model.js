@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Please provide a password"],
-      minLength: 6,
+      minLength: 8,
     },
     phoneNumber: {
       type: String,
@@ -44,10 +44,11 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    verificationToken: String, // random token emailed to user for verification(at time of registration)
-    verificationTokenExpires: Date, // expiry time for verification token (e.g., 24 hours after generation)
-    resetPasswordToken: String, // random token emailed to user for password reset
-    resetPasswordExpires: Date, // expiry time for reset password token (e.g., 1 hour after generation)
+    verificationToken: String,
+    verificationTokenExpires: Date,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+    refreshToken: String,
   },
   { timestamps: true },
 );

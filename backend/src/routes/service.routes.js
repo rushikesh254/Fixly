@@ -19,7 +19,7 @@ router.post(
   "/",
   protect,
   authorize("admin", "provider"),
-  upload.array("images", 5), // multer middleware to handle file uploads, allowing up to 5 images
+  upload.array("images", 5),
   createService,
 );
 
@@ -27,7 +27,7 @@ router.put(
   "/:id",
   protect,
   authorize("admin", "provider"),
-  upload.array("images", 5), // multer middleware to handle file uploads, allowing up to 5 images
+  upload.array("images", 5),
   updateService,
 );
 

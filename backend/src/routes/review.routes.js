@@ -4,7 +4,6 @@ import {
   deleteReview,
   getReviews,
 } from "../controllers/review.controller.js";
-
 import { authorize, protect } from "../middleware/auth.middleware.js";
 
 const router = Router();

@@ -9,7 +9,6 @@ import { authorize, protect } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-// create a new booking only user can create a booking
 router.post("/", protect, authorize("user"), createBooking);
 
 // get bookings of the logged in user or provider
@@ -20,7 +19,6 @@ router.get(
   getMyBookings,
 );
 
-// only provider can update the booking status
 router.put(
   "/:bookingId/status",
   protect,

@@ -16,9 +16,9 @@ const app = express();
 
 app.use(helmet()); // set security-related HTTP headers
 app.use(express.json()); // allow JSON data in the request body
+app.use(cookieParser()); // parse cookies in the request headers
 app.use(express.urlencoded({ extended: true })); // allow urlencoded data in the request body
 app.use(express.static("public")); // serve static files from the public directory
-app.use(cookieParser()); // parse cookies in the request headers
 
 app.use(
   cors({
@@ -29,12 +29,18 @@ app.use(
   }),
 );
 
-app.use(apiLimiter); // apply rate limiting to all routes
+// apply rate limiting to all routes
+app.use(apiLimiter);
 
 // routes
-
 app.get("/", (req, res) => {
   res.json({ success: true, message: "Fixly Server is running" });
+});
+
+// healthcheck route
+
+app.get("/health", (req, res) => {
+  res.json({ success: true, message: "Server is healthy" });
 });
 
 // auth routes

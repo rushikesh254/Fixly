@@ -1,34 +1,22 @@
 import BookingModel from "../models/booking.model.js";
 import ReviewModel from "../models/review.model.js";
 import ServiceModel from "../models/service.model.js";
+import { createReviewSchema } from "../validation/review.validation.js";
 
-// Controller function to create a new review
-// POST /api/reviews
-const createReview = async (req, res) => {
+const createReview = async (req, res, next) => {
   try {
-    const { serviceId, rating, comment } = req.body;
-
-    // Validate input
-    if (!serviceId || !rating || !comment) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields are required" });
+    const result = createReviewSchema.safeParse(req.body);
+    if (!result.success) {
+      const messages = result.error.issues.map(i => i.message).join(", ");
+      return res.status(400).json({ success: false, message: messages });
     }
+    const { serviceId, rating, comment } = result.data;
 
-    // rating must be between 1 and 5
-    if (rating < 1 || rating > 5) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Rating must be between 1 and 5" });
-    }
-
-    // Check if service exists
     const service = await ServiceModel.findById(serviceId);
     if (!service) {
       return res.status(404).json({ success: false, message: "Service not found" });
     }
 
-    // Check if user has completed a booking for this service
     const completedBooking = await BookingModel.findOne({
       user: req.user._id,
       service: serviceId,
@@ -42,19 +30,15 @@ const createReview = async (req, res) => {
       });
     }
 
-    // Check if user has already reviewed this service
     const existingReview = await ReviewModel.findOne({
       user: req.user._id,
       service: serviceId,
     });
 
     if (existingReview) {
-      return res
-        .status(400)
-        .json({ success: false, message: "You have already reviewed this service" });
+      return res.status(400).json({ success: false, message: "You have already reviewed this service" });
     }
 
-    // Create review
     const review = await ReviewModel.create({
       user: req.user._id,
       service: serviceId,
@@ -62,25 +46,22 @@ const createReview = async (req, res) => {
       comment,
     });
 
-    // Mark booking as reviewed
     completedBooking.isReviewed = true;
     await completedBooking.save();
 
-    // send response
     res.status(201).json({ success: true, review });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error creating review" });
+    console.error("Error creating review:", error);
+    error.statusCode = 500;
+    next(error);
   }
 };
 
-// get reviews for a service
-// GET /api/reviews/service/:serviceId
-const getReviews = async (req, res) => {
+const getReviews = async (req, res, next) => {
   try {
     const { serviceId } = req.params;
-    // Check if service exists
-    const service = await ServiceModel.findById(serviceId);
 
+    const service = await ServiceModel.findById(serviceId);
     if (!service) {
       return res.status(404).json({ success: false, message: "Service not found" });
     }
@@ -91,13 +72,13 @@ const getReviews = async (req, res) => {
 
     res.status(200).json({ success: true, count: reviews.length, reviews });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error fetching reviews" });
+    console.error("Error fetching reviews:", error);
+    error.statusCode = 500;
+    next(error);
   }
 };
 
-// Controller function to delete a review
-// DELETE /api/reviews/:reviewId
-const deleteReview = async (req, res) => {
+const deleteReview = async (req, res, next) => {
   try {
     const { reviewId } = req.params;
 
@@ -106,7 +87,6 @@ const deleteReview = async (req, res) => {
       return res.status(404).json({ success: false, message: "Review not found" });
     }
 
-    // Only the user who created the review can delete it
     if (review.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: "Unauthorized" });
     }
@@ -115,7 +95,9 @@ const deleteReview = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Review deleted" });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error deleting review" });
+    console.error("Error deleting review:", error);
+    error.statusCode = 500;
+    next(error);
   }
 };
 
