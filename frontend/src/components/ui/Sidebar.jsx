@@ -34,7 +34,7 @@ function Sidebar({
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col overflow-y-auto bg-white shadow-md transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col overflow-y-auto bg-gradient-to-b from-white to-slate-50/80 shadow-md transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -73,10 +73,10 @@ function Sidebar({
                 to={item.path}
                 onClick={close}
                 className={({ isActive }) =>
-                  `flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-2.5 text-[13px] transition-colors ${
+                  `flex w-full cursor-pointer items-center gap-3 rounded-lg border-l-2 px-4 py-2.5 text-[13px] transition-colors ${
                     isActive
-                      ? "bg-blue-100 font-semibold text-blue-600"
-                      : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                      ? "border-blue-600 bg-blue-50/60 font-semibold text-blue-600"
+                      : "border-transparent text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                   }`
                 }
               >
@@ -90,10 +90,10 @@ function Sidebar({
                   item.onClick?.();
                   close();
                 }}
-                className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-2.5 text-[13px] transition-colors ${
+                className={`flex w-full cursor-pointer items-center gap-3 rounded-lg border-l-2 px-4 py-2.5 text-[13px] transition-colors ${
                   item.active
-                    ? "bg-blue-100 font-semibold text-blue-600"
-                    : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                    ? "border-blue-600 bg-blue-50/60 font-semibold text-blue-600"
+                    : "border-transparent text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                 }`}
               >
                 <span className="shrink-0">{item.icon}</span>

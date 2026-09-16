@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import CancelModal from "../../components/user/CancelModal";
 import DetailModal from "../../components/user/DetailModal";
 import { useSaved } from "../../context/savedContext";
 import { userBookings } from "../../data/bookings";
@@ -15,9 +14,11 @@ import {
 import { FiArrowRight } from "react-icons/fi";
 import { MdOutlineAccessTime } from "react-icons/md";
 import { TfiMoney } from "react-icons/tfi";
+import { toast } from "sonner";
 import EmptyState from "../../components/ui/EmptyState";
 import PrimaryBtn from "../../components/ui/PrimaryBtn";
 import SecondaryBtn from "../../components/ui/SecondaryBtn";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import HorizontalCard from "../../components/user/HorizontalCard";
 import SavedCard from "../../components/user/SavedCard";
 import { useAuth } from "../../context/AuthContext";
@@ -232,9 +233,16 @@ function UserDashboard() {
             />
           )}
           {showCancelModal && (
-            <CancelModal
-              showCancelModal={showCancelModal}
-              setShowCancelModal={setShowCancelModal}
+            <ConfirmDialog
+              title="Cancel this service?"
+              message="Are you sure you want to cancel this booking? This action cannot be undone."
+              cancelLabel="Keep Booking"
+              confirmLabel="Yes, Cancel"
+              onCancel={() => setShowCancelModal(false)}
+              onConfirm={() => {
+                setShowCancelModal(false);
+                toast.success("Your booking has been cancelled successfully.");
+              }}
             />
           )}
           {/* Upcoming Bookings */}

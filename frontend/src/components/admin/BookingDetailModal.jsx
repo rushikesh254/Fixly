@@ -40,6 +40,7 @@ function BookingDetailModal({ booking, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
       <div className="mx-4 w-full max-w-lg rounded-2xl bg-white shadow-xl max-h-[85vh] overflow-hidden flex flex-col">
+        <div className="h-1 shrink-0 bg-gradient-to-r from-blue-500 via-indigo-500 to-violet-500"></div>
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-slate-100 shrink-0">
           <div className="flex items-center gap-3">

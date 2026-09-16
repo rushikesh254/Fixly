@@ -3,8 +3,8 @@ import { FiSearch } from "react-icons/fi";
 import { users as usersData } from "../../data/users";
 import EmptyState from "../../components/ui/EmptyState";
 import UserDetailModal from "../../components/admin/UserDetailModal";
-import PrimaryBtn from "../../components/ui/PrimaryBtn";
 import SecondaryBtn from "../../components/ui/SecondaryBtn";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import defaultAvatar from "../../assets/avatardefault.png";
 
 function UsersPage() {
@@ -246,28 +246,14 @@ function UsersPage() {
 
       {/* Block confirmation */}
       {blockTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
-          <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-            <h3 className="text-base font-semibold text-gray-900">
-              Block {blockTarget.name}?
-            </h3>
-            <p className="mt-1 text-sm text-gray-500">
-              This user will no longer be able to use the platform.
-            </p>
-            <div className="mt-6 flex justify-end gap-3">
-              <SecondaryBtn
-                btn="Cancel"
-                onclick={() => setBlockTarget(null)}
-                className="text-gray-600! border-gray-200! bg-gray-50! hover:bg-gray-100! hover:text-gray-800!"
-              />
-              <PrimaryBtn
-                btn="Block"
-                onclick={handleBlock}
-                className="bg-red-600! hover:bg-red-700!"
-              />
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          title={`Block ${blockTarget.name}?`}
+          message="This user will no longer be able to use the platform."
+          cancelLabel="Cancel"
+          confirmLabel="Block"
+          onCancel={() => setBlockTarget(null)}
+          onConfirm={handleBlock}
+        />
       )}
     </div>
   );

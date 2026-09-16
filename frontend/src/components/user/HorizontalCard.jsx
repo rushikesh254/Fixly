@@ -4,10 +4,11 @@ import { IoLocationOutline } from "react-icons/io5";
 import { LuClock2 } from "react-icons/lu";
 import { SlCalender } from "react-icons/sl";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import SecondaryBtn from "../ui/SecondaryBtn";
 import DetailModal from "./DetailModal";
-import CancelModal from "./CancelModal";
+import ConfirmDialog from "../ui/ConfirmDialog";
 import ReviewModal from "./ReviewModal";
 
 function HorizontalCard({ booking }) {
@@ -219,7 +220,17 @@ navigate(`/services/viewDetails/${booking.providerId}`);
       )}
       {/* Cancel Modal */}
       {showCancelModal && (
-        <CancelModal setShowCancelModal={setShowCancelModal} />
+        <ConfirmDialog
+          title="Cancel this service?"
+          message="Are you sure you want to cancel this booking? This action cannot be undone."
+          cancelLabel="Keep Booking"
+          confirmLabel="Yes, Cancel"
+          onCancel={() => setShowCancelModal(false)}
+          onConfirm={() => {
+            setShowCancelModal(false);
+            toast.success("Your booking has been cancelled successfully.");
+          }}
+        />
       )}
 
       {/* Detail Modal */}

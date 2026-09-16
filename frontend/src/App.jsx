@@ -19,7 +19,6 @@ import BookingsPage from "./pages/Admin/BookingsPage.jsx";
 import ProvidersPage from "./pages/Admin/ProvidersPage.jsx";
 import AdminServicesPage from "./pages/Admin/ServicesPage.jsx";
 import UsersPage from "./pages/Admin/UsersPage.jsx";
-import SupportPage from "./pages/Admin/SupportPage.jsx";
 import MyBookings from "./pages/User/MyBookings.jsx";
 import SavedServices from "./pages/User/SavedServices.jsx";
 import Account from "./pages/User/Account.jsx";
@@ -109,7 +108,6 @@ function App() {
           <Route path="providers" element={<ProvidersPage />} />
           <Route path="service-catalog" element={<AdminServicesPage />} />
           <Route path="users" element={<UsersPage />} />
-          <Route path="support" element={<SupportPage />} />
         </Route>
         {/* Catch all route for 404 Not Found */}
         <Route path="*" element={<NotFound />} />

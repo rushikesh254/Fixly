@@ -4,7 +4,6 @@ import Sidebar from "../components/ui/Sidebar.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import {
   LuCalendarCheck,
-  LuHeadphones,
   LuLayoutDashboard,
   LuUserRound,
   LuUsers,
@@ -28,11 +27,6 @@ const adminNavItems = [
     label: "Services",
     path: "/admin/service-catalog",
     icon: <LuWrench size={20} />,
-  },
-  {
-    label: "Support",
-    path: "/admin/support",
-    icon: <LuHeadphones size={20} />,
   },
 ];
 

@@ -6,6 +6,7 @@ import RequestDetailModal from "../../components/provider/RequestDetailModal";
 import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
 import getBookingDateTime from "../../utils/getBookingDateTime";
 import formatDate from "../../utils/formatDate";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
 
 function New() {
   // copy of this provider's bookings
@@ -160,34 +161,22 @@ function New() {
 
       {/* Decline Confirmation Modal */}
       {bookingToDecline && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
-          <div className="mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Decline this request?
-            </h2>
-            <p className="mt-2 text-sm text-gray-600">
+        <ConfirmDialog
+          title="Decline this request?"
+          message={
+            <p>
               Are you sure you want to decline{" "}
               <span className="font-medium text-gray-900">
                 {bookingToDecline.customerName}
               </span>
               's request?
             </p>
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                onClick={() => setBookingToDecline(null)}
-                className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-              >
-                Keep Request
-              </button>
-              <button
-                onClick={handleDecline}
-                className="cursor-pointer rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
-              >
-                Yes, Decline
-              </button>
-            </div>
-          </div>
-        </div>
+          }
+          cancelLabel="Keep Request"
+          confirmLabel="Yes, Decline"
+          onCancel={() => setBookingToDecline(null)}
+          onConfirm={handleDecline}
+        />
       )}
     </div>
   );

@@ -13,6 +13,13 @@ function UserDetailModal({ user, onClose, onBlock, onUnblock }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
       <div className="mx-4 w-full max-w-lg rounded-2xl bg-white shadow-xl max-h-[85vh] overflow-hidden flex flex-col">
+        <div
+          className={`h-1 shrink-0 bg-gradient-to-r ${
+            user.status === "active"
+              ? "from-emerald-400 to-teal-500"
+              : "from-red-400 to-rose-500"
+          }`}
+        ></div>
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-slate-100 shrink-0">
           <div className="flex items-center gap-4 min-w-0">
@@ -83,7 +90,7 @@ function UserDetailModal({ user, onClose, onBlock, onUnblock }) {
           {/* Account */}
           <div className="px-5 py-4">
             <h2 className="font-semibold text-[13px] flex items-center gap-2 mb-3">
-              <span className="w-1 h-5 rounded-full inline-block bg-blue-600"></span>
+              <span className="w-1 h-5 rounded-full inline-block bg-emerald-500"></span>
               ACCOUNT
             </h2>
             <div className="space-y-2.5 text-[12px]">

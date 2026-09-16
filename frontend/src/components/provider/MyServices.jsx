@@ -11,7 +11,7 @@ import { RxCross1 } from "react-icons/rx";
 import { toast } from "sonner";
 import services from "../../data/services.js";
 import { useAuth } from "../../context/AuthContext.jsx";
-import DeleteConfirmModal from "./DeleteConfirmModal.jsx";
+import ConfirmDialog from "../ui/ConfirmDialog";
 
 const inputClass =
   "w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-[13px] text-slate-700 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-100";
@@ -323,9 +323,16 @@ function ServiceForm({ service, onClose }) {
         </form>
       </div>
       {showDeleteModal && (
-        <DeleteConfirmModal
-          setShowDeleteModal={setShowDeleteModal}
-          onConfirm={handleDelete}
+        <ConfirmDialog
+          title="Delete this service?"
+          message="Are you sure you want to delete this service? This action cannot be undone."
+          cancelLabel="Cancel"
+          confirmLabel="Delete"
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={() => {
+            setShowDeleteModal(false);
+            handleDelete();
+          }}
         />
       )}
     </div>
