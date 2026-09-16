@@ -23,8 +23,12 @@ const adminNavItems = [
     icon: <LuCalendarCheck size={20} />,
   },
   { label: "Providers", path: "/admin/providers", icon: <LuUsers size={20} /> },
-  { label: "Services", path: "/admin/service-catalog", icon: <LuWrench size={20} /> },
   { label: "Users", path: "/admin/users", icon: <LuUserRound size={20} /> },
+  {
+    label: "Services",
+    path: "/admin/service-catalog",
+    icon: <LuWrench size={20} />,
+  },
   {
     label: "Support",
     path: "/admin/support",
@@ -46,7 +50,7 @@ function AdminLayout() {
     <div className="relative flex min-h-screen bg-slate-100">
       <Sidebar
         subtitle="Administrator"
-        section="ADMIN"
+        section="manage"
         navItems={adminNavItems}
         user={user}
         onLogout={handleLogout}

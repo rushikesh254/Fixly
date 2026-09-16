@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { CiFileOn } from "react-icons/ci";
-import { toast } from "sonner";
 
 function Documents() {
   const [idProof, setIdProof] = useState(null);
@@ -12,7 +11,6 @@ function Documents() {
     const file = e.target.files[0];
     if (!file) return;
     setter(file);
-    toast.success(`${file.name} uploaded!`);
   };
 
   return (
@@ -68,7 +66,7 @@ function Documents() {
               </span>
               <input
                 type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
+                accept=".pdf"
                 className="hidden"
                 onChange={(e) => handleUpload(e, setIdProof)}
               />
@@ -108,7 +106,7 @@ function Documents() {
               </span>
               <input
                 type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
+                accept=".pdf"
                 className="hidden"
                 onChange={(e) => handleUpload(e, setAddressProof)}
               />
@@ -149,7 +147,7 @@ function Documents() {
               </span>
               <input
                 type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
+                accept=".pdf"
                 className="hidden"
                 onChange={(e) => handleUpload(e, setSkillProof)}
               />

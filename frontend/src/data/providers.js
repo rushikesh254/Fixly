@@ -79,13 +79,11 @@
           "Good service overall. The team was professional and did a great job. The only reason I'm giving 4 stars instead of 5 is because they were a bit late to arrive, but the quality of cleaning made up for it.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-raj-sharma.pdf",
-        address: "electricity-bill-ashok-nagar.pdf",
-        skill: "home-cleaning-certificate-raj.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0002",
@@ -144,13 +142,11 @@
           "Amazing deep cleaning service. Highly recommended! But the price is a bit high.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-vikram-singh.pdf",
-        address: "electricity-bill-govindpur.pdf",
-        skill: "deep-cleaning-certificate-vikram.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0003",
@@ -208,13 +204,11 @@
         comment: "Quick AC repair service.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-imran-khan.pdf",
-        address: "electricity-bill-tagore-town.pdf",
-        skill: "ac-repair-diploma-imran.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0004",
@@ -249,7 +243,8 @@
         category: "Repairing",
         price: 549,
         estimatedDuration: "2-3 hours",
-        description: "Reliable washing machine repair services at your doorstep.",
+        description:
+          "Reliable washing machine repair services at your doorstep.",
         includes: ["Motor check", "Pipe repair", "Drain cleaning"],
         availableToday: false,
         availableTomorrow: true,
@@ -272,13 +267,11 @@
         comment: "Affordable and professional.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-sanjay-verma.pdf",
-        address: "electricity-bill-chak-raghunath.pdf",
-        skill: "washing-machine-certificate-sanjay.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0005",
@@ -337,13 +330,11 @@
         comment: "Excellent electrical work.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-arjun-verma.pdf",
-        address: "electricity-bill-tashkent-marg.pdf",
-        skill: "electrician-diploma-arjun.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0006",
@@ -401,13 +392,11 @@
         comment: "Clean installation work.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-deepaka-joshi.pdf",
-        address: "electricity-bill-trivenipuram.pdf",
-        skill: "tv-installation-course-deepaka.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0007",
@@ -465,13 +454,11 @@
         comment: "Very smooth installation process.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-naveen-kumar.pdf",
-        address: "electricity-bill-green-park.pdf",
-        skill: "ro-installation-certificate-naveen.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0008",
@@ -529,13 +516,11 @@
         comment: "Laptop fixed within a day.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-akash-mehta.pdf",
-        address: "electricity-bill-gandhi-colony.pdf",
-        skill: "hardware-repair-diploma-akash.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0009",
@@ -593,13 +578,11 @@
         comment: "Internet speed improved a lot.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-ravina-menon.pdf",
-        address: "electricity-bill-signal-view.pdf",
-        skill: "network-support-certificate-ravina.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0010",
@@ -657,13 +640,11 @@
         comment: "Excellent grooming experience.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-aditya-kapoor.pdf",
-        address: "electricity-bill-amar-sagar.pdf",
-        skill: "hairstyling-course-aditya.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0011",
@@ -721,13 +702,11 @@
         comment: "Very relaxing and professional.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-sneha-arora.pdf",
-        address: "electricity-bill-sipri-bazaar.pdf",
-        skill: "spa-therapist-certificate-sneha.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0012",
@@ -786,13 +765,11 @@
         comment: "Beautiful paint finish.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-mahi-joshi.pdf",
-        address: "electricity-bill-baurari.pdf",
-        skill: "painting-license-mahi.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0013",
@@ -850,13 +827,11 @@
         comment: "Excellent furniture repair.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-harish-gupta.pdf",
-        address: "electricity-bill-mission-compound.pdf",
-        skill: "carpentry-diploma-harish.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0014",
@@ -914,13 +889,11 @@
         comment: "Delicious homemade food.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-ankit.pdf",
-        address: "electricity-bill-khati-baba.pdf",
-        skill: "food-safety-certificate-ankit.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0015",
@@ -978,13 +951,11 @@
         comment: "Outstanding catering experience.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-sameer.pdf",
-        address: "electricity-bill-kuvempunagar.pdf",
-        skill: "catering-fssai-sameer.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0016",
@@ -1042,19 +1013,17 @@
         comment: "Exceptional care for my grandmother.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-neha-sharma.pdf",
-        address: "electricity-bill-sunrise.pdf",
-        skill: "nursing-assistant-certificate-neha.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0017",
     role: "provider",
     providerName: "PipeFix Experts",
-    status: "approved",
+    status: "blocked",
     appliedAt: "2026-08-29",
     category: "Repairing",
     coverImage:
@@ -1109,13 +1078,11 @@
           "Fixed a leaking kitchen tap quickly at a fair price. Highly recommended.",
       },
     ],
-    documents: [
-      {
-        id: "aadhaar-rakesh-mishra.pdf",
-        address: "electricity-bill-old-gt-road.pdf",
-        skill: "plumbing-diploma-rakesh.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0018",
@@ -1165,13 +1132,11 @@
     lat: 25.435,
     lon: 81.84,
     reviews: [],
-    documents: [
-      {
-        id: "aadhaar-rahul-verma.pdf",
-        address: "electricity-bill-shashtri-nagar.pdf",
-        skill: "gardening-certificate-rahul.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0019",
@@ -1221,13 +1186,11 @@
     lat: 26.4499,
     lon: 80.3319,
     reviews: [],
-    documents: [
-      {
-        id: "aadhaar-nisha-patel.pdf",
-        address: "electricity-bill-kaushalpuri.pdf",
-        skill: "fitness-coach-certification-nisha.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
   {
     id: "PRV-0020",
@@ -1277,13 +1240,11 @@
     lat: 25.4484,
     lon: 78.5685,
     reviews: [],
-    documents: [
-      {
-        id: "aadhaar-faisal-khan.pdf",
-        address: "electricity-bill-vijay-nagar.pdf",
-        skill: "automotive-certificate-faisal.pdf",
-      },
-    ],
+    documents: {
+      id: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      address: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+      skill: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    },
   },
 ];
 

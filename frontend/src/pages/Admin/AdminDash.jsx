@@ -136,7 +136,7 @@ function AdminDash() {
           <p className="mt-1 text-sm text-blue-100">{todayLabel}</p>
         </div>
         <Link
-          to="/admin/providers?tab=pending"
+          to="/admin/providers"
           className="w-fit rounded-xl bg-white/10 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
         >
           {pendingApprovals.length} Pending Review
@@ -224,7 +224,7 @@ function AdminDash() {
                   ))}
                 </div>
                 <Link
-                  to="/admin/providers?tab=pending"
+                  to="/admin/providers"
                   className="mt-5 flex items-center justify-center gap-1 rounded-xl border border-amber-200 py-2.5 text-sm font-semibold text-amber-600 transition hover:bg-amber-50"
                 >
                   View All <FiArrowRight />

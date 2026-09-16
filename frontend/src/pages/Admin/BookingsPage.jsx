@@ -140,7 +140,7 @@ function BookingsPage() {
                     Status
                   </th>
                   <th className="px-4 py-3 font-semibold text-right whitespace-nowrap">
-                    Action
+                    View
                   </th>
                 </tr>
               </thead>
