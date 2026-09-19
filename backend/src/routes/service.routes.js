@@ -3,6 +3,7 @@ import {
   createService,
   deleteService,
   getAllServices,
+  getMyServices,
   getServiceById,
   updateService,
 } from "../controllers/service.controller.js";
@@ -12,6 +13,14 @@ import upload from "../middleware/upload.middleware.js";
 const router = Router();
 
 router.get("/", getAllServices);
+
+// must be declared before "/:id" so it is not treated as a service id
+router.get(
+  "/my-services",
+  protect,
+  authorize("admin", "provider"),
+  getMyServices,
+);
 
 router.get("/:id", getServiceById);
 

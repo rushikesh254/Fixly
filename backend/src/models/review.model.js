@@ -18,9 +18,12 @@ const reviewSchema = new mongoose.Schema(
       min: 1,
       max: 5,
     },
+    // optional, a customer may rate without writing anything
     comment: {
       type: String,
-      required: [true, "Comment is required"],
+      default: "",
+      trim: true,
+      maxLength: 1000,
     },
   },
   {

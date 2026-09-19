@@ -43,7 +43,7 @@ const createReview = async (req, res, next) => {
       user: req.user._id,
       service: serviceId,
       rating,
-      comment,
+      comment: comment || "",
     });
 
     completedBooking.isReviewed = true;
@@ -78,27 +78,4 @@ const getReviews = async (req, res, next) => {
   }
 };
 
-const deleteReview = async (req, res, next) => {
-  try {
-    const { reviewId } = req.params;
-
-    const review = await ReviewModel.findById(reviewId);
-    if (!review) {
-      return res.status(404).json({ success: false, message: "Review not found" });
-    }
-
-    if (review.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ success: false, message: "Unauthorized" });
-    }
-
-    await review.deleteOne();
-
-    res.status(200).json({ success: true, message: "Review deleted" });
-  } catch (error) {
-    console.error("Error deleting review:", error);
-    error.statusCode = 500;
-    next(error);
-  }
-};
-
-export { createReview, deleteReview, getReviews };
+export { createReview, getReviews };

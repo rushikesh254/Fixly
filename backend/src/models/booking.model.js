@@ -30,10 +30,23 @@ const bookingSchema = new mongoose.Schema(
       type: String,
       required: [true, "Address is required"],
     },
-    status: {
+    // notes the customer leaves for the provider when booking
+    specialInstructions: {
       type: String,
-      enum: ["pending", "confirmed", "completed", "cancelled"],
+      default: "",
+    },
+    status: {
+      // "rejected" means the provider declined the request, "cancelled" means
+      // the customer or provider called off an accepted booking
+      type: String,
+      enum: ["pending", "confirmed", "completed", "cancelled", "rejected"],
       default: "pending",
+    },
+    // there is no payment gateway yet, this only tracks how the job will be paid
+    paymentStatus: {
+      type: String,
+      enum: ["Pay after Service", "Paid", "Not Paid"],
+      default: "Pay after Service",
     },
     amount: {
       type: Number,
@@ -48,6 +61,11 @@ const bookingSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // timestamps for the status timeline shown in the booking detail modal
+    confirmedAt: Date,
+    completedAt: Date,
+    cancelledAt: Date,
+    rejectedAt: Date,
   },
 
   { timestamps: true },

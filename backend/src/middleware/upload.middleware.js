@@ -2,6 +2,9 @@ import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "../utils/cloudinary.js";
 
+const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
@@ -10,8 +13,19 @@ const storage = new CloudinaryStorage({
   },
 });
 
-const upload = multer({ storage });
+// Reject files that are not genuine images before they reach Cloudinary
+const fileFilter = (_req, file, cb) => {
+  if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only JPG, PNG, and WebP images are allowed"), false);
+  }
+};
+
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: MAX_FILE_SIZE_BYTES },
+});
 
 export default upload;
-
-// this is multer middleware for handling file uploads to cloudinary. It uses CloudinaryStorage to store files in a specified folder on Cloudinary. The allowed formats for uploaded files are jpg, png, jpeg, and webp. files are not stored locally on the server, but directly uploaded to cloudinary.

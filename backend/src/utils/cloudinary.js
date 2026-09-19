@@ -6,5 +6,3 @@ cloudinary.config({
 });
 
 export default cloudinary;
-
-// we can use this for upload,delete and other operations with cloudinary

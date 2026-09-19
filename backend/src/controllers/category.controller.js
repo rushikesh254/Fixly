@@ -37,23 +37,4 @@ const getAllCategories = async (req, res, next) => {
   }
 };
 
-const deleteCategory = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const category = await CategoryModel.findById(id);
-
-    if (!category) {
-      return res.status(404).json({ success: false, message: "Category not found" });
-    }
-
-    await CategoryModel.findByIdAndDelete(id);
-
-    res.status(200).json({ success: true, message: "Category deleted successfully", category });
-  } catch (error) {
-    console.error("Error deleting category:", error);
-    error.statusCode = 500;
-    next(error);
-  }
-};
-
-export { createCategory, deleteCategory, getAllCategories };
+export { createCategory, getAllCategories };

@@ -20,7 +20,14 @@ const serviceSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Service duration is required"],
       min: 1,
-      default: 60, // duration in minutes ( 1 hour )
+      default: 60, // duration in minutes ( 1 hour ), used to detect overlapping bookings
+    },
+    // human readable duration shown to customers eg "2-3 hours", the numeric
+    // duration above stays the source of truth for scheduling
+    estimatedDuration: {
+      type: String,
+      default: "",
+      trim: true,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -36,9 +43,23 @@ const serviceSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    // what the service covers, shown as a checklist on the details page
+    includes: {
+      type: [String],
+      default: [],
+    },
+    availableToday: {
+      type: Boolean,
+      default: false,
+    },
+    instantBooking: {
+      type: Boolean,
+      default: false,
+    },
+    // optional, falls back to the provider's default saved address
     address: {
       type: String,
-      required: [true, "Service address is required"],
+      default: "",
     },
     // location is stored as GeoJSON Point (longitude, latitude) eg { type: "Point", coordinates: [longitude, latitude] } used to calculate distance between user and service provider
     location: {
@@ -58,17 +79,6 @@ const serviceSchema = new mongoose.Schema(
 
 // Create a geospatial index on the location field to enable geospatial queries (e.g., finding services near a user's location)
 serviceSchema.index({ location: "2dsphere" });
-
-// Virtual field to populate reviews for a service (assuming a Review model exists with a reference to the Service model)
-serviceSchema.virtual("reviews", {
-  ref: "Review",
-  localField: "_id",
-  foreignField: "service",
-});
-
-// Ensure virtual fields are included when converting documents to JSON or Objects
-serviceSchema.set("toJSON", { virtuals: true });
-serviceSchema.set("toObject", { virtuals: true });
 
 const ServiceModel = mongoose.model("Service", serviceSchema);
 

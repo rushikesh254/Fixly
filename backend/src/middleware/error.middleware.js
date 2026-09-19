@@ -1,7 +1,13 @@
 // Error handling middleware to catch and handle errors in the application
 const errorHandler = (err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
+  let statusCode = err.statusCode || 500;
+  let message = err.message || "Internal Server Error";
+
+  // an invalid ObjectId is a client mistake, not a server crash
+  if (err.name === "CastError" && err.kind === "ObjectId") {
+    statusCode = 400;
+    message = "Invalid resource identifier";
+  }
 
   if (process.env.NODE_ENV === "development") {
     console.error(err.stack);
