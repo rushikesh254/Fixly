@@ -1,4 +1,4 @@
-import { FaUserCheck } from "react-icons/fa";
+import { FaStar, FaUserCheck } from "react-icons/fa";
 import { TbUserCheck } from "react-icons/tb";
 import { TiBriefcase } from "react-icons/ti";
 import PrimaryBtn from "../ui/PrimaryBtn";
@@ -32,6 +32,14 @@ function ProviderCard({ provider, onBook }) {
           <p className="mt-1 text-sm font-semibold text-gray-500">
             {provider.providerName}
           </p>
+
+          <div className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-amber-500">
+            <FaStar className="fill-current" />
+            <span>{expert.rating}</span>
+            <span className="font-normal text-gray-400">
+              ({expert.totalReviews} reviews)
+            </span>
+          </div>
 
           <div className="mt-3 flex flex-wrap gap-2">
             <span className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700">

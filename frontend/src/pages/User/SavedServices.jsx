@@ -1,9 +1,11 @@
 import { useSaved } from "../../context/savedContext";
 import EmptyState from "../../components/ui/EmptyState";
+import Loader, { ErrorState } from "../../components/ui/Loader";
 import SavedCard from "../../components/user/SavedCard";
 
 function SavedServices() {
-  const { savedServices } = useSaved();
+  const { savedServices, loading, error, refresh } = useSaved();
+
   return (
     <div className="p-7">
       {/* Header */}
@@ -16,7 +18,11 @@ function SavedServices() {
         </p>
       </div>
       <div className="flex flex-col gap-4 mt-10">
-        {savedServices.length === 0 ? (
+        {loading && <Loader label="Loading your saved services..." />}
+
+        {!loading && error && <ErrorState message={error} onRetry={refresh} />}
+
+        {!loading && !error && savedServices.length === 0 ? (
           <EmptyState
             title="No Services Saved"
             description="You haven't saved any services yet. Save services to quickly
@@ -26,6 +32,8 @@ function SavedServices() {
             className={`bg-amber-500 hover:bg-amber-600`}
           />
         ) : (
+          !loading &&
+          !error &&
           savedServices.map((booking) => (
             <SavedCard key={booking.id} booking={booking} compact />
           ))

@@ -6,7 +6,9 @@ import { CiCamera } from "react-icons/ci";
 import { FaRegEdit } from "react-icons/fa";
 import { FiCalendar } from "react-icons/fi";
 import { toast } from "sonner";
+import defaultAvatar from "../../assets/avatardefault.png";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { getApiErrorMessage } from "../../utils/apiError.js";
 
 const inputClass = (isEditing) =>
   `w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition ${
@@ -16,18 +18,22 @@ const inputClass = (isEditing) =>
   }`;
 
 export function PersonalTab({ user }) {
-  const { updateUser, setUser } = useAuth();
+  const { updateProfile } = useAuth();
 
   // State to track if the form is in edit mode
   const [isEditing, setIsEditing] = useState(false);
+  const [profileFile, setProfileFile] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Function to handle profile photo change
+  // preview the picked photo until the form is submitted and it is uploaded
+  const [photoPreview, setPhotoPreview] = useState(null);
+
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    const imgURL = URL.createObjectURL(file);
-    setUser((prev) => ({ ...prev, image: imgURL }));
+    setProfileFile(file);
+    setPhotoPreview(URL.createObjectURL(file));
   };
 
   // State for date of birth
@@ -60,16 +66,26 @@ export function PersonalTab({ user }) {
     dob: user.dob || "",
   });
 
-  const onSubmit = (data) => {
-    updateUser({
-      name: data.name,
-      email: data.email,
-      phoneNumber: data.phone,
-      gender: data.gender,
-      dob: data.dob,
-    });
-    setIsEditing(false);
-    toast.success("Personal details updated!");
+  const onSubmit = async (data) => {
+    setIsSaving(true);
+    try {
+      await updateProfile({
+        name: data.name,
+        phoneNumber: data.phone,
+        gender: data.gender,
+        dob: data.dob,
+        profileImage: profileFile,
+      });
+      setProfileFile(null);
+      setIsEditing(false);
+      toast.success("Profile updated!");
+    } catch (err) {
+      toast.error(
+        getApiErrorMessage(err, "Failed to update profile. Try again."),
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -84,7 +100,7 @@ export function PersonalTab({ user }) {
         <div className="relative inline-block">
           <div>
             <img
-              src={user.image}
+              src={photoPreview || user.image || defaultAvatar}
               alt="User Avatar"
               className="h-24 w-24 rounded-full border-2 border-white object-cover shadow-md"
             />
@@ -180,22 +196,15 @@ export function PersonalTab({ user }) {
             Email Address
           </label>
 
+          {/* the email identifies the account and would need re-verification to
+              change, so it stays read only */}
           <input
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Please enter a valid email",
-              },
-            })}
+            {...register("email")}
             id="email"
             type="email"
-            readOnly={!isEditing}
-            className={inputClass(isEditing)}
+            readOnly
+            className={inputClass(false)}
           />
-          {errors.email && (
-            <p className="text-xs text-red-500">{errors.email.message}</p>
-          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -270,9 +279,10 @@ export function PersonalTab({ user }) {
           <div className="flex gap-3 md:col-span-2">
             <button
               type="submit"
-              className="cursor-pointer rounded-full bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
+              disabled={isSaving}
+              className="cursor-pointer rounded-full bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:opacity-60"
             >
-              Save Changes
+              {isSaving ? "Saving..." : "Save Changes"}
             </button>
           </div>
         )}

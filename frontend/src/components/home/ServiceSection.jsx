@@ -1,22 +1,31 @@
+import { useCallback } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import services from "../../data/services";
-import providers from "../../data/providers";
+import { getServices } from "../../api/services";
+import Loader, { ErrorState } from "../ui/Loader";
 import ServiceCard from "../ui/ServiceCard";
+import { useFetch } from "../../hooks/useFetch";
+import { normalizeService } from "../../utils/normalize";
+
+// number of services shown on the landing page
+const TOP_SERVICES = 4;
 
 function ServiceSection() {
-  const topProviders = providers.slice(0, 4);
-  const serviceNameById = Object.fromEntries(
-    services.map((service) => [service.id, service.name]),
+  // the best rated services stand in for "top booked" until booking volume is
+  // exposed per service
+  const fetchServices = useCallback(
+    () =>
+      getServices().then((res) =>
+        res.data.services
+          .map(normalizeService)
+          .sort((a, b) => b.rating - a.rating)
+          .slice(0, TOP_SERVICES),
+      ),
+    [],
   );
-  const providersWithServiceName = topProviders.map((provider) => {
-    const primaryService = provider.services?.[0] || {};
-    return {
-      ...provider,
-      ...primaryService,
-      service:
-        serviceNameById[primaryService.serviceId] ?? primaryService.title,
-    };
+
+  const { data: services, loading, error, refetch } = useFetch(fetchServices, {
+    initialData: [],
   });
 
   return (
@@ -32,13 +41,30 @@ function ServiceSection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-10">
-        {providersWithServiceName.map((service, index) => (
-          <div key={index} className="w-full">
-            <ServiceCard service={service} />
-          </div>
-        ))}
-      </div>
+      {loading && <Loader label="Loading services..." className="mb-10" />}
+
+      {!loading && error && (
+        <ErrorState message={error} onRetry={refetch} className="mb-10" />
+      )}
+
+      {!loading && !error && services.length === 0 && (
+        <div className="mb-10 flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-200 bg-white py-16 text-center">
+          <p className="font-semibold text-gray-900">No services yet</p>
+          <p className="max-w-xs text-sm text-gray-500">
+            Services will appear here as soon as providers start publishing them.
+          </p>
+        </div>
+      )}
+
+      {!loading && !error && services.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-10">
+          {services.map((service) => (
+            <div key={service.id} className="w-full">
+              <ServiceCard service={service} />
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="flex items-center justify-center">
         <Link

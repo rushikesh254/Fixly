@@ -1,8 +1,46 @@
-import { useState } from "react";
-import HorizontalCard from "../../components/user/HorizontalCard";
-import { userBookings } from "../../data/bookings";
-import EmptyState from "../../components/ui/EmptyState";
+import { useCallback, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
+import { getMyBookings } from "../../api/bookings";
+import EmptyState from "../../components/ui/EmptyState";
+import Loader, { ErrorState } from "../../components/ui/Loader";
+import HorizontalCard from "../../components/user/HorizontalCard";
+import { useFetch } from "../../hooks/useFetch";
+import getBookingDateTime from "../../utils/getBookingDateTime";
+import { normalizeBooking } from "../../utils/normalize";
+
+// empty state copy per tab, keyed by the tab label
+const EMPTY_STATES = {
+  "All Bookings": {
+    title: "No Bookings Yet",
+    description:
+      "You haven't booked any services yet. Explore services and schedule your first appointment.",
+    buttonText: "Browse Services",
+    buttonLink: "services",
+  },
+  Confirmed: {
+    title: "No Confirmed Bookings",
+    description:
+      "You don't have any confirmed service appointments at the moment.",
+    buttonText: "Browse Services",
+    buttonLink: "services",
+  },
+  Pending: {
+    title: "No Pending Bookings",
+    description: "You don't have any booking requests awaiting confirmation.",
+  },
+  Completed: {
+    title: "No Completed Services",
+    description: "Your completed service history will appear here.",
+  },
+  Cancelled: {
+    title: "No Cancelled Services",
+    description: "Your cancelled service history will appear here.",
+  },
+  Rejected: {
+    title: "No Rejected Requests",
+    description: "Requests a provider could not take will appear here.",
+  },
+};
 
 function MyBookings() {
   const tabs = [
@@ -11,6 +49,7 @@ function MyBookings() {
     "Pending",
     "Completed",
     "Cancelled",
+    "Rejected",
   ];
   // State to track the active tab
   const [activeTab, setActiveTab] = useState("All Bookings");
@@ -18,66 +57,61 @@ function MyBookings() {
   // State to track the search query
   const [searchQuery, setSearchQuery] = useState("");
 
-  const confirmedBookings = userBookings
-    .filter((booking) => booking.status === "Confirmed")
-    .sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      if (dateA < dateB) return -1;
-      if (dateA > dateB) return 1;
-    });
+  const fetchBookings = useCallback(
+    () =>
+      getMyBookings().then((res) => res.data.bookings.map(normalizeBooking)),
+    [],
+  );
 
-  const pendingBookings = userBookings
-    .filter((booking) => booking.status === "Pending")
-    .sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      if (dateA < dateB) return -1;
-      if (dateA > dateB) return 1;
-    });
+  const {
+    data: userBookings,
+    loading,
+    error,
+    refetch,
+  } = useFetch(fetchBookings, { initialData: [] });
 
-  const completedBookings = userBookings
-    .filter((booking) => booking.status === "Completed")
-    .sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      if (dateA < dateB) return -1;
-      if (dateA > dateB) return 1;
-    });
+  // soonest first within every status
+  const byStatus = useCallback(
+    (status) =>
+      (userBookings || [])
+        .filter((booking) => booking.status === status)
+        .sort((a, b) => getBookingDateTime(a) - getBookingDateTime(b)),
+    [userBookings],
+  );
 
-  const cancelledBookings = userBookings
-    .filter((booking) => booking.status === "Cancelled")
-    .sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      if (dateA < dateB) return -1;
-      if (dateA > dateB) return 1;
-    });
+  const bookingsByTab = useMemo(
+    () => ({
+      "All Bookings": [...(userBookings || [])].sort(
+        (a, b) => getBookingDateTime(b) - getBookingDateTime(a),
+      ),
+      Confirmed: byStatus("Confirmed"),
+      Pending: byStatus("Pending"),
+      Completed: byStatus("Completed"),
+      Cancelled: byStatus("Cancelled"),
+      Rejected: byStatus("Rejected"),
+    }),
+    [userBookings, byStatus],
+  );
 
   // Count of bookings for each tab
-  const tabCounts = {
-    "All Bookings": userBookings.length,
-    Confirmed: confirmedBookings.length,
-    Pending: pendingBookings.length,
-    Completed: completedBookings.length,
-    Cancelled: cancelledBookings.length,
-  };
-
-  // Object to map tab names to their corresponding bookings
-  const bookingsByTab = {
-    "All Bookings": userBookings,
-    Confirmed: confirmedBookings,
-    Pending: pendingBookings,
-    Completed: completedBookings,
-    Cancelled: cancelledBookings,
-  };
+  const tabCounts = useMemo(
+    () =>
+      tabs.reduce((counts, tab) => {
+        counts[tab] = bookingsByTab[tab].length;
+        return counts;
+      }, {}),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bookingsByTab],
+  );
 
   // Filter bookings based on search query
   const displayedBookings = bookingsByTab[activeTab].filter((booking) =>
     `${booking.serviceTitle} ${booking.providerName}`
       .toLowerCase()
-      .includes(searchQuery.toLowerCase()),
+      .includes(searchQuery.trim().toLowerCase()),
   );
+
+  const emptyState = EMPTY_STATES[activeTab];
 
   return (
     <>
@@ -134,86 +168,32 @@ function MyBookings() {
             </button>
           ))}
         </div>
-        {/* Content based on active tab */}
-        <div className="mt-10">
-          {/* All Bookings */}
-          {activeTab === "All Bookings" && (
+
+        {/* Bookings list */}
+        <div>
+          {loading && <Loader label="Loading your bookings..." />}
+
+          {!loading && error && (
+            <ErrorState message={error} onRetry={refetch} />
+          )}
+
+          {!loading && !error && (
             <div className="flex flex-col gap-5">
               {displayedBookings.length !== 0 ? (
                 displayedBookings.map((booking) => (
-                  <HorizontalCard key={booking.id} booking={booking} />
+                  <HorizontalCard
+                    key={booking.id}
+                    booking={booking}
+                    onChanged={refetch}
+                  />
                 ))
               ) : (
                 <EmptyState
-                  title="No Bookings Yet"
-                  description="You haven't booked any services yet.
-                            Explore services and schedule your first appointment."
-                  buttonLink="services"
-                  buttonText="Browse Services"
+                  title={emptyState.title}
+                  description={emptyState.description}
+                  buttonLink={emptyState.buttonLink}
+                  buttonText={emptyState.buttonText}
                   className={`bg-blue-600 hover:bg-blue-700`}
-                />
-              )}
-            </div>
-          )}
-          {/* Confirmed Bookings */}
-          {activeTab === "Confirmed" && (
-            <div className="flex flex-col gap-5">
-              {displayedBookings.length !== 0 ? (
-                displayedBookings.map((booking) => (
-                  <HorizontalCard key={booking.id} booking={booking} />
-                ))
-              ) : (
-                <EmptyState
-                  title="No Confirmed Bookings"
-                  description="You don't have any confirmed service appointments at the moment."
-                  buttonLink="services"
-                  buttonText="Browse Services"
-                  className={`bg-blue-600 hover:bg-blue-700`}
-                />
-              )}
-            </div>
-          )}
-          {/* Pending Bookings */}
-          {activeTab === "Pending" && (
-            <div className="flex flex-col gap-5">
-              {displayedBookings.length !== 0 ? (
-                displayedBookings.map((booking) => (
-                  <HorizontalCard key={booking.id} booking={booking} />
-                ))
-              ) : (
-                <EmptyState
-                  title="No Pending Bookings"
-                  description="You don't have any booking requests awaiting confirmation."
-                />
-              )}
-            </div>
-          )}
-          {/* Completed Bookings */}
-          {activeTab === "Completed" && (
-            <div className="flex flex-col gap-5">
-              {displayedBookings.length !== 0 ? (
-                displayedBookings.map((booking) => (
-                  <HorizontalCard key={booking.id} booking={booking} />
-                ))
-              ) : (
-                <EmptyState
-                  title="No Completed Services"
-                  description="Your completed service history will appear here."
-                />
-              )}
-            </div>
-          )}
-          {/* Cancelled Bookings */}
-          {activeTab === "Cancelled" && (
-            <div className="flex flex-col gap-5">
-              {displayedBookings.length !== 0 ? (
-                displayedBookings.map((booking) => (
-                  <HorizontalCard key={booking.id} booking={booking} />
-                ))
-              ) : (
-                <EmptyState
-                  title="No Cancelled Services"
-                  description="Your cancelled service history will appear here."
                 />
               )}
             </div>

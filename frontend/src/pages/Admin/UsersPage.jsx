@@ -1,16 +1,32 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { users as usersData } from "../../data/users";
+import { toast } from "sonner";
+import { getAdminUsers, updateUserStatus } from "../../api/admin";
 import EmptyState from "../../components/ui/EmptyState";
+import Loader, { ErrorState } from "../../components/ui/Loader";
 import UserDetailModal from "../../components/admin/UserDetailModal";
 import SecondaryBtn from "../../components/ui/SecondaryBtn";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import defaultAvatar from "../../assets/avatardefault.png";
+import { useFetch } from "../../hooks/useFetch";
+import { getApiErrorMessage } from "../../utils/apiError";
+import { normalizeUserRow } from "../../utils/normalize";
 
 function UsersPage() {
   const tabs = ["active", "blocked"];
 
-  const [users, setUsers] = useState(usersData);
+  const fetchUsers = useCallback(
+    () => getAdminUsers().then((res) => res.data.users.map(normalizeUserRow)),
+    [],
+  );
+
+  const {
+    data: users,
+    loading,
+    error,
+    refetch,
+  } = useFetch(fetchUsers, { initialData: [] });
+
   const [activeTab, setActiveTab] = useState("active");
   const [selected, setSelected] = useState(null);
   const [blockTarget, setBlockTarget] = useState(null);
@@ -36,23 +52,34 @@ function UsersPage() {
   const currentList = listFor(activeTab);
 
   // filtered providers based on search query
+  const query = searchQuery.trim().toLowerCase();
   const filteredList = currentList.filter(
     (u) =>
-      u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      u.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      u.phone.toLowerCase().includes(searchQuery.toLowerCase()),
+      (u.name || "").toLowerCase().includes(query) ||
+      (u.email || "").toLowerCase().includes(query) ||
+      (u.phone || "").toLowerCase().includes(query),
   );
 
   // set user status
-  const setStatus = (id, status) => {
-    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, status } : u)));
-    setSelected(null);
+  const setStatus = async (id, status) => {
+    try {
+      await updateUserStatus(id, status);
+      setSelected(null);
+      toast.success(
+        status === "blocked"
+          ? "User blocked successfully."
+          : "User unblocked successfully.",
+      );
+      refetch();
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Could not update this user."));
+    }
   };
 
   const handleUnblock = () => setStatus(selected.id, "active");
 
-  const handleBlock = () => {
-    setStatus(blockTarget.id, "blocked");
+  const handleBlock = async () => {
+    await setStatus(blockTarget.id, "blocked");
     setBlockTarget(null);
   };
 
@@ -123,7 +150,13 @@ function UsersPage() {
       </div>
 
       {/* Content */}
-      {filteredList.length === 0 ? (
+      {loading && <Loader label="Loading users..." className="mt-8" />}
+
+      {!loading && error && (
+        <ErrorState message={error} onRetry={refetch} className="mt-8" />
+      )}
+
+      {!loading && !error && filteredList.length === 0 ? (
         <div className="mt-8">
           <EmptyState
             title="No users found"
@@ -131,6 +164,8 @@ function UsersPage() {
           />
         </div>
       ) : (
+        !loading &&
+        !error && (
         <>
           {/* Table */}
           <div className="hidden md:block mt-6 overflow-x-auto rounded-2xl border border-gray-200 bg-white">
@@ -229,6 +264,7 @@ function UsersPage() {
             ))}
           </div>
         </>
+        )
       )}
 
       {/* Detail Modal */}

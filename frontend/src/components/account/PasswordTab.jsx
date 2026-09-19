@@ -1,7 +1,11 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { changePassword } from "../../api/auth";
+import { useAuth } from "../../context/AuthContext";
+import { getApiErrorMessage } from "../../utils/apiError";
 
 export function PasswordTab() {
   const {
@@ -12,9 +16,27 @@ export function PasswordTab() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = () => {
-    toast.success("Password changed successfully!");
-    reset();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const onSubmit = async (data) => {
+    setIsSaving(true);
+    try {
+      const res = await changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
+      reset();
+      toast.success(res.data.message || "Password changed successfully!");
+      // the server invalidates every session on a password change
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Could not change your password."));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Password visibility state
@@ -28,8 +50,9 @@ export function PasswordTab() {
   return (
     <div className="max-w-xl">
       <p className="mb-6 text-[13px] text-gray-500">
-        Your password must be at least 6 characters long and should not be
-        shared with anyone.
+        Your password must be at least 8 characters long, include an uppercase
+        letter, a lowercase letter and a number, and should not be shared with
+        anyone.
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
@@ -83,8 +106,15 @@ export function PasswordTab() {
               {...register("newPassword", {
                 required: "New password is required",
                 minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters",
+                  value: 8,
+                  message: "Password must be at least 8 characters",
+                },
+                validate: {
+                  hasUpper: (value) =>
+                    /[A-Z]/.test(value) || "Add an uppercase letter",
+                  hasLower: (value) =>
+                    /[a-z]/.test(value) || "Add a lowercase letter",
+                  hasNumber: (value) => /[0-9]/.test(value) || "Add a number",
                 },
               })}
               id="newPassword"
@@ -150,9 +180,10 @@ export function PasswordTab() {
         <div>
           <button
             type="submit"
-            className="mt-2 cursor-pointer rounded-full bg-blue-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-blue-700"
+            disabled={isSaving}
+            className="mt-2 cursor-pointer rounded-full bg-blue-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Update Password
+            {isSaving ? "Updating..." : "Update Password"}
           </button>
         </div>
       </form>

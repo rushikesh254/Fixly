@@ -1,47 +1,66 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
-import bookings from "../../data/bookings";
+import { getMyBookings, updateBookingStatus } from "../../api/bookings";
 import EmptyState from "../../components/ui/EmptyState";
+import Loader, { ErrorState } from "../../components/ui/Loader";
 import BookingDetailModal from "../../components/provider/BookingDetailModal";
 import { FiCalendar, FiMapPin } from "react-icons/fi";
+import { useFetch } from "../../hooks/useFetch";
+import { getApiErrorMessage } from "../../utils/apiError";
 import getBookingDateTime from "../../utils/getBookingDateTime";
 import formatDate from "../../utils/formatDate";
+import { normalizeBooking } from "../../utils/normalize";
 
 function Upcoming() {
-  //  copy of this provider's bookings
-  const [myBookings, setMyBookings] = useState(
-    bookings.filter((b) => b.providerId === "PRV-0001"),
+  const fetchBookings = useCallback(
+    () =>
+      getMyBookings().then((res) => res.data.bookings.map(normalizeBooking)),
+    [],
   );
+
+  const {
+    data: myBookings,
+    loading,
+    error,
+    refetch,
+  } = useFetch(fetchBookings, { initialData: [] });
 
   const [selectedBooking, setSelectedBooking] = useState(null);
 
-  // Update a booking's status
-  const updateStatus = (id, newStatus) => {
-    setMyBookings(
-      myBookings.map((b) => (b.id === id ? { ...b, status: newStatus } : b)),
-    );
+  // Update a booking's status on the server, then reload the list
+  const updateStatus = async (id, newStatus, successMessage) => {
+    try {
+      await updateBookingStatus(id, newStatus);
+      setSelectedBooking(null);
+      toast.success(successMessage);
+      refetch();
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Could not update this booking."));
+    }
   };
 
   // Completed bookings
-  const handleComplete = () => {
-    updateStatus(selectedBooking.id, "Completed");
-    setSelectedBooking(null);
-    toast.success("Booking marked as completed.");
-  };
+  const handleComplete = () =>
+    updateStatus(
+      selectedBooking.id,
+      "completed",
+      "Booking marked as completed.",
+    );
 
   // Reject Booking
-  const handleReject = () => {
-    updateStatus(selectedBooking.id, "Rejected");
-    setSelectedBooking(null);
-    toast.info("Booking rejected.");
-  };
+  const handleReject = () =>
+    updateStatus(selectedBooking.id, "rejected", "Booking rejected.");
 
   // Only confirmed bookings that are still upcoming
-  const upcomingBookings = myBookings
-    .filter(
-      (b) => b.status === "Confirmed" && getBookingDateTime(b) >= new Date(),
-    )
-    .sort((a, b) => getBookingDateTime(a) - getBookingDateTime(b));
+  const upcomingBookings = useMemo(
+    () =>
+      (myBookings || [])
+        .filter(
+          (b) => b.status === "Confirmed" && getBookingDateTime(b) >= new Date(),
+        )
+        .sort((a, b) => getBookingDateTime(a) - getBookingDateTime(b)),
+    [myBookings],
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 px-5 py-8 sm:px-8 lg:px-15">
@@ -63,7 +82,9 @@ function Upcoming() {
 
       {/* Bookings List */}
       <div className="mt-8">
-        {upcomingBookings.length === 0 ? (
+        {loading && <Loader label="Loading bookings..." />}
+        {!loading && error && <ErrorState message={error} onRetry={refetch} />}
+        {!loading && !error && upcomingBookings.length === 0 ? (
           <EmptyState
             title="No upcoming bookings"
             description="When you will confirm bookings, they will appear here. You can mark them as completed once the service is done."
@@ -72,6 +93,8 @@ function Upcoming() {
             className="bg-blue-600 hover:bg-blue-700"
           />
         ) : (
+          !loading &&
+          !error && (
           <div className="flex flex-col gap-4">
             {upcomingBookings.map((booking) => (
               <div
@@ -108,8 +131,9 @@ function Upcoming() {
                   </span>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
         )}
       </div>
 

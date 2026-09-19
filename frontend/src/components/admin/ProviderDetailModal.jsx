@@ -1,4 +1,4 @@
-import { FiArrowLeft, FiFile } from "react-icons/fi";
+import { FiArrowLeft } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import SecondaryBtn from "../ui/SecondaryBtn";
@@ -16,7 +16,6 @@ function ProviderDetailModal({
   const address = provider.address
     ? Object.values(provider.address).filter(Boolean).join(", ")
     : provider.location || "";
-  const doc = <provider className="documents"></provider>;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
@@ -212,66 +211,6 @@ function ProviderDetailModal({
             )}
           </div>
 
-          {/* Documents */}
-          {(provider.status === "pending" ||
-            provider.status === "approved") && (
-            <div className="px-5 py-4">
-              <h2 className="font-semibold text-[13px] flex items-center gap-2 mb-3">
-                <span className="w-1 h-5 rounded-full inline-block bg-rose-500"></span>
-                DOCUMENTS
-              </h2>
-              {doc ? (
-                <div className="flex items-start gap-5">
-                  <a
-                    href={doc.id}
-                    target="_blank"
-                    rel="noreferrer"
-                    title={doc.id}
-                    className="group flex flex-col items-center"
-                  >
-                    <div className="flex h-16 w-20 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 transition group-hover:border-blue-300 group-hover:bg-blue-50">
-                      <FiFile size={24} className="text-red-400" />
-                    </div>
-                    <span className="mt-1 max-w-20 truncate text-[10px] font-medium text-slate-500">
-                      ID Proof
-                    </span>
-                  </a>
-                  <a
-                    href={doc.address}
-                    target="_blank"
-                    rel="noreferrer"
-                    title={doc.address}
-                    className="group flex flex-col items-center"
-                  >
-                    <div className="flex h-16 w-20 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 transition group-hover:border-blue-300 group-hover:bg-blue-50">
-                      <FiFile size={24} className="text-red-400" />
-                    </div>
-                    <span className="mt-1 max-w-20 truncate text-[10px] font-medium text-slate-500">
-                      Address Proof
-                    </span>
-                  </a>
-                  <a
-                    href={doc.skill}
-                    target="_blank"
-                    rel="noreferrer"
-                    title={doc.skill}
-                    className="group flex flex-col items-center"
-                  >
-                    <div className="flex h-16 w-20 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 transition group-hover:border-blue-300 group-hover:bg-blue-50">
-                      <FiFile size={24} className="text-red-400" />
-                    </div>
-                    <span className="mt-1 max-w-20 truncate text-[10px] font-medium text-slate-500">
-                      Skill Proof
-                    </span>
-                  </a>
-                </div>
-              ) : (
-                <p className="text-[12px] text-slate-500">
-                  No documents uploaded.
-                </p>
-              )}
-            </div>
-          )}
         </div>
 
         {/* actions */}

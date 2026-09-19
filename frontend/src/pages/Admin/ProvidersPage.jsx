@@ -1,18 +1,40 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
-import providersData from "../../data/providers";
+import { toast } from "sonner";
+import {
+  getAdminProviders,
+  updateProviderStatus,
+} from "../../api/admin";
 import ProviderDetailModal from "../../components/admin/ProviderDetailModal";
+import Loader, { ErrorState } from "../../components/ui/Loader";
 import SecondaryBtn from "../../components/ui/SecondaryBtn";
 import EmptyState from "../../components/ui/EmptyState";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import defaultAvatar from "../../assets/avatardefault.png";
+import { useFetch } from "../../hooks/useFetch";
+import { getApiErrorMessage } from "../../utils/apiError";
 import formatDate from "../../utils/formatDate";
+import { normalizeProvider } from "../../utils/normalize";
 
 function ProvidersPage() {
   const tabs = ["pending", "approved", "rejected", "blocked"];
 
-  const [providers, setProviders] = useState(providersData);
+  const fetchProviders = useCallback(
+    () =>
+      getAdminProviders().then((res) =>
+        res.data.providers.map(normalizeProvider),
+      ),
+    [],
+  );
+
+  const {
+    data: providers,
+    loading,
+    error,
+    refetch,
+  } = useFetch(fetchProviders, { initialData: [] });
+
   const [activeTab, setActiveTab] = useState("pending");
   const [selected, setSelected] = useState(null);
   const [blockTarget, setBlockTarget] = useState(null);
@@ -50,20 +72,26 @@ function ProvidersPage() {
   );
 
   // set provider status
-  const setStatus = (id, status) => {
-    setProviders((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status } : p)),
-    );
-    setSelected(null);
+  const setStatus = async (id, status) => {
+    try {
+      await updateProviderStatus(id, status);
+      setSelected(null);
+      toast.success(`Provider ${status} successfully.`);
+      refetch();
+    } catch (err) {
+      toast.error(
+        getApiErrorMessage(err, "Could not update this provider."),
+      );
+    }
   };
 
   const handleApprove = () => setStatus(selected.id, "approved");
   const handleReject = () => setStatus(selected.id, "rejected");
   const handleUnblock = () => setStatus(selected.id, "approved");
 
-  const confirmBlock = () => {
+  const confirmBlock = async () => {
     if (!blockTarget) return;
-    setStatus(blockTarget.id, "blocked");
+    await setStatus(blockTarget.id, "blocked");
     setBlockTarget(null);
   };
 
@@ -134,7 +162,13 @@ function ProvidersPage() {
       </div>
 
       {/* Content */}
-      {filteredList.length === 0 ? (
+      {loading && <Loader label="Loading providers..." className="mt-8" />}
+
+      {!loading && error && (
+        <ErrorState message={error} onRetry={refetch} className="mt-8" />
+      )}
+
+      {!loading && !error && filteredList.length === 0 ? (
         <div className="mt-8">
           <EmptyState
             title="No providers found"
@@ -142,6 +176,8 @@ function ProvidersPage() {
           />
         </div>
       ) : (
+        !loading &&
+        !error && (
         <>
           {/* Table */}
           <div className="hidden md:block mt-6 overflow-x-auto rounded-2xl border border-gray-200 bg-white">
@@ -300,6 +336,7 @@ function ProvidersPage() {
             ))}
           </div>
         </>
+        )
       )}
 
       {/* Detail Modal */}

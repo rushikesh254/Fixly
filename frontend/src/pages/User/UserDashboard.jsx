@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { cancelBooking, getMyBookings } from "../../api/bookings";
+import { getMyActivities } from "../../api/users";
 import DetailModal from "../../components/user/DetailModal";
 import { useSaved } from "../../context/savedContext";
-import { userBookings } from "../../data/bookings";
-import recentActivities from "../../data/recentActivities";
 
 import {
   CiBookmarkCheck,
@@ -16,30 +16,64 @@ import { MdOutlineAccessTime } from "react-icons/md";
 import { TfiMoney } from "react-icons/tfi";
 import { toast } from "sonner";
 import EmptyState from "../../components/ui/EmptyState";
+import Loader, { ErrorState, InlineLoader } from "../../components/ui/Loader";
 import PrimaryBtn from "../../components/ui/PrimaryBtn";
 import SecondaryBtn from "../../components/ui/SecondaryBtn";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import HorizontalCard from "../../components/user/HorizontalCard";
 import SavedCard from "../../components/user/SavedCard";
 import { useAuth } from "../../context/AuthContext";
+import { useFetch } from "../../hooks/useFetch";
+import { getApiErrorMessage } from "../../utils/apiError";
+import formatDate from "../../utils/formatDate";
+import getBookingDateTime from "../../utils/getBookingDateTime";
+import { normalizeBooking } from "../../utils/normalize";
 
 function UserDashboard() {
   const { savedServices } = useSaved();
   const { user } = useAuth();
 
-  const upcomingBookings = userBookings.filter(
-    (b) => b.status === "Pending" || b.status === "Confirmed",
+  const fetchBookings = useCallback(
+    () =>
+      getMyBookings().then((res) => res.data.bookings.map(normalizeBooking)),
+    [],
+  );
+
+  const {
+    data: userBookings,
+    loading,
+    error,
+    refetch,
+  } = useFetch(fetchBookings, { initialData: [] });
+
+  const fetchActivities = useCallback(
+    () => getMyActivities().then((res) => res.data.activities),
+    [],
+  );
+  const {
+    data: recentActivities,
+    loading: activitiesLoading,
+    refetch: refetchActivities,
+  } = useFetch(fetchActivities, { initialData: [] });
+
+  // upcoming bookings, soonest first so "next service" really is the next one
+  const upcomingBookings = useMemo(
+    () =>
+      (userBookings || [])
+        .filter((b) => b.status === "Pending" || b.status === "Confirmed")
+        .sort((a, b) => getBookingDateTime(a) - getBookingDateTime(b)),
+    [userBookings],
   );
 
   const nextBooking = upcomingBookings[0] ?? null;
 
   const upcomingCount = upcomingBookings.length;
 
-  const completedCount = userBookings.filter(
+  const completedCount = (userBookings || []).filter(
     (b) => b.status === "Completed",
   ).length;
 
-  const totalSpent = userBookings
+  const totalSpent = (userBookings || [])
     .filter((b) => b.status === "Completed")
     .reduce((sum, b) => sum + b.price, 0);
 
@@ -74,6 +108,31 @@ function UserDashboard() {
   //state for cancel modal and detail modal
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  const handleCancel = async () => {
+    if (!nextBooking) return;
+    setIsCancelling(true);
+    try {
+      const { data } = await cancelBooking(nextBooking.id);
+      setShowCancelModal(false);
+      toast.success(
+        data.message || "Your booking has been cancelled successfully.",
+      );
+      refetch();
+      refetchActivities();
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Could not cancel this booking."));
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  // refresh the lists after a card action so the counters stay accurate
+  const handleBookingChanged = () => {
+    refetch();
+    refetchActivities();
+  };
 
   const statusConfig = {
     Pending: {
@@ -124,7 +183,7 @@ function UserDashboard() {
       <div className="rounded-2xl bg-blue-600 px-6 py-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:px-10">
         <div>
           <h1 className="text-2xl font-bold text-white">
-            Welcome Back, {user.name.split(" ")[0]}!
+            Welcome Back, {user?.name?.split(" ")[0] || "there"}!
           </h1>
           <p className="mt-1 text-sm text-blue-100">
             Here's a quick overview of your activity and upcoming services.
@@ -163,8 +222,14 @@ function UserDashboard() {
       {/* Main Content */}
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-8">
+          {loading && <Loader label="Loading your bookings..." />}
+
+          {!loading && error && (
+            <ErrorState message={error} onRetry={refetch} />
+          )}
+
           {/* next booking */}
-          {nextBooking && (
+          {!loading && !error && nextBooking && (
             <div className="rounded-2xl border-l-4 border-blue-500 bg-white border border-gray-200 p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
@@ -223,13 +288,14 @@ function UserDashboard() {
               </div>
             </div>
           )}
-          {showDetailModal && (
+          {showDetailModal && nextBooking && (
             <DetailModal
               booking={nextBooking}
               showDetailModal={showDetailModal}
               setShowDetailModal={setShowDetailModal}
               setShowCancelModal={setShowCancelModal}
               cfg={cfg}
+              onChanged={handleBookingChanged}
             />
           )}
           {showCancelModal && (
@@ -237,12 +303,9 @@ function UserDashboard() {
               title="Cancel this service?"
               message="Are you sure you want to cancel this booking? This action cannot be undone."
               cancelLabel="Keep Booking"
-              confirmLabel="Yes, Cancel"
+              confirmLabel={isCancelling ? "Cancelling..." : "Yes, Cancel"}
               onCancel={() => setShowCancelModal(false)}
-              onConfirm={() => {
-                setShowCancelModal(false);
-                toast.success("Your booking has been cancelled successfully.");
-              }}
+              onConfirm={handleCancel}
             />
           )}
           {/* Upcoming Bookings */}
@@ -262,7 +325,8 @@ function UserDashboard() {
             </div>
 
             <div className="flex flex-col gap-4 mt-5">
-              {upcomingCount === 0 ? (
+              {loading && <InlineLoader label="Loading bookings..." />}
+              {!loading && !error && upcomingCount === 0 ? (
                 <EmptyState
                   title="No Upcoming Bookings"
                   description="You don't have any upcoming service bookings. Explore
@@ -279,6 +343,7 @@ function UserDashboard() {
                       key={booking.id}
                       booking={booking}
                       compact
+                      onChanged={handleBookingChanged}
                     />
                   ))
               )}
@@ -314,7 +379,7 @@ function UserDashboard() {
                 savedServices
                   .slice(0, 3)
                   .map((booking) => (
-                    <SavedCard key={booking.id} booking={booking} compact />
+                    <SavedCard key={booking.id} booking={booking} />
                   ))
               )}
             </div>
@@ -329,7 +394,8 @@ function UserDashboard() {
           </h2>
 
           <div className="mt-5 flex flex-col gap-3">
-            {recentActivities.length === 0 ? (
+            {activitiesLoading && <InlineLoader label="Loading activity..." />}
+            {!activitiesLoading && recentActivities.length === 0 ? (
               <EmptyState
                 title="No Recent Activity"
                 description="Your recent actions will appear here."
@@ -367,7 +433,7 @@ function UserDashboard() {
                           {activity.serviceName}
                         </p>
                         <span className="text-xs text-gray-400">
-                          {activity.createdAt}
+                          {formatDate(activity.createdAt)}
                         </span>
                       </div>
                       <p className="mt-0.5 text-xs text-gray-500 capitalize">

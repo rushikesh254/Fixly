@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   CiBadgeDollar,
@@ -9,8 +9,16 @@ import {
 } from "react-icons/ci";
 import { RxCross1 } from "react-icons/rx";
 import { toast } from "sonner";
-import services from "../../data/services.js";
-import { useAuth } from "../../context/AuthContext.jsx";
+import {
+  createService,
+  deleteService,
+  getMyServices,
+  updateService,
+} from "../../api/services";
+import { getServiceTypes } from "../../api/serviceTypes";
+import { useFetch } from "../../hooks/useFetch.js";
+import { getApiErrorMessage } from "../../utils/apiError.js";
+import Loader, { ErrorState } from "../ui/Loader";
 import ConfirmDialog from "../ui/ConfirmDialog";
 
 const inputClass =
@@ -40,9 +48,7 @@ function Toggle({ value, onChange, label, subtext }) {
   );
 }
 
-function ServiceForm({ service, onClose }) {
-  const { user, updateUser } = useAuth();
-
+function ServiceForm({ service, provider, onClose, onSaved }) {
   const [includes, setIncludes] = useState([...(service?.includes ?? [])]);
   const [tagInput, setTagInput] = useState("");
   const [availableToday, setAvailableToday] = useState(
@@ -52,6 +58,7 @@ function ServiceForm({ service, onClose }) {
     service?.instantBooking ?? false,
   );
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Determine if we are editing an existing service or adding a new one
   const isEdit = Boolean(service);
@@ -69,11 +76,22 @@ function ServiceForm({ service, onClose }) {
     },
   });
 
-  const providerCategory = user?.category ?? "";
+  const providerCategory = provider?.category ?? "";
+  const providerCategoryId = provider?.categoryId ?? "";
 
-  const filteredServices = services.filter(
-    (s) => s.category.toLowerCase() === providerCategory.toLowerCase(),
+  // the titles a provider may publish come from the admin curated catalogue
+  const fetchServiceTypes = useCallback(
+    () =>
+      providerCategoryId
+        ? getServiceTypes({ category: providerCategoryId }).then(
+            (res) => res.data.serviceTypes,
+          )
+        : Promise.resolve([]),
+    [providerCategoryId],
   );
+  const { data: filteredServices } = useFetch(fetchServiceTypes, {
+    initialData: [],
+  });
 
   const addTag = () => {
     const val = tagInput.trim();
@@ -87,45 +105,50 @@ function ServiceForm({ service, onClose }) {
     setIncludes((prev) => prev.filter((t) => t !== tag));
   };
 
-  const onSubmit = (data) => {
-    const yourData = {
-      title: data.title,
-      category: isEdit
-        ? (service?.category ?? providerCategory)
-        : providerCategory,
-      price: Number(data.price),
-      estimatedDuration: data.duration,
-      description: data.description,
-      includes,
-      availableToday,
-      instantBooking,
-    };
-
-    if (isEdit) {
-      const updated = user.services.map((s) =>
-        s.serviceId === service.serviceId ? { ...s, ...yourData } : s,
-      );
-      updateUser({ services: updated });
-      toast.success("Service updated successfully!");
-    } else {
-      const catalogService = services.find((s) => s.name === data.title);
-      const newService = {
-        ...yourData,
-        serviceId: catalogService ? catalogService.id : null,
-      };
-      updateUser({ services: [...user.services, newService] });
-      toast.success("Service added successfully!");
+  const onSubmit = async (data) => {
+    if (!providerCategoryId) {
+      toast.error("Select a category in Provider Info first.");
+      return;
     }
-    onClose();
+
+    setIsSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append("name", data.title);
+      formData.append("description", data.description || data.title);
+      formData.append("price", String(Number(data.price)));
+      formData.append("category", providerCategoryId);
+      formData.append("estimatedDuration", data.duration || "");
+      formData.append("includes", JSON.stringify(includes));
+      formData.append("availableToday", String(availableToday));
+      formData.append("instantBooking", String(instantBooking));
+
+      if (isEdit) {
+        await updateService(service.serviceId, formData);
+        toast.success("Service updated successfully!");
+      } else {
+        await createService(formData);
+        toast.success("Service added successfully!");
+      }
+      onSaved();
+      onClose();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Could not save this service."));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleDelete = () => {
-    const updated = user.services.filter(
-      (s) => s.serviceId !== service.serviceId,
-    );
-    updateUser({ services: updated });
-    toast.info("Service deleted successfully!");
-    onClose();
+  const handleDelete = async () => {
+    try {
+      await deleteService(service.serviceId);
+      toast.info("Service deleted successfully!");
+      onSaved();
+      onClose();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Could not delete this service."));
+      setShowDeleteModal(false);
+    }
   };
 
   return (
@@ -153,7 +176,6 @@ function ServiceForm({ service, onClose }) {
               Service Category
             </label>
             <input
-              {...register("category")}
               value={providerCategory}
               readOnly
               className="cursor-pointer rounded-xl border border-slate-300 bg-white px-3 py-2 text-[13px] text-slate-700 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
@@ -165,24 +187,31 @@ function ServiceForm({ service, onClose }) {
             )}
           </div>
           {/* Service Title */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 relative">
             <label className="text-[13px] font-medium text-slate-800">
               Service Title
             </label>
             <select
-              {...register("title", { required: true })}
+              {...register("title", { required: "Title is required" })}
               className="cursor-pointer rounded-xl border border-slate-300 bg-white px-3 py-2 text-[13px] text-slate-700 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
             >
               <option value="">Select service</option>
               {service?.title && (
                 <option value={service.title}>{service.title}</option>
               )}
-              {filteredServices.map((s) => (
-                <option key={s.id} value={s.name}>
-                  {s.name}
-                </option>
-              ))}
+              {filteredServices
+                .filter((s) => s.name !== service?.title)
+                .map((s) => (
+                  <option key={s._id} value={s.name}>
+                    {s.name}
+                  </option>
+                ))}
             </select>
+            {errors.title && (
+              <p className="text-[12px] text-red-600 absolute right-1 top-1">
+                {errors.title.message}
+              </p>
+            )}
           </div>
 
           {/* Price */}
@@ -191,7 +220,10 @@ function ServiceForm({ service, onClose }) {
               Price (₹)
             </label>
             <input
-              {...register("price", { required: "Price is required" })}
+              {...register("price", {
+                required: "Price is required",
+                min: { value: 0, message: "Price cannot be negative" },
+              })}
               type="number"
               placeholder="e.g. 499"
               className={inputClass}
@@ -253,98 +285,122 @@ function ServiceForm({ service, onClose }) {
               ))}
             </div>
 
-            <div className="mt-1 flex gap-2">
+            <div className="flex gap-2">
               <input
-                type="text"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && (e.preventDefault(), addTag())
-                }
-                placeholder="Add an item (e.g. Dusting)"
-                className="w-full max-w-sm rounded-xl border border-slate-300 bg-white px-4 py-2 text-[13px] text-slate-700 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-100"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addTag();
+                  }
+                }}
+                type="text"
+                placeholder="e.g. Dusting"
+                className={inputClass}
               />
               <button
                 type="button"
                 onClick={addTag}
-                className="shrink-0 cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-[13px] font-medium text-white transition hover:bg-blue-700"
+                className="shrink-0 cursor-pointer rounded-xl border border-slate-300 px-4 text-[13px] font-medium text-slate-700 transition hover:bg-slate-100"
               >
                 Add
               </button>
             </div>
           </div>
 
-          {/* Toggles */}
+          {/* Availability toggles */}
           <Toggle
             value={availableToday}
             onChange={setAvailableToday}
             label="Available Today"
-            subtext="Show as available for same-day bookings"
+            subtext="Show this service to customers looking for today"
           />
           <Toggle
             value={instantBooking}
             onChange={setInstantBooking}
             label="Instant Booking"
-            subtext="Allow booking without provider confirmation"
+            subtext="Let customers book without waiting for approval"
           />
 
           {/* Actions */}
-          <div
-            className={`flex flex-wrap items-center gap-3 md:col-span-2 ${
-              isEdit ? "justify-between" : "justify-end"
-            }`}
-          >
-            {isEdit && (
+          <div className="flex items-center justify-between gap-3 md:col-span-2">
+            {isEdit ? (
               <button
                 type="button"
                 onClick={() => setShowDeleteModal(true)}
-                className="flex cursor-pointer items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-[13px] font-medium text-red-600 transition hover:bg-red-100"
+                className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-red-200 px-4 py-2.5 text-[13px] font-medium text-red-600 transition hover:bg-red-50"
               >
                 <CiTrash size={16} />
                 Delete
               </button>
+            ) : (
+              <span />
             )}
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={onClose}
-                className="cursor-pointer rounded-full border border-gray-300 px-4 py-2 text-[13px] font-medium text-gray-600 transition hover:bg-gray-100"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="cursor-pointer rounded-full bg-blue-600 px-5 py-2 text-[13px] font-medium text-white transition hover:bg-blue-700"
-              >
-                {isEdit ? "Save Changes" : "Add Service"}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="cursor-pointer rounded-full bg-blue-600 px-6 py-2.5 text-[13px] font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isSaving
+                ? "Saving..."
+                : isEdit
+                  ? "Save Changes"
+                  : "Add Service"}
+            </button>
           </div>
         </form>
       </div>
+
       {showDeleteModal && (
         <ConfirmDialog
           title="Delete this service?"
-          message="Are you sure you want to delete this service? This action cannot be undone."
+          message={
+            <p>
+              <span className="font-medium text-gray-900">
+                {service?.title}
+              </span>{" "}
+              will no longer be offered to customers.
+            </p>
+          }
           cancelLabel="Cancel"
           confirmLabel="Delete"
           onCancel={() => setShowDeleteModal(false)}
-          onConfirm={() => {
-            setShowDeleteModal(false);
-            handleDelete();
-          }}
+          onConfirm={handleDelete}
         />
       )}
     </div>
   );
 }
 
-function MyServices() {
-  const { user } = useAuth();
+function MyServices({ provider }) {
   const [isOpen, setIsOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
-  const servicesList = user.services ?? [];
+  const fetchServices = useCallback(
+    () =>
+      getMyServices().then((res) =>
+        res.data.services.map((service) => ({
+          serviceId: service._id,
+          title: service.name,
+          category: service.category?.name || "",
+          price: service.price,
+          estimatedDuration: service.estimatedDuration || "",
+          description: service.description || "",
+          includes: service.includes || [],
+          availableToday: Boolean(service.availableToday),
+          instantBooking: Boolean(service.instantBooking),
+        })),
+      ),
+    [],
+  );
+
+  const {
+    data: servicesList,
+    loading,
+    error,
+    refetch,
+  } = useFetch(fetchServices, { initialData: [] });
 
   // Open the add form
   const openAdd = () => {
@@ -370,7 +426,13 @@ function MyServices() {
         </button>
       </div>
 
-      {servicesList.length === 0 ? (
+      {loading && <Loader label="Loading your services..." className="mt-6" />}
+
+      {!loading && error && (
+        <ErrorState message={error} onRetry={refetch} className="mt-6" />
+      )}
+
+      {!loading && !error && servicesList.length === 0 ? (
         <div className="mt-10 flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-16 text-center">
           <CiCirclePlus size={40} className="text-slate-400" />
           <p className="mt-3 text-sm font-medium text-slate-600">
@@ -381,81 +443,90 @@ function MyServices() {
           </p>
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {servicesList.map((service) => (
-            <div
-              key={service.serviceId}
-              className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h3 className="text-base font-semibold text-gray-900">
-                    {service.title}
-                  </h3>
-                  <span className="mt-2 inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
-                    {service.category}
+        !loading &&
+        !error && (
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {servicesList.map((service) => (
+              <div
+                key={service.serviceId}
+                className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900">
+                      {service.title}
+                    </h3>
+                    <span className="mt-2 inline-block rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+                      {service.category}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => openEdit(service)}
+                    className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-gray-600 transition hover:bg-gray-100"
+                  >
+                    <CiEdit size={15} />
+                    Edit
+                  </button>
+                </div>
+
+                <div className="mt-4 flex items-center gap-4 text-sm">
+                  <span className="flex items-center gap-1.5 font-semibold text-gray-900">
+                    <CiBadgeDollar size={17} className="text-gray-500" />₹
+                    {service.price}
+                  </span>
+                  {service.estimatedDuration && (
+                    <span className="flex items-center gap-1.5 text-[13px] text-gray-600">
+                      <CiClock1 size={17} className="text-gray-500" />
+                      {service.estimatedDuration}
+                    </span>
+                  )}
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
+                      service.availableToday
+                        ? "bg-emerald-50 text-emerald-700"
+                        : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        service.availableToday
+                          ? "bg-emerald-500"
+                          : "bg-slate-400"
+                      }`}
+                    />
+                    Available Today
+                  </span>
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
+                      service.instantBooking
+                        ? "bg-emerald-50 text-emerald-700"
+                        : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        service.instantBooking
+                          ? "bg-emerald-300"
+                          : "bg-slate-400"
+                      }`}
+                    />
+                    Instant Booking
                   </span>
                 </div>
-                <button
-                  onClick={() => openEdit(service)}
-                  className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs text-gray-600 transition hover:bg-gray-100"
-                >
-                  <CiEdit size={15} />
-                  Edit
-                </button>
               </div>
-
-              <div className="mt-4 flex items-center gap-4 text-sm">
-                <span className="flex items-center gap-1.5 font-semibold text-gray-900">
-                  <CiBadgeDollar size={17} className="text-gray-500" />₹
-                  {service.price}
-                </span>
-                {service.estimatedDuration && (
-                  <span className="flex items-center gap-1.5 text-[13px] text-gray-600">
-                    <CiClock1 size={17} className="text-gray-500" />
-                    {service.estimatedDuration}
-                  </span>
-                )}
-              </div>
-
-              <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                    service.availableToday
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-slate-100 text-slate-500"
-                  }`}
-                >
-                  <span
-                    className={`h-1.5 w-1.5 rounded-full ${
-                      service.availableToday ? "bg-emerald-500" : "bg-slate-400"
-                    }`}
-                  />
-                  Available Today
-                </span>
-                <span
-                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                    service.instantBooking
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-slate-100 text-slate-500"
-                  }`}
-                >
-                  <span
-                    className={`h-1.5 w-1.5 rounded-full ${
-                      service.instantBooking ? "bg-emerald-300" : "bg-slate-400"
-                    }`}
-                  />
-                  Instant Booking
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )
       )}
 
       {isOpen && (
         <ServiceForm
           service={editing}
+          provider={provider}
+          onSaved={refetch}
           onClose={() => {
             setIsOpen(false);
             setEditing(null);

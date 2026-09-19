@@ -23,7 +23,11 @@ function Header() {
     location.pathname.startsWith("/user/") ||
     location.pathname.startsWith("/provider/");
 
-  if (location.pathname === "/auth") {
+  if (
+    location.pathname === "/auth" ||
+    location.pathname === "/login" ||
+    location.pathname === "/signup"
+  ) {
     return null;
   }
 
@@ -103,7 +107,7 @@ function Header() {
           {!user && (
             <button
               onClick={() => {
-                navigate("/auth", { state: { isFlipped: false } });
+                navigate("/login");
               }}
               className="text-white cursor-pointer hover:scale-105 transition duration-300 flex items-center gap-2 font-semibold"
             >
@@ -174,7 +178,7 @@ to={`/provider/profile`}
             <PrimaryBtn
               btn="Sign Up"
               onclick={() => {
-                navigate("/auth", { state: { isFlipped: true } });
+                navigate("/signup");
               }}
             />
           )}
@@ -223,7 +227,7 @@ to={`/provider/profile`}
             <button
               onClick={() => {
                 setIsSidebarOpen(false);
-                navigate("/auth", { state: { isFlipped: false } });
+                navigate("/login");
               }}
               className="w-full  text-gray-700 text-[14px] hover:bg-gray-100 rounded-md px-8 py-3 transition"
             >
@@ -288,7 +292,7 @@ to={`/provider/profile`}
             <button
               onClick={() => {
                 setIsSidebarOpen(false);
-                navigate("/auth", { state: { isFlipped: true } });
+                navigate("/signup");
               }}
               className="w-full text-gray-700 text-[14px] hover:bg-gray-100 rounded-md px-8 py-3 transition"
             >

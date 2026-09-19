@@ -1,17 +1,24 @@
 import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { toast } from "sonner";
 import { useSaved } from "../../context/savedContext";
+import { getApiErrorMessage } from "../../utils/apiError";
 
 function SaveBtn({ service }) {
   const { isSaved, toggleSaved } = useSaved();
   const saved = isSaved(service.id);
 
-  const handleBookmarkClick = () => {
-    toggleSaved(service);
-    if (!saved) {
-      toast.success("Service saved to your list!");
-    } else {
-      toast.error("Service removed from your saved list.");
+  const handleBookmarkClick = async () => {
+    try {
+      const nowSaved = await toggleSaved(service);
+      if (nowSaved) {
+        toast.success("Service saved to your list!");
+      } else {
+        toast.error("Service removed from your saved list.");
+      }
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "Could not update your saved list."),
+      );
     }
   };
 

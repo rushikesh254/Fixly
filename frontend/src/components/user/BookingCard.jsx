@@ -1,29 +1,23 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useForm } from "react-hook-form";
 import { FiCalendar, FiMapPin } from "react-icons/fi";
 import { HiOutlineXMark } from "react-icons/hi2";
+import { getAddress } from "../../api/users";
 import availableSlots from "../../constants/availableSlots";
+import { useFetch } from "../../hooks/useFetch";
+import { formatAddress } from "../../utils/normalize";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import AddressCard from "./AddressCard";
 import ConfirmModal from "./ConfirmModal";
-
-//  get saved address from localStorage
-function getSavedAddress() {
-  try {
-    return JSON.parse(localStorage.getItem("userAddress")) || {};
-  } catch {
-    return {};
-  }
-}
 
 // Set date limits
 const today = new Date();
 const maxDate = new Date(today);
 maxDate.setDate(today.getDate() + 6); // Set max date to 6 days from today
 
-function BookingCard({ service, setOpenBooking }) {
+function BookingCard({ service, setOpenBooking, onBooked }) {
   const [selectedDate, setSelectedDate] = useState(null);
 
   const {
@@ -39,16 +33,16 @@ function BookingCard({ service, setOpenBooking }) {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [addressOpen, setAddressOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState("");
-  const savedAddress = getSavedAddress();
-  const addressText = [
-    savedAddress.flat,
-    savedAddress.street,
-    savedAddress.city,
-    savedAddress.state,
-    savedAddress.pincode,
-  ]
-    .filter(Boolean)
-    .join(", ");
+
+  // the service address comes from the account, so it is the same on every device
+  const fetchAddress = useCallback(
+    () => getAddress().then((res) => res.data.address),
+    [],
+  );
+  const { data: savedAddress, setData: setSavedAddress } = useFetch(fetchAddress);
+
+  const addressText = formatAddress(savedAddress);
+
   // Update the "where" field whenever the address changes
   useEffect(() => {
     setValue("where", addressText || "No address added", {
@@ -129,6 +123,8 @@ function BookingCard({ service, setOpenBooking }) {
                 <AddressCard
                   addressOpen={addressOpen}
                   setAddressOpen={setAddressOpen}
+                  currentAddress={savedAddress}
+                  onSave={(saved) => setSavedAddress(saved || null)}
                 />
               )}
             </div>
@@ -237,6 +233,7 @@ function BookingCard({ service, setOpenBooking }) {
           service={service}
           formData={formData}
           setOpenBooking={setOpenBooking}
+          onBooked={onBooked}
         />
       )}
     </div>

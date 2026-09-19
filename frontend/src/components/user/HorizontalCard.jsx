@@ -5,13 +5,15 @@ import { LuClock2 } from "react-icons/lu";
 import { SlCalender } from "react-icons/sl";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { cancelBooking } from "../../api/bookings";
+import { getApiErrorMessage } from "../../utils/apiError";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import SecondaryBtn from "../ui/SecondaryBtn";
 import DetailModal from "./DetailModal";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import ReviewModal from "./ReviewModal";
 
-function HorizontalCard({ booking }) {
+function HorizontalCard({ booking, onChanged }) {
   const {
     userAddress,
     serviceTitle,
@@ -29,6 +31,23 @@ function HorizontalCard({ booking }) {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+
+  const handleCancel = async () => {
+    setIsCancelling(true);
+    try {
+      const { data } = await cancelBooking(booking.id);
+      setShowCancelModal(false);
+      toast.success(
+        data.message || "Your booking has been cancelled successfully.",
+      );
+      if (onChanged) onChanged();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Could not cancel this booking."));
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   const statusConfig = {
     Pending: {
@@ -81,7 +100,7 @@ function HorizontalCard({ booking }) {
           <div
             onClick={() => {
               window.scrollTo({ top: 0, behavior: "smooth" });
-              navigate(`/services/viewDetails/${booking.providerId}`);
+              navigate(`/services/viewDetails/${booking.serviceId}`);
             }}
             className="relative w-full md:w-72 h-44 md:h-auto shrink-0 overflow-hidden cursor-pointer"
           >
@@ -168,7 +187,7 @@ function HorizontalCard({ booking }) {
                   />
                 )}
 
-                {status === "Completed" && (
+                {status === "Completed" && !booking.isReviewed && (
                   <SecondaryBtn
                     btn="Rate Now"
                     className="text-amber-600! border border-amber-300! hover:bg-amber-50!"
@@ -181,7 +200,7 @@ function HorizontalCard({ booking }) {
                     btn="Book Again"
                     className="text-emerald-600! border border-emerald-400! hover:bg-emerald-50!"
                     onclick={() => {
-navigate(`/services/viewDetails/${booking.providerId}`);
+                      navigate(`/services/viewDetails/${booking.serviceId}`);
                     }}
                   />
                 )}
@@ -216,6 +235,8 @@ navigate(`/services/viewDetails/${booking.providerId}`);
         <ReviewModal
           setShowReviewModal={setShowReviewModal}
           providerName={providerName}
+          serviceId={booking.serviceId}
+          onSubmitted={onChanged}
         />
       )}
       {/* Cancel Modal */}
@@ -224,12 +245,9 @@ navigate(`/services/viewDetails/${booking.providerId}`);
           title="Cancel this service?"
           message="Are you sure you want to cancel this booking? This action cannot be undone."
           cancelLabel="Keep Booking"
-          confirmLabel="Yes, Cancel"
+          confirmLabel={isCancelling ? "Cancelling..." : "Yes, Cancel"}
           onCancel={() => setShowCancelModal(false)}
-          onConfirm={() => {
-            setShowCancelModal(false);
-            toast.success("Your booking has been cancelled successfully.");
-          }}
+          onConfirm={handleCancel}
         />
       )}
 
@@ -239,8 +257,10 @@ navigate(`/services/viewDetails/${booking.providerId}`);
           showDetailModal={showDetailModal}
           setShowDetailModal={setShowDetailModal}
           setShowCancelModal={setShowCancelModal}
+          setShowReviewModal={setShowReviewModal}
           booking={booking}
           cfg={cfg}
+          onChanged={onChanged}
         />
       )}
     </>

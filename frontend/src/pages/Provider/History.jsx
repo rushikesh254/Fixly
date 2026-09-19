@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { FiCalendar, FiMapPin, FiSearch } from "react-icons/fi";
+import { getMyBookings } from "../../api/bookings";
 import HistoryDetailModal from "../../components/provider/HistoryDetailModal";
 import EmptyState from "../../components/ui/EmptyState";
-import bookings from "../../data/bookings";
+import Loader, { ErrorState } from "../../components/ui/Loader";
+import { useFetch } from "../../hooks/useFetch";
 import getBookingDateTime from "../../utils/getBookingDateTime";
 import formatDate from "../../utils/formatDate";
+import { normalizeBooking } from "../../utils/normalize";
 
 const badgeStyles = {
   Completed: "bg-green-100 text-green-700",
@@ -21,14 +24,26 @@ function History() {
 
   const [selectedBooking, setSelectedBooking] = useState(null);
 
+  const fetchBookings = useCallback(
+    () =>
+      getMyBookings().then((res) => res.data.bookings.map(normalizeBooking)),
+    [],
+  );
+
+  const { data: bookings, loading, error, refetch } = useFetch(fetchBookings, {
+    initialData: [],
+  });
+
   // Completed, cancelled & rejected bookings of this provider
-  const historyBookings = bookings
-    .filter(
-      (b) =>
-        b.providerId === "PRV-0001" &&
-        ["Completed", "Cancelled", "Rejected"].includes(b.status),
-    )
-    .sort((a, b) => getBookingDateTime(b) - getBookingDateTime(a));
+  const historyBookings = useMemo(
+    () =>
+      (bookings || [])
+        .filter((b) =>
+          ["Completed", "Cancelled", "Rejected"].includes(b.status),
+        )
+        .sort((a, b) => getBookingDateTime(b) - getBookingDateTime(a)),
+    [bookings],
+  );
 
   const tabCounts = {
     All: historyBookings.length,
@@ -40,7 +55,7 @@ function History() {
   const displayedBookings = historyBookings
     .filter((b) => activeTab === "All" || b.status === activeTab)
     .filter((b) =>
-      b.customerName.toLowerCase().includes(searchQuery.toLowerCase()),
+      b.customerName.toLowerCase().includes(searchQuery.trim().toLowerCase()),
     );
 
   return (
@@ -101,12 +116,16 @@ function History() {
 
       {/* Bookings List */}
       <div className="mt-8">
-        {displayedBookings.length === 0 ? (
+        {loading && <Loader label="Loading history..." />}
+        {!loading && error && <ErrorState message={error} onRetry={refetch} />}
+        {!loading && !error && displayedBookings.length === 0 ? (
           <EmptyState
             title="No booking history yet"
             description="Bookings completed, rejected by you, or cancelled by customers will appear here."
           />
         ) : (
+          !loading &&
+          !error && (
           <div className="flex flex-col gap-4">
             {displayedBookings.map((booking) => (
               <div
@@ -145,8 +164,9 @@ function History() {
                   </span>
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
         )}
       </div>
 

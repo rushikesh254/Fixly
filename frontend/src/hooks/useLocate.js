@@ -1,8 +1,7 @@
 import { useCallback, useState } from "react";
-import providers from "../data/providers";
 import axios from "axios";
 
-function getDistanceInKm(lat1, lon1, lat2, lon2) {
+export function getDistanceInKm(lat1, lon1, lat2, lon2) {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
@@ -33,14 +32,16 @@ export function useLocate() {
           lat,
           lon,
         });
+        // the coordinates are enough for the nearby search, so the location
+        // counts as detected even if the address lookup below fails
+        setStatus("success");
 
         try {
           const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`;
           const res = await axios.get(url);
           setAddress(res.data.address);
-          setStatus("success");
         } catch {
-          setStatus("denied");
+          setAddress(null);
         }
       },
       () => {
@@ -55,17 +56,27 @@ export function useLocate() {
     setAddress(null);
   }, []);
 
-  const nearbyProviders = (providersList) => {
-    if (!userCoords) return providersList;
-    return [...providersList]
-      .filter((p) => p.lat !== null && p.lon !== null)
-      .map((p) => ({
-        ...p,
-        distance: getDistanceInKm(userCoords.lat, userCoords.lon, p.lat, p.lon),
-      }))
-      .filter((p) => p.distance <= 400);
-  };
-  const nearbyProvidersList = nearbyProviders(providers);
+  // Attach the distance from the detected position to api results. The server
+  // already filters and orders by proximity, this only supplies the label the
+  // cards show.
+  const withDistance = useCallback(
+    (items = []) => {
+      if (!userCoords) return items;
 
-  return { status, address, detect, clearLocation, nearbyProvidersList };
+      return items.map((item) => {
+        const coordinates = item.coordinates;
+        if (!coordinates || coordinates.length !== 2) return item;
+
+        // GeoJSON stores [longitude, latitude]
+        const [lon, lat] = coordinates;
+        return {
+          ...item,
+          distance: getDistanceInKm(userCoords.lat, userCoords.lon, lat, lon),
+        };
+      });
+    },
+    [userCoords],
+  );
+
+  return { status, address, userCoords, detect, clearLocation, withDistance };
 }

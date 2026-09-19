@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import { BsLinkedin, BsTwitterX, BsYoutube } from "react-icons/bs";
-import { FaFacebookF, FaInstagram, FaPhoneAlt } from "react-icons/fa";
+import { FaPhoneAlt } from "react-icons/fa";
 import { IoMdMail } from "react-icons/io";
 import { LuMapPin } from "react-icons/lu";
 import { Link, useLocation } from "react-router-dom";
@@ -8,18 +7,12 @@ import logo from "../../assets/logo.png";
 
 function Footer() {
   const location = useLocation();
-  const isAuth = location.pathname === "/auth";
+  const isAuth = ["/auth", "/login", "/signup"].includes(location.pathname);
 
   useEffect(() => {
-    if (location.hash === "#testimonials") {
-      const element = document.getElementById("testimonials");
-      if (element) element.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [location, isAuth]);
-
-  useEffect(() => {
-    if (location.hash === "#howItWorks") {
-      const element = document.getElementById("howItWorks");
+    const anchors = ["#testimonials", "#howItWorks"];
+    if (anchors.includes(location.hash)) {
+      const element = document.getElementById(location.hash.slice(1));
       if (element) element.scrollIntoView({ behavior: "smooth" });
     }
   }, [location, isAuth]);
@@ -44,23 +37,6 @@ function Footer() {
             Fast and reliable home services at your fingertips. Book now and
             experience the absolute convenience of Fixly!!
           </p>
-          <div className="flex space-x-4">
-            <Link to="#" className="">
-              <FaFacebookF className="w-4 h-4 text-gray-400 hover:text-white hover:scale-105" />
-            </Link>
-            <Link to="#" className="">
-              <BsTwitterX className="w-4 h-4 text-gray-400 hover:text-white hover:scale-105" />
-            </Link>
-            <Link to="#" className="">
-              <FaInstagram className="w-4 h-4 text-gray-400 hover:text-white hover:scale-105  " />
-            </Link>
-            <Link to="#" className="">
-              <BsYoutube className="w-4 h-4 text-gray-400 hover:text-white hover:scale-105" />
-            </Link>
-            <Link to="#" className="">
-              <BsLinkedin className="w-4 h-4 text-gray-400 hover:text-white hover:scale-105" />
-            </Link>
-          </div>
         </div>
 
         <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-8 lg:ml-20 xl:ml-32">

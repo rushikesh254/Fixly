@@ -2,20 +2,32 @@ import { useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { RxCross1 } from "react-icons/rx";
 import { toast } from "sonner";
+import { createReview } from "../../api/reviews";
+import { getApiErrorMessage } from "../../utils/apiError";
 import PrimaryBtn from "../ui/PrimaryBtn";
 
-function ReviewModal({ setShowReviewModal, providerName }) {
+function ReviewModal({ setShowReviewModal, providerName, serviceId, onSubmitted }) {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (rating === 0) {
       toast.error("Please select a rating before submitting.");
       return;
     }
 
-    toast.success("Review submitted successfully!");
-    setShowReviewModal(false);
+    setIsSaving(true);
+    try {
+      await createReview({ serviceId, rating, comment: review });
+      toast.success("Review submitted successfully!");
+      setShowReviewModal(false);
+      if (onSubmitted) onSubmitted();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Could not submit your review."));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -80,7 +92,11 @@ function ReviewModal({ setShowReviewModal, providerName }) {
 
         {/* Button */}
         <div className="flex justify-end gap-3">
-          <PrimaryBtn btn="Submit" onclick={handleSubmit} />
+          <PrimaryBtn
+            btn={isSaving ? "Submitting..." : "Submit"}
+            onclick={handleSubmit}
+            disabled={isSaving}
+          />
         </div>
       </div>
     </div>

@@ -11,12 +11,15 @@ function EmptyState({ title, description, buttonText, buttonLink, className }) {
         />
         <p className="font-semibold text-gray-900">{title}</p>
         <p className="text-sm text-gray-500 max-w-xs">{description}</p>
-        <button
-          className={`mt-2 px-6 py-2.5  text-white cursor-pointer text-sm font-medium rounded-xl transition ${className}`}
-          onClick={() => navigate(`/${buttonLink}`)}
-        >
-          {buttonText}
-        </button>
+        {/* only render the action when there is somewhere to send the user */}
+        {buttonText && buttonLink && (
+          <button
+            className={`mt-2 px-6 py-2.5  text-white cursor-pointer text-sm font-medium rounded-xl transition ${className}`}
+            onClick={() => navigate(`/${buttonLink}`)}
+          >
+            {buttonText}
+          </button>
+        )}
       </div>
     </>
   );

@@ -1,3 +1,5 @@
+// Retained as reference / fallback development data. The app now reads this
+// information from the Fixly API; this file is kept for local reference only.
 const testimonials = [
   {
     id: 1,

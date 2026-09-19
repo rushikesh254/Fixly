@@ -1,7 +1,8 @@
 import { FaStar } from "react-icons/fa";
+import formatDate from "../../utils/formatDate";
 
 function ReviewsRatings({ provider }) {
-  const { reviews, rating, totalReviews } = provider;
+  const { reviews = [], rating = 0, totalReviews = 0 } = provider || {};
 
   return (
     <div>
@@ -70,7 +71,7 @@ function ReviewsRatings({ provider }) {
                         ))}
                       </div>
                       <span className="text-[12px] text-gray-400">
-                        {review.date}
+                        {formatDate(review.date)}
                       </span>
                     </div>
                   </div>

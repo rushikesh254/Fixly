@@ -2,24 +2,20 @@ import { Link } from "react-router-dom";
 import {
   CiBoxList,
   CiCalendar,
-  CiCircleCheck,
-  CiCircleRemove,
-  CiLock,
   CiShop,
   CiUser,
 } from "react-icons/ci";
 import { FiArrowRight } from "react-icons/fi";
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { useCallback } from "react";
+import { getAdminProviders, getAdminStats } from "../../api/admin";
 import EmptyState from "../../components/ui/EmptyState";
-import { adminRecents } from "../../data/adminRecents";
-import bookings from "../../data/bookings";
-import providers from "../../data/providers";
-import services from "../../data/services";
-import { users } from "../../data/users";
+import Loader, { ErrorState } from "../../components/ui/Loader";
+import { useFetch } from "../../hooks/useFetch";
 import formatDate from "../../utils/formatDate";
+import { normalizeProvider } from "../../utils/normalize";
 
 function AdminDash() {
-  const todayKey = new Date().toISOString().slice(0, 10);
   const todayLabel = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
     day: "numeric",
@@ -27,81 +23,57 @@ function AdminDash() {
     year: "numeric",
   });
 
+  // counters and the weekly series are computed on the server so the chart and
+  // the cards always agree on what a day is
+  const fetchOverview = useCallback(
+    () =>
+      Promise.all([getAdminStats(), getAdminProviders()]).then(
+        ([statsRes, providersRes]) => ({
+          stats: statsRes.data.stats,
+          weekData: statsRes.data.weekData,
+          providers: providersRes.data.providers.map(normalizeProvider),
+        }),
+      ),
+    [],
+  );
+
+  const { data, loading, error, refetch } = useFetch(fetchOverview);
+
+  const stats = data?.stats || null;
+  const weekData = data?.weekData || [];
+
   // pending approvals
-  const pendingApprovals = providers
+  const pendingApprovals = (data?.providers || [])
     .filter((p) => p.status === "pending")
     .sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt))
     .slice(0, 3);
 
-  // data for the last 7 days
-  const weekData = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const key = d.toISOString().slice(0, 10);
-    weekData.push({
-      name: d.toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "short",
-      }),
-      bookings: bookings.filter((b) => b.date === key).length,
-    });
-  }
-
   const statsData = [
     {
       title: "TOTAL PROVIDERS",
-      value: providers.length,
+      value: stats?.providers ?? 0,
       icon: <CiShop size={22} />,
       iconClass: "bg-blue-100 text-blue-600",
     },
     {
       title: "TOTAL USERS",
-      value: users.length,
+      value: stats?.users ?? 0,
       icon: <CiUser size={22} />,
       iconClass: "bg-purple-100 text-purple-600",
     },
     {
       title: "TODAY'S BOOKINGS",
-      value: bookings.filter((b) => b.date === todayKey).length,
+      value: stats?.todayBookings ?? 0,
       icon: <CiCalendar size={22} />,
       iconClass: "bg-emerald-100 text-emerald-600",
     },
     {
       title: "SERVICES LIVE",
-      value: services.filter((s) => s.status === "active").length,
+      value: stats?.servicesLive ?? 0,
       icon: <CiBoxList size={22} />,
       iconClass: "bg-amber-100 text-amber-600",
     },
   ];
-
-  const activityConfig = {
-    provider_registered: {
-      label: "Provider Registered",
-      color: "bg-blue-100 text-blue-600",
-      icon: <CiUser size={16} />,
-    },
-    provider_approved: {
-      label: "Provider Approved",
-      color: "bg-emerald-100 text-emerald-600",
-      icon: <CiCircleCheck size={16} />,
-    },
-    provider_rejected: {
-      label: "Provider Rejected",
-      color: "bg-red-100 text-red-600",
-      icon: <CiCircleRemove size={16} />,
-    },
-    provider_blocked: {
-      label: "Provider Blocked",
-      color: "bg-red-100 text-red-600",
-      icon: <CiLock size={16} />,
-    },
-    user_blocked: {
-      label: "User Blocked",
-      color: "bg-slate-100 text-slate-600",
-      icon: <CiLock size={16} />,
-    },
-  };
 
   const quickLinks = [
     {
@@ -143,6 +115,12 @@ function AdminDash() {
         </Link>
       </div>
 
+      {loading && <Loader label="Loading overview..." className="mt-8" />}
+
+      {!loading && error && (
+        <ErrorState message={error} onRetry={refetch} className="mt-8" />
+      )}
+
       {/*  Stats row */}
       <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {statsData.map((stat, index) => (
@@ -170,8 +148,8 @@ function AdminDash() {
         ))}
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="space-y-8 lg:col-span-2">
+      <div className="mt-8 space-y-8">
+        <div>
           {/*  Pending Approvals */}
           <div className="rounded-2xl border-2 border-amber-200 bg-white p-5">
             <div className="flex items-center justify-between">
@@ -269,57 +247,6 @@ function AdminDash() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="lg:col-span-1">
-          <h2 className="flex items-center gap-2 text-sm font-semibold">
-            <span className="inline-block h-5 w-1 rounded-full bg-emerald-500"></span>
-            RECENT ACTIVITY
-          </h2>
-
-          <div className="mt-5 flex flex-col gap-3">
-            {adminRecents.length === 0 ? (
-              <EmptyState
-                title="No Recent Activity"
-                description="Recent platform activity will appear here."
-              />
-            ) : (
-              adminRecents.map((activity, idx) => {
-                const cfg =
-                  activityConfig[activity.type] ||
-                  activityConfig.provider_registered;
-
-                return (
-                  <div key={activity.id} className="flex gap-4">
-                    <div className="flex flex-col items-center">
-                      <div
-                        className={`flex h-9 w-9 items-center justify-center rounded-full ${cfg.color}`}
-                      >
-                        {cfg.icon}
-                      </div>
-                      {idx < adminRecents.length - 1 && (
-                        <div className="mt-1 h-full w-px bg-gray-200"></div>
-                      )}
-                    </div>
-                    <div className="flex-1 rounded-xl border border-gray-200 bg-white p-3.5">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="truncate text-sm font-medium text-gray-900">
-                          {activity.actorName}
-                        </p>
-                        <span className="shrink-0 text-xs text-gray-400">
-                          {formatDate(activity.createdAt)}
-                        </span>
-                      </div>
-                      <p className="mt-0.5 text-xs text-gray-500">
-                        {cfg.label}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })
-            )}
           </div>
         </div>
       </div>

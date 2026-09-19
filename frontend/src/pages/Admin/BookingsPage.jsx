@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { FiCalendar, FiEye, FiMapPin, FiSearch } from "react-icons/fi";
+import { getAdminBookings } from "../../api/admin";
 import AdminBookingDetailModal from "../../components/admin/BookingDetailModal";
 import EmptyState from "../../components/ui/EmptyState";
-import bookings from "../../data/bookings";
+import Loader, { ErrorState } from "../../components/ui/Loader";
+import { useFetch } from "../../hooks/useFetch";
 import formatDate from "../../utils/formatDate";
 import getBookingDateTime from "../../utils/getBookingDateTime";
+import { normalizeBooking } from "../../utils/normalize";
 
 const statusStyles = {
   Pending: "bg-amber-100 text-amber-700",
@@ -15,14 +18,40 @@ const statusStyles = {
 };
 
 function BookingsPage() {
-  const tabs = ["All", "Pending", "Confirmed", "Completed", "Cancelled"];
+  const tabs = [
+    "All",
+    "Pending",
+    "Confirmed",
+    "Completed",
+    "Cancelled",
+    "Rejected",
+  ];
 
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBooking, setSelectedBooking] = useState(null);
 
-  const allBookings = [...bookings].sort(
-    (a, b) => getBookingDateTime(b) - getBookingDateTime(a),
+  const fetchBookings = useCallback(
+    () =>
+      getAdminBookings().then((res) =>
+        res.data.bookings.map(normalizeBooking),
+      ),
+    [],
+  );
+
+  const {
+    data: bookings,
+    loading,
+    error,
+    refetch,
+  } = useFetch(fetchBookings, { initialData: [] });
+
+  const allBookings = useMemo(
+    () =>
+      [...(bookings || [])].sort(
+        (a, b) => getBookingDateTime(b) - getBookingDateTime(a),
+      ),
+    [bookings],
   );
 
   const tabCounts = {
@@ -31,6 +60,7 @@ function BookingsPage() {
     Confirmed: allBookings.filter((b) => b.status === "Confirmed").length,
     Completed: allBookings.filter((b) => b.status === "Completed").length,
     Cancelled: allBookings.filter((b) => b.status === "Cancelled").length,
+    Rejected: allBookings.filter((b) => b.status === "Rejected").length,
   };
 
   const displayedBookings = allBookings
@@ -104,7 +134,13 @@ function BookingsPage() {
       </div>
 
       {/* Bookings Table  */}
-      {displayedBookings.length === 0 ? (
+      {loading && <Loader label="Loading bookings..." className="mt-8" />}
+
+      {!loading && error && (
+        <ErrorState message={error} onRetry={refetch} className="mt-8" />
+      )}
+
+      {!loading && !error && displayedBookings.length === 0 ? (
         <div className="mt-8">
           <EmptyState
             title="No bookings found"
@@ -112,6 +148,8 @@ function BookingsPage() {
           />
         </div>
       ) : (
+        !loading &&
+        !error && (
         <>
           {/* Desktop table */}
           <div className="hidden md:block mt-6 overflow-x-auto rounded-2xl border border-gray-200 bg-white">
@@ -238,6 +276,7 @@ function BookingsPage() {
             ))}
           </div>
         </>
+        )
       )}
 
       {/* Booking Detail Modal */}

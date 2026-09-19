@@ -1,20 +1,36 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaMapPin } from "react-icons/fa";
 import { HiOutlineXMark } from "react-icons/hi2";
 import { toast } from "sonner";
+import { saveAddress as saveAddressApi } from "../../api/users";
 import { useLocate } from "../../hooks/useLocate";
+import { getApiErrorMessage } from "../../utils/apiError";
 
-function AddressCard({ setAddressOpen, onSave }) {
+// An account has a single address, so this form both adds it the first time and
+// edits it afterwards. Pass `currentAddress` to prefill it.
+function AddressCard({ setAddressOpen, onSave, currentAddress }) {
+  const isEdit = Boolean(currentAddress);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
     reset,
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      label: currentAddress?.label ?? "",
+      flat: currentAddress?.flat ?? "",
+      street: currentAddress?.street ?? "",
+      city: currentAddress?.city ?? "",
+      state: currentAddress?.state ?? "",
+      pincode: currentAddress?.pincode ?? "",
+    },
+  });
 
-  const { detect, status, clearLocation, address } = useLocate();
+  const { detect, status, clearLocation, address, userCoords } = useLocate();
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (address) {
@@ -28,10 +44,35 @@ function AddressCard({ setAddressOpen, onSave }) {
     }
   }, [address, setValue]);
 
+  // Persist the address on the account so it is available on every device and
+  // can prefill the booking form.
+  const submitAddress = async (data) => {
+    setIsSaving(true);
+    try {
+      const { data: res } = await saveAddressApi({
+        ...data,
+        // coordinates are only known when the address was auto-detected, they let
+        // the nearby search work for the services a provider publishes
+        ...(userCoords
+          ? { lat: userCoords.lat, lon: userCoords.lon }
+          : currentAddress?.lat !== undefined
+            ? { lat: currentAddress.lat, lon: currentAddress.lon }
+            : {}),
+      });
+      if (onSave) onSave(res.address);
+      setAddressOpen(false);
+      toast.success(res.message || "Address saved successfully!");
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Could not save your address."));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div>
       <div className="fixed inset-0 bg-black/50  flex items-center justify-center z-50">
-        <div className="bg-white relative rounded-lg p-5 w-full max-w-md  mx-4">
+        <div className="bg-white relative rounded-lg p-5 w-full max-w-md  mx-4 max-h-[90vh] overflow-y-auto">
           {/* Close button */}
           <div
             onClick={() => setAddressOpen(false)}
@@ -39,13 +80,16 @@ function AddressCard({ setAddressOpen, onSave }) {
           >
             <HiOutlineXMark className="" size={20} />
           </div>
-          <h1 className="text-lg relative font-bold mb-3">Add New Address</h1>
+          <h1 className="text-lg relative font-bold mb-3">
+            {isEdit ? "Change Address" : "Add Your Address"}
+          </h1>
           {/*button to clear address*/}
           {(status === "success" || status === "denied") && (
             <button
               onClick={() => {
                 clearLocation();
                 reset({
+                  label: "",
                   flat: "",
                   street: "",
                   city: "",
@@ -84,7 +128,22 @@ function AddressCard({ setAddressOpen, onSave }) {
           <div>
             <div className="relative">
               <label
-                htmlfor="flat"
+                htmlFor="label"
+                className="block  text-[13px] font-bold mb-1"
+              >
+                Label (optional)
+              </label>
+              <input
+                {...register("label")}
+                id="label"
+                type="text"
+                placeholder="E.g., Home"
+                className="w-full border border-gray-300 rounded-md pl-3 pr-3 py-2 placeholder:text-[13px] text-[13px] text-gray-700 mb-3 focus:outline-none focus:ring-1 focus:ring-blue-400 "
+              />
+            </div>
+            <div className="relative">
+              <label
+                htmlFor="flat"
                 className="block  text-[13px] font-bold mb-1"
               >
                 Flat, House No, or Apartment
@@ -99,7 +158,7 @@ function AddressCard({ setAddressOpen, onSave }) {
             </div>
             <div className="relative">
               <label
-                htmlfor="street"
+                htmlFor="street"
                 className="block text-[13px] font-bold mb-1"
               >
                 Area, Street, Sector, Village
@@ -119,7 +178,7 @@ function AddressCard({ setAddressOpen, onSave }) {
             </div>
             <div className="relative">
               <label
-                htmlfor="city"
+                htmlFor="city"
                 className="block text-[13px] font-bold mb-1"
               >
                 Town/City
@@ -139,7 +198,7 @@ function AddressCard({ setAddressOpen, onSave }) {
             </div>
             <div className="relative">
               <label
-                htmlfor="state"
+                htmlFor="state"
                 className="block text-[13px] font-bold mb-1"
               >
                 State
@@ -158,7 +217,7 @@ function AddressCard({ setAddressOpen, onSave }) {
               )}
               <div className="relative">
                 <label
-                  htmlfor="pincode"
+                  htmlFor="pincode"
                   className="block text-[13px] font-bold mb-1"
                 >
                   Pincode
@@ -166,6 +225,10 @@ function AddressCard({ setAddressOpen, onSave }) {
                 <input
                   {...register("pincode", {
                     required: "This field is required",
+                    pattern: {
+                      value: /^[0-9]{6}$/,
+                      message: "Pincode must be 6 digits",
+                    },
                   })}
                   id="pincode"
                   type="text"
@@ -181,15 +244,11 @@ function AddressCard({ setAddressOpen, onSave }) {
             </div>
             {/*submit address button */}
             <button
-              onClick={handleSubmit((data) => {
-                localStorage.setItem("userAddress", JSON.stringify(data));
-                if (onSave) onSave(data);
-                setAddressOpen(false);
-                toast.success("Address saved successfully!");
-              })}
-              className="mt-4 px-4 bg-blue-600 text-white text-[13px] py-2 cursor-pointer rounded-full hover:bg-blue-700 transition duration-200"
+              disabled={isSaving}
+              onClick={handleSubmit(submitAddress)}
+              className="mt-4 px-4 bg-blue-600 text-white text-[13px] py-2 cursor-pointer rounded-full hover:bg-blue-700 transition duration-200 disabled:opacity-60"
             >
-              Use this address
+              {isSaving ? "Saving..." : "Use this address"}
             </button>
           </div>
         </div>

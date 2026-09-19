@@ -3,7 +3,9 @@ import { CiCircleQuestion, CiMail, CiPhone } from "react-icons/ci";
 import { LuMapPin } from "react-icons/lu";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { sendContactMessage } from "../../api/contact";
 import PageHero from "../../components/ui/PageHero";
+import { getApiErrorMessage } from "../../utils/apiError";
 
 import PrimaryBtn from "../../components/ui/PrimaryBtn";
 
@@ -15,9 +17,21 @@ function ContactPage({ hideHero = false }) {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  const onSubmit = () => {
-    reset();
-    toast.success("Message sent successfully! We'll get back to you soon.");
+  const onSubmit = async (data) => {
+    try {
+      const res = await sendContactMessage({
+        name: data.name,
+        email: data.email,
+        message: data.message,
+      });
+      reset();
+      toast.success(
+        res.data.message ||
+          "Message sent successfully! We'll get back to you soon.",
+      );
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Could not send your message."));
+    }
   };
 
   return (

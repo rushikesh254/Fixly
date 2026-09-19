@@ -1,26 +1,32 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { CiCircleCheck } from "react-icons/ci";
 import { FaCheckCircle, FaInfoCircle, FaStar } from "react-icons/fa";
 import { FiMapPin } from "react-icons/fi";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdElectricBolt, MdEventAvailable } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
+import { getServiceById } from "../../api/services";
+import { getProviderById } from "../../api/providers";
+import { getServiceReviews } from "../../api/reviews";
 import Gallery from "../../components/ui/Gallery";
+import Loader, { ErrorState } from "../../components/ui/Loader";
 import BookingCard from "../../components/user/BookingCard";
 import ProviderCard from "../../components/user/ProviderCard";
 import ReviewSection from "../../components/user/reviewSection";
 import pricingNote from "../../constants/pricingNote";
 import guarantees from "../../constants/guarantees";
-import providers from "../../data/providers";
+import { useAuth } from "../../context/AuthContext";
+import { useFetch } from "../../hooks/useFetch";
+import {
+  normalizeProvider,
+  normalizeReview,
+  normalizeService,
+} from "../../utils/normalize";
 
 function ViewDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const provider = providers.find((p) => p.id === id);
-  const p = provider
-    ? { ...provider, ...(provider.services?.[0] || {}) }
-    : null;
+  const { user } = useAuth();
 
   // state for lightbox
   const [open, setOpen] = useState(false);
@@ -28,19 +34,74 @@ function ViewDetails() {
 
   const [openBooking, setOpenBooking] = useState(false);
 
-  // if provider not found display message
-  if (!p) {
+  const fetchService = useCallback(async () => {
+    const serviceRes = await getServiceById(id);
+    const service = normalizeService(serviceRes.data.service);
+
+    // provider stats are a best-effort enrichment: the page works without them
+    const providerRes = service?.providerId
+      ? await getProviderById(service.providerId).catch(() => ({
+          data: { provider: null },
+        }))
+      : { data: { provider: null } };
+
+    const reviewRes = await getServiceReviews(id);
+
+    return {
+      service,
+      provider: normalizeProvider(providerRes.data.provider),
+      reviews: reviewRes.data.reviews.map(normalizeReview),
+    };
+  }, [id]);
+
+  const { data, loading, error, refetch } = useFetch(fetchService);
+
+  const p = data?.service || null;
+  const reviews = data?.reviews || [];
+  const provider = data?.provider || null;
+
+  // provider-wide stats win over the per-service numbers when the profile loads
+  const cardProvider = provider
+    ? {
+        ...p,
+        rating: provider.rating,
+        totalReviews: provider.totalReviews,
+        bookingsCompleted: provider.bookingsCompleted,
+      }
+    : p;
+
+  if (loading) {
     return (
-      <div className="px-4 py-10 text-center text-gray-600">
-        Service provider not found.
+      <div className="min-h-screen bg-gray-100 px-4 py-10 sm:px-6 lg:px-10">
+        <Loader label="Loading service..." />
+      </div>
+    );
+  }
+
+  // if the service could not be loaded display the reason
+  if (error || !p) {
+    return (
+      <div className="min-h-screen bg-gray-100 px-4 py-10 sm:px-6 lg:px-10">
+        <ErrorState
+          message={error || "Service provider not found."}
+          onRetry={refetch}
+        />
       </div>
     );
   }
 
   const galleryImages = p.galleryImages || [];
   const includes = p.includes || [];
-  const reviews = p.reviews || [];
   const images = [p.coverImage, ...galleryImages].filter(Boolean);
+
+  // only a signed in customer can place a booking
+  const handleBook = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    setOpenBooking(true);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-8 sm:px-6 lg:px-10">
@@ -90,10 +151,11 @@ function ViewDetails() {
         setIndex={setIndex}
       />
 
-      {/* provider desc, booking info and reviews section */}
       <div className="mx-auto mt-8 flex max-w-6xl flex-col gap-8 lg:flex-row lg:items-start">
         <div className="min-w-0 flex-1">
-          <p className="py-2 text-[15px] uppercase leading-7 tracking-[0.3px] text-gray-700">
+          {/* description */}
+          <h1 className="text-lg font-bold tracking-wide">ABOUT THE SERVICE</h1>
+          <p className="mt-3 text-sm leading-7 text-gray-700">
             {p.description}
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -143,7 +205,7 @@ function ViewDetails() {
             <p className="leading-6">{pricingNote}</p>
           </div>
           <div className="mt-8 block lg:hidden sm:max-w-md sm:mx-auto">
-            <ProviderCard provider={p} onBook={() => {}} />
+            <ProviderCard provider={cardProvider} onBook={handleBook} />
           </div>
 
           {/* what's included and booking availability */}
@@ -156,6 +218,11 @@ function ViewDetails() {
                 <h2 className="text-base font-semibold text-gray-700">
                   What's Included?
                 </h2>
+                {includes.length === 0 && (
+                  <p className="mt-3 text-sm text-gray-500">
+                    The provider has not listed the inclusions yet.
+                  </p>
+                )}
                 {includes.map((item, i) => (
                   <div key={i} className="mt-3 flex items-start gap-3">
                     <span className="mt-0.5 text-gray-600">
@@ -215,7 +282,7 @@ function ViewDetails() {
         )}
         {/* sticky provider card with booking button for larger screens */}
         <aside className="hidden w-full lg:sticky lg:top-24 lg:block lg:w-95 lg:self-start">
-          <ProviderCard provider={p} onBook={() => setOpenBooking(true)} />
+          <ProviderCard provider={cardProvider} onBook={handleBook} />
         </aside>
       </div>
     </div>

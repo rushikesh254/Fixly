@@ -1,42 +1,80 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { LuPlus, LuTag, LuX } from "react-icons/lu";
-import categoriesData from "../../data/categories";
-import servicesData from "../../data/services";
+import { toast } from "sonner";
+import { createCategory, getCategories } from "../../api/categories";
+import { createServiceType, getServiceTypes } from "../../api/serviceTypes";
+import Loader, { ErrorState } from "../../components/ui/Loader";
 import PrimaryBtn from "../../components/ui/PrimaryBtn";
 import SecondaryBtn from "../../components/ui/SecondaryBtn";
+import { useFetch } from "../../hooks/useFetch";
+import { getApiErrorMessage } from "../../utils/apiError";
 
 function ServicesPage() {
-  const [categories, setCategories] = useState(categoriesData);
-  const [servicesList, setServicesList] = useState(servicesData);
+  const fetchCatalogue = useCallback(
+    () =>
+      Promise.all([getCategories(), getServiceTypes()]).then(
+        ([categoryRes, typeRes]) => ({
+          categories: categoryRes.data.categories,
+          serviceTypes: typeRes.data.serviceTypes,
+        }),
+      ),
+    [],
+  );
+
+  const { data, loading, error, refetch } = useFetch(fetchCatalogue, {
+    initialData: { categories: [], serviceTypes: [] },
+  });
+
+  const categories = data?.categories || [];
+  const servicesList = data?.serviceTypes || [];
 
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [categoryName, setCategoryName] = useState("");
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [serviceName, setServiceName] = useState("");
   const [serviceCategory, setServiceCategory] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
-  const categoryCount = (category) =>
-    servicesList.filter((s) => s.category === category).length;
+  const categoryCount = (categoryId) =>
+    servicesList.filter((s) => (s.category?._id || s.category) === categoryId)
+      .length;
 
   // add category and service funtions
-  const addCategory = () => {
+  const addCategory = async () => {
     const name = categoryName.trim();
     if (!name) return;
-    setCategories((prev) => [...prev, name]);
-    setCategoryName("");
-    setShowCategoryModal(false);
+
+    setIsSaving(true);
+    try {
+      await createCategory(name);
+      setCategoryName("");
+      setShowCategoryModal(false);
+      toast.success("Category added successfully.");
+      refetch();
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Could not add the category."));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const addService = () => {
+  const addService = async () => {
     const name = serviceName.trim();
     if (!name || !serviceCategory) return;
-    setServicesList((prev) => [
-      ...prev,
-      { name, category: serviceCategory, status: "active" },
-    ]);
-    setServiceName("");
-    setServiceCategory("");
-    setShowServiceModal(false);
+
+    setIsSaving(true);
+    try {
+      await createServiceType({ name, category: serviceCategory });
+      setServiceName("");
+      setServiceCategory("");
+      setShowServiceModal(false);
+      toast.success("Service added successfully.");
+      refetch();
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Could not add the service."));
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -67,26 +105,40 @@ function ServicesPage() {
           </button>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {categories.map((cat) => (
-            <div
-              key={cat}
-              className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 transition hover:border-gray-300"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
-                <LuTag size={20} />
+        {loading && <Loader label="Loading catalogue..." className="mt-5" />}
+
+        {!loading && error && (
+          <ErrorState message={error} onRetry={refetch} className="mt-5" />
+        )}
+
+        {!loading && !error && categories.length === 0 && (
+          <p className="mt-5 text-sm text-gray-500">
+            No categories yet. Add the first one to get started.
+          </p>
+        )}
+
+        {!loading && !error && categories.length > 0 && (
+          <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {categories.map((cat) => (
+              <div
+                key={cat._id}
+                className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 transition hover:border-gray-300"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
+                  <LuTag size={20} />
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-gray-900">
+                    {cat.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {categoryCount(cat._id)} services
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-gray-900">
-                  {cat}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {categoryCount(cat)} services
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Services */}
@@ -121,14 +173,14 @@ function ServicesPage() {
             <tbody>
               {servicesList.map((s, idx) => (
                 <tr
-                  key={s.id}
+                  key={s._id}
                   className={`border-b border-gray-100 last:border-0 transition hover:bg-blue-50/40 ${idx % 2 === 1 ? "bg-gray-50/40" : "bg-white"}`}
                 >
                   <td className="px-4 py-3.5 text-[13px] font-semibold text-gray-900 whitespace-nowrap">
                     {s.name}
                   </td>
                   <td className="px-4 py-3.5 text-[13px] text-gray-600 whitespace-nowrap">
-                    {s.category}
+                    {s.category?.name || ""}
                   </td>
                 </tr>
               ))}
@@ -140,18 +192,24 @@ function ServicesPage() {
         <div className="mt-5 flex flex-col gap-3 md:hidden">
           {servicesList.map((s) => (
             <div
-              key={s.id}
+              key={s._id}
               className="rounded-xl border border-gray-200 p-4 transition hover:border-blue-300"
             >
               <p className="truncate text-sm font-semibold text-gray-900">
                 {s.name}
               </p>
               <p className="mt-0.5 truncate text-xs text-gray-500">
-                {s.category}
+                {s.category?.name || ""}
               </p>
             </div>
           ))}
         </div>
+
+        {!loading && !error && servicesList.length === 0 && (
+          <p className="mt-5 text-sm text-gray-500">
+            No services in the catalogue yet. Add one so providers can publish it.
+          </p>
+        )}
       </div>
 
       {/* Add Category modal */}
@@ -185,7 +243,11 @@ function ServicesPage() {
                 onclick={() => setShowCategoryModal(false)}
                 className="text-gray-600! border-gray-200! bg-gray-50! hover:bg-gray-100! hover:text-gray-800!"
               />
-              <PrimaryBtn btn="Add Category" onclick={addCategory} />
+              <PrimaryBtn
+                btn={isSaving ? "Adding..." : "Add Category"}
+                onclick={addCategory}
+                disabled={isSaving}
+              />
             </div>
           </div>
         </div>
@@ -226,8 +288,8 @@ function ServicesPage() {
             >
               <option value="">Select category</option>
               {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
                 </option>
               ))}
             </select>
@@ -237,7 +299,11 @@ function ServicesPage() {
                 onclick={() => setShowServiceModal(false)}
                 className="text-gray-600! border-gray-200! bg-gray-50! hover:bg-gray-100! hover:text-gray-800!"
               />
-              <PrimaryBtn btn="Add Service" onclick={addService} />
+              <PrimaryBtn
+                btn={isSaving ? "Adding..." : "Add Service"}
+                onclick={addService}
+                disabled={isSaving}
+              />
             </div>
           </div>
         </div>

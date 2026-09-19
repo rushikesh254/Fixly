@@ -6,6 +6,8 @@ import AuthPage from "./pages/Public/AuthPage.jsx";
 import ContactPage from "./pages/Public/ContactPage.jsx";
 import HomePage from "./pages/Public/HomePage.jsx";
 import NotFound from "./pages/Public/NotFound.jsx";
+import ForgotPassword from "./pages/Public/ForgotPassword.jsx";
+import ResetPassword from "./pages/Public/ResetPassword.jsx";
 import ProviderPage from "./pages/Public/ProviderPage.jsx";
 import ServicesPage from "./pages/Public/ServicesPage.jsx";
 import ViewDetails from "./pages/Public/ViewDetails.jsx";
@@ -39,7 +41,11 @@ function App() {
           <Route path="join" element={<ProviderPage />} />
           <Route path="services" element={<ServicesPage />} />
           <Route path="contact" element={<ContactPage />} />
-          <Route path="auth" element={<AuthPage />} />
+          <Route path="auth" element={<AuthPage mode="auth" />} />
+          <Route path="login" element={<AuthPage mode="login" />} />
+          <Route path="signup" element={<AuthPage mode="signup" />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password/:token" element={<ResetPassword />} />
           <Route path="services/viewDetails/:id" element={<ViewDetails />} />
         </Route>
         {/* Logged in user */}

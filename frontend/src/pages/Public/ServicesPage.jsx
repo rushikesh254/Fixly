@@ -1,18 +1,24 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { RiResetRightLine } from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getCategories } from "../../api/categories";
+import { getServices } from "../../api/services";
+import { getServiceTypes } from "../../api/serviceTypes";
 import Filters from "../../components/ui/Filters";
+import Loader, { ErrorState } from "../../components/ui/Loader";
 import ServiceCard from "../../components/ui/ServiceCard";
 import PageHero from "../../components/ui/PageHero";
 import PrimaryBtn from "../../components/ui/PrimaryBtn";
-import services from "../../data/services";
-import providers from "../../data/providers";
+import { useFetch } from "../../hooks/useFetch";
 import { useLocate } from "../../hooks/useLocate";
-import categories from "../../data/categories";
+import { normalizeService } from "../../utils/normalize";
+
+// radius used when the visitor asks for services near them
+const NEARBY_DISTANCE_KM = 400;
 
 function ServicesPage() {
-  const { status, detect, nearbyProvidersList, clearLocation } = useLocate();
+  const { status, detect, userCoords, clearLocation, withDistance } = useLocate();
 
   const [isCategoryExpanded, setIsCategoryExpanded] = useState(false);
   const [isServiceExpanded, setIsServiceExpanded] = useState(false);
@@ -34,82 +40,116 @@ function ServicesPage() {
   // State to track the search input value
   const [inputValue, setInputValue] = useState(searchQuery);
 
-  // Calculate min and max price for filters
-  const maxPrice = providers.reduce(
-    (acc, cv) => (acc > cv.services?.[0]?.price ? acc : cv.services?.[0]?.price),
-    0,
+  // categories drive both the filter list and the category query parameter,
+  // which stays a readable name so the footer links keep working
+  const fetchCategories = useCallback(
+    () => getCategories().then((res) => res.data.categories),
+    [],
   );
-  const minPrice = providers.reduce(
-    (acc, cv) => (acc < cv.services?.[0]?.price ? acc : cv.services?.[0]?.price),
-    Infinity,
+  const { data: categoryList } = useFetch(fetchCategories, { initialData: [] });
+
+  const categories = useMemo(
+    () => (categoryList || []).map((category) => category.name),
+    [categoryList],
   );
 
-  //services in selected category
+  const selectedCategoryId = useMemo(
+    () =>
+      (categoryList || []).find((category) => category.name === selectedCategory)
+        ?._id || "",
+    [categoryList, selectedCategory],
+  );
 
-  const servicesInCategory = selectedCategory
-    ? services.filter((service) => service.category === selectedCategory)
-    : services;
-
-  //with  filters like category,service, price, rating, instant booking, available today
-
-  const filteredProviders = providers.filter((provider) => {
-    const primaryService = provider.services?.[0] || {};
-
-    if (selectedCategory && provider.category !== selectedCategory) {
-      return false;
-    }
-
-    if (
-      selectedServices.length > 0 &&
-      !selectedServices.includes(primaryService.title)
-    ) {
-      return false;
-    }
-
-    if (instantBookingEnabled && primaryService.instantBooking !== true) {
-      return false;
-    }
-    if (availableTodayEnabled && primaryService.availableToday !== true) {
-      return false;
-    }
-    if (selectedPrice && primaryService.price > parseInt(selectedPrice)) {
-      return false;
-    }
-    if (selectedRating && provider.rating < parseFloat(selectedRating)) {
-      return false;
-    }
-    return true;
+  // the service filter lists the catalogue titles of the selected category
+  const fetchServiceTypes = useCallback(
+    () => getServiceTypes().then((res) => res.data.serviceTypes),
+    [],
+  );
+  const { data: serviceTypes } = useFetch(fetchServiceTypes, {
+    initialData: [],
   });
 
-  const flattenPrimaryService = (provider, extra = {}) => ({
-    ...provider,
-    ...(provider.services?.[0] || {}),
-    ...extra,
+  const servicesInCategory = useMemo(
+    () =>
+      (serviceTypes || [])
+        .filter(
+          (type) => !selectedCategory || type.category?.name === selectedCategory,
+        )
+        .map((type) => ({ id: type._id, name: type.name })),
+    [serviceTypes, selectedCategory],
+  );
+
+  // every filter the server can apply is sent as a query parameter, so the list
+  // never has to be filtered down from a full copy of the catalogue
+  const fetchServices = useCallback(() => {
+    const params = {};
+    if (searchQuery) params.keyword = searchQuery;
+    if (selectedCategoryId) params.category = selectedCategoryId;
+    if (selectedPrice) params.maxPrice = selectedPrice;
+    if (selectedRating) params.minRating = selectedRating;
+    if (instantBookingEnabled) params.instantBooking = true;
+    if (availableTodayEnabled) params.availableToday = true;
+    if (status === "success" && userCoords) {
+      params.lat = userCoords.lat;
+      params.lng = userCoords.lon;
+      params.distance = NEARBY_DISTANCE_KM;
+    }
+
+    return getServices(params).then((res) =>
+      res.data.services.map(normalizeService),
+    );
+  }, [
+    searchQuery,
+    selectedCategoryId,
+    selectedPrice,
+    selectedRating,
+    instantBookingEnabled,
+    availableTodayEnabled,
+    status,
+    userCoords,
+  ]);
+
+  const {
+    data: services,
+    loading,
+    error,
+    refetch,
+  } = useFetch(fetchServices, { initialData: [] });
+
+  // The slider bounds have to describe the whole catalogue, otherwise they would
+  // shrink to the filtered result every time the price changes. Fetched once.
+  const fetchPriceRange = useCallback(
+    () =>
+      getServices().then((res) => {
+        const prices = res.data.services.map((service) => service.price);
+        if (prices.length === 0) return { minPrice: 0, maxPrice: 5000 };
+        return {
+          minPrice: Math.min(...prices),
+          maxPrice: Math.max(...prices),
+        };
+      }),
+    [],
+  );
+  const { data: priceRange } = useFetch(fetchPriceRange, {
+    initialData: { minPrice: 0, maxPrice: 5000 },
   });
 
-  //with location filters
+  const { minPrice, maxPrice } = priceRange || { minPrice: 0, maxPrice: 5000 };
 
-  const displayedProviders =
-    status === "success"
-      ? filteredProviders
-          .map((provider) => {
-            const nearby = nearbyProvidersList.find(
-              (p) => p.id === provider.id,
-            );
-            return nearby
-              ? flattenPrimaryService(provider, { distance: nearby.distance })
-              : null;
-          })
-          .filter(Boolean)
-          .sort((a, b) => a.distance - b.distance)
-      : filteredProviders.map((provider) => flattenPrimaryService(provider));
+  // the catalogue title filter is a multi select, which the api does not model
+  const displayedServices = useMemo(() => {
+    const filtered = (services || []).filter(
+      (service) =>
+        selectedServices.length === 0 || selectedServices.includes(service.title),
+    );
 
-  // Filter displayed providers based on search query
-  const finalDisplayedProviders = displayedProviders.filter((provider) =>
-    `${provider.title} ${provider.category} ${provider.providerName} ${provider.location}`
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase()),
-  );
+    return withDistance(filtered);
+  }, [services, selectedServices, withDistance]);
+
+  const resetFilters = () => {
+    clearLocation();
+    navigate("/services");
+  };
 
   return (
     <div>
@@ -186,8 +226,14 @@ function ServicesPage() {
             </p>
           </div>
 
-          {/* if no provider found */}
-          {finalDisplayedProviders.length === 0 && (
+          {loading && <Loader label="Loading services..." className="mt-10" />}
+
+          {!loading && error && (
+            <ErrorState message={error} onRetry={refetch} className="mt-10" />
+          )}
+
+          {/* if no service found */}
+          {!loading && !error && displayedServices.length === 0 && (
             <div className="flex flex-col bg-white rounded-2xl py-20 items-center justify-center gap-4 mt-10">
               <img
                 src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png"
@@ -202,10 +248,7 @@ function ServicesPage() {
               <div className="px-4 mt-6 mb-2">
                 <button
                   className="w-full py-2.5 bg-white border border-gray-100 text-gray-700 text-[13px] font-medium rounded-lg hover:bg-red-50 hover:text-red-900 hover:border-red-100 transition-all flex items-center justify-center gap-2 duration-200 px-35"
-                  onClick={() => {
-                    clearLocation();
-                    navigate("/services");
-                  }}
+                  onClick={resetFilters}
                 >
                   <RiResetRightLine />
                   Reset Filters
@@ -214,14 +257,14 @@ function ServicesPage() {
             </div>
           )}
 
-          {/* providers grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-3 my-3 ">
-            {finalDisplayedProviders
-              .filter((provider) => provider.status === "approved")
-              .map((provider) => (
-                <ServiceCard key={provider.id} service={provider} />
+          {/* services grid */}
+          {!loading && !error && displayedServices.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-3 my-3 ">
+              {displayedServices.map((service) => (
+                <ServiceCard key={service.id} service={service} />
               ))}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,18 +1,17 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
-  CiFileOn,
   CiMedicalClipboard,
   CiStar,
   CiUser,
 } from "react-icons/ci";
+import { getMyProviderProfile, getMyProviderReviews } from "../../api/providers";
 import ProviderInfo from "../../components/provider/ProviderInfo.jsx";
 import MyServices from "../../components/provider/MyServices.jsx";
-import Documents from "../../components/provider/Documents.jsx";
 import ReviewsRatings from "../../components/provider/ReviewsRatings.jsx";
-import providers from "../../data/providers.js";
+import Loader, { ErrorState } from "../../components/ui/Loader.jsx";
 import Sidebar from "../../components/ui/Sidebar.jsx";
-
-const provider = providers.find((p) => p.id === "PRV-0001");
+import { useFetch } from "../../hooks/useFetch.js";
+import { normalizeProvider, normalizeReview } from "../../utils/normalize.js";
 
 const sidebarItems = [
   {
@@ -25,7 +24,6 @@ const sidebarItems = [
     label: "My Services",
     icon: <CiMedicalClipboard size={20} />,
   },
-  { id: "documents", label: "Documents", icon: <CiFileOn size={20} /> },
   { id: "reviews", label: "Ratings & Reviews", icon: <CiStar size={20} /> },
 ];
 
@@ -38,10 +36,6 @@ const tabMeta = {
     title: "My Services",
     description: "Add and manage the services you offer",
   },
-  documents: {
-    title: "Documents",
-    description: "Upload and manage your verification documents",
-  },
   reviews: {
     title: "Ratings & Reviews",
     description: "See what customers are saying about you",
@@ -50,6 +44,19 @@ const tabMeta = {
 
 function Profile() {
   const [activeTab, setActiveTab] = useState("info");
+
+  const fetchProfile = useCallback(
+    () =>
+      Promise.all([getMyProviderProfile(), getMyProviderReviews()]).then(
+        ([profileRes, reviewsRes]) => ({
+          ...normalizeProvider(profileRes.data.provider),
+          reviews: (reviewsRes.data.reviews || []).map(normalizeReview),
+        }),
+      ),
+    [],
+  );
+
+  const { data: provider, loading, error, refetch } = useFetch(fetchProfile);
 
   const navItems = sidebarItems.map((item) => ({
     ...item,
@@ -86,10 +93,23 @@ function Profile() {
 
           {/* Content */}
           <div className="mt-8 sm:mt-10">
-            {activeTab === "info" && <ProviderInfo provider={provider} />}
-            {activeTab === "services" && <MyServices provider={provider} />}
-            {activeTab === "documents" && <Documents />}
-            {activeTab === "reviews" && <ReviewsRatings provider={provider} />}
+            {loading && <Loader label="Loading your profile..." />}
+
+            {!loading && error && (
+              <ErrorState message={error} onRetry={refetch} />
+            )}
+
+            {!loading && !error && provider && (
+              <>
+                {activeTab === "info" && (
+                  <ProviderInfo provider={provider} onSaved={refetch} />
+                )}
+                {activeTab === "services" && <MyServices provider={provider} />}
+                {activeTab === "reviews" && (
+                  <ReviewsRatings provider={provider} />
+                )}
+              </>
+            )}
           </div>
         </div>
       </main>

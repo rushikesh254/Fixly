@@ -1,19 +1,48 @@
+import { useState } from "react";
 import { FiArrowLeft } from "react-icons/fi";
+import { createBooking } from "../../api/bookings";
 import { useAuth } from "../../context/AuthContext";
 import PrimaryBtn from "../ui/PrimaryBtn";
 import SecondaryBtn from "../ui/SecondaryBtn";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "../../utils/apiError";
 import formatDate from "../../utils/formatDate";
+import { toDateKey, toTime24h } from "../../utils/time";
 
 function ConfirmModal({
   setConfirmModalOpen,
   setOpenBooking,
   service,
   formData,
+  onBooked,
 }) {
   const { user } = useAuth();
+  const [isBooking, setIsBooking] = useState(false);
 
   const { title, providerName, price, estimatedDuration } = service;
+
+  const handleConfirm = async () => {
+    setIsBooking(true);
+    try {
+      const { data } = await createBooking({
+        serviceId: service.serviceId || service.id,
+        // the api works in calendar dates and 24 hour times
+        bookingDate: toDateKey(formData.date),
+        bookingTime: toTime24h(formData.time),
+        address: formData.where,
+        specialInstructions: formData.additional || "",
+      });
+
+      setConfirmModalOpen(false);
+      setOpenBooking(false);
+      toast.success(data.message || "Booking confirmed successfully!");
+      if (onBooked) onBooked(data.booking);
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Could not create your booking."));
+    } finally {
+      setIsBooking(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
@@ -160,12 +189,9 @@ function ConfirmModal({
               }}
             />
             <PrimaryBtn
-              btn="Confirm Booking"
-              onclick={() => {
-                setConfirmModalOpen(false);
-                setOpenBooking(false);
-                toast.success("Booking confirmed successfully!");
-              }}
+              btn={isBooking ? "Booking..." : "Confirm Booking"}
+              onclick={handleConfirm}
+              disabled={isBooking}
               className="py-3 bg-emerald-500 hover:bg-emerald-600 text-white"
             />
           </div>

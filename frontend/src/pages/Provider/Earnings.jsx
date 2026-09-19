@@ -7,34 +7,49 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import bookings from "../../data/bookings";
-import providers from "../../data/providers";
+import { useCallback, useMemo } from "react";
+import { getMyBookings } from "../../api/bookings";
 import EmptyState from "../../components/ui/EmptyState";
+import Loader, { ErrorState } from "../../components/ui/Loader";
+import { useFetch } from "../../hooks/useFetch";
+import { normalizeBooking } from "../../utils/normalize";
+import { toDateKey } from "../../utils/time";
 import { FiCalendar, FiClock, FiMapPin, FiTrendingUp } from "react-icons/fi";
 import { TfiMoney } from "react-icons/tfi";
 
 function Earnings() {
-  const provider = providers[0];
-  const myBookings = bookings.filter((b) => b.providerId === provider.id);
+  const fetchBookings = useCallback(
+    () =>
+      getMyBookings().then((res) => res.data.bookings.map(normalizeBooking)),
+    [],
+  );
 
-  const completedBookings = myBookings
-    .filter((b) => b.status === "Completed")
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  const { data: myBookings, loading, error, refetch } = useFetch(fetchBookings, {
+    initialData: [],
+  });
 
-  // Calculate earnings
-  const today = new Date().toISOString().slice(0, 10);
+  const completedBookings = useMemo(
+    () =>
+      (myBookings || [])
+        .filter((b) => b.status === "Completed")
+        .sort((a, b) => new Date(b.date) - new Date(a.date)),
+    [myBookings],
+  );
+
+  // Calculate earnings ( local calendar dates so "today" matches the provider )
+  const today = toDateKey(new Date());
 
   const todayEarnings = completedBookings
     .filter((b) => b.date === today)
     .reduce((sum, b) => sum + b.price, 0);
 
   const weekAgoDate = new Date();
-  weekAgoDate.setDate(weekAgoDate.getDate() - 7);
+  weekAgoDate.setDate(weekAgoDate.getDate() - 6);
 
-  const weekAgoKey = weekAgoDate.toISOString().slice(0, 10);
+  const weekAgoKey = toDateKey(weekAgoDate);
 
   const last7daysEarnings = completedBookings
-    .filter((b) => b.date >= weekAgoKey)
+    .filter((b) => b.date >= weekAgoKey && b.date <= today)
     .reduce((sum, b) => sum + b.price, 0);
 
   const monthEarnings = completedBookings
@@ -78,7 +93,7 @@ function Earnings() {
     const date = new Date();
     date.setDate(date.getDate() - i);
 
-    const key = date.toISOString().slice(0, 10);
+    const key = toDateKey(date);
 
     const earnings = completedBookings
       .filter((booking) => booking.date === key)
@@ -105,7 +120,13 @@ function Earnings() {
         </p>
       </div>
 
-      {completedBookings.length === 0 ? (
+      {loading && <Loader label="Loading earnings..." className="mt-8" />}
+
+      {!loading && error && (
+        <ErrorState message={error} onRetry={refetch} className="mt-8" />
+      )}
+
+      {!loading && !error && completedBookings.length === 0 ? (
         <div className="mt-8">
           <EmptyState
             title="No earnings yet"
@@ -116,6 +137,8 @@ function Earnings() {
           />
         </div>
       ) : (
+        !loading &&
+        !error && (
         <>
           {/* Summary cards */}
           <div className="mt-8 grid grid-cols-2 gap-5 lg:grid-cols-4">
@@ -233,6 +256,7 @@ function Earnings() {
             </div>
           </div>
         </>
+        )
       )}
     </div>
   );

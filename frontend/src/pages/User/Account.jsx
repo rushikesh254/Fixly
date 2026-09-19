@@ -13,7 +13,7 @@ const sidebarItems = [
   { id: "personal", label: "Personal Information", icon: <CiUser size={20} /> },
   {
     id: "address",
-    label: "Manage Addresses",
+    label: "Manage Address",
     icon: <CiLocationOn size={20} />,
   },
   { id: "password", label: "Change Password", icon: <CiLock size={20} /> },
@@ -31,8 +31,8 @@ const tabMeta = {
     description: "Manage your account details",
   },
   address: {
-    title: "Manage Addresses",
-    description: "Add, edit and manage your saved addresses",
+    title: "Manage Address",
+    description: "Add or change the address your services are delivered to",
   },
   password: {
     title: "Change Password",
@@ -40,7 +40,7 @@ const tabMeta = {
   },
   settings: {
     title: "Account Settings",
-    description: "Manage your preferences and account",
+    description: "Manage your account",
   },
   support: {
     title: "Support",
@@ -64,7 +64,8 @@ function Account() {
         section="ACCOUNT"
         navItems={navItems}
         user={user}
-        goBack="/user/dashboard"
+        // /account is reachable by every role, so go back to the right dashboard
+        goBack={`/${user?.role || "user"}/dashboard`}
       />
 
       {/* Main */}

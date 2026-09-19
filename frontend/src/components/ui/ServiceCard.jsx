@@ -1,12 +1,13 @@
 import { FaStar } from "react-icons/fa";
 import { FiMapPin } from "react-icons/fi";
 import { MdElectricBolt } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SaveBtn from "../user/SaveBtn";
 import PrimaryBtn from "./PrimaryBtn";
 import SecondaryBtn from "./SecondaryBtn";
 import { useState } from "react";
 import BookingCard from "../user/BookingCard";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ServiceCard({ service }) {
   const {
@@ -20,7 +21,18 @@ export default function ServiceCard({ service }) {
     distance,
   } = service;
 
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [openBooking, setOpenBooking] = useState(false);
+
+  // booking needs an account, so send a visitor to the login page first
+  const handleBook = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    setOpenBooking(true);
+  };
 
   return (
     <div className="group max-w-95  h-full w-full  bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 overflow-hidden">
@@ -45,7 +57,8 @@ export default function ServiceCard({ service }) {
             Instant Booking
           </span>
         )}
-        <SaveBtn service={service} />
+        {/* saving needs an account, matching the gallery on the details page */}
+        {user && <SaveBtn service={service} />}
       </div>
 
       <div className="p-4 space-y-1">
@@ -94,11 +107,7 @@ export default function ServiceCard({ service }) {
             </Link>
           </div>
           <div className="w-1/2">
-            <PrimaryBtn
-              btn="Book Now"
-              className="w-full"
-              onclick={() => setOpenBooking(true)}
-            />
+            <PrimaryBtn btn="Book Now" className="w-full" onclick={handleBook} />
           </div>
           {openBooking && (
             <BookingCard setOpenBooking={setOpenBooking} service={service} />

@@ -12,6 +12,7 @@ function DetailModal({
   showDetailModal,
   setShowDetailModal,
   setShowCancelModal,
+  setShowReviewModal,
   booking,
   cfg,
 }) {
@@ -387,14 +388,20 @@ function DetailModal({
                   className="text-blue-600! border border-blue-200! hover:bg-blue-50! py-3"
                   onclick={() => {
                     setShowDetailModal(false);
-navigate(`/services/viewDetails/${booking.providerId}`);
+                    navigate(`/services/viewDetails/${booking.serviceId}`);
                   }}
                 />
-                <PrimaryBtn
-                  btn="Leave Review"
-                  onclick={() => setShowDetailModal(false)}
-                  className="flex-1 py-3"
-                />
+                {/* a service can only be reviewed once */}
+                {!booking.isReviewed && setShowReviewModal && (
+                  <PrimaryBtn
+                    btn="Leave Review"
+                    onclick={() => {
+                      setShowDetailModal(false);
+                      setShowReviewModal(true);
+                    }}
+                    className="flex-1 py-3"
+                  />
+                )}
               </div>
             )}
             {status === "Cancelled" && (
@@ -402,7 +409,7 @@ navigate(`/services/viewDetails/${booking.providerId}`);
                 btn="Book Again"
                 onclick={() => {
                   setShowDetailModal(false);
-                  navigate(`/services/viewDetails/${booking.providerId}`);
+                  navigate(`/services/viewDetails/${booking.serviceId}`);
                 }}
                 className="px-5 py-3"
               />
@@ -412,7 +419,7 @@ navigate(`/services/viewDetails/${booking.providerId}`);
                 btn="Book Again"
                 onclick={() => {
                   setShowDetailModal(false);
-                  navigate(`/services/viewDetails/${booking.providerId}`);
+                  navigate(`/services/viewDetails/${booking.serviceId}`);
                 }}
                 className="py-3 px-5"
               />

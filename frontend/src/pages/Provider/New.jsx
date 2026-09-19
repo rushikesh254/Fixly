@@ -1,48 +1,75 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
-import bookings from "../../data/bookings";
+import { getMyBookings, updateBookingStatus } from "../../api/bookings";
 import EmptyState from "../../components/ui/EmptyState";
+import Loader, { ErrorState } from "../../components/ui/Loader";
 import RequestDetailModal from "../../components/provider/RequestDetailModal";
 import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
+import { useFetch } from "../../hooks/useFetch";
+import { getApiErrorMessage } from "../../utils/apiError";
 import getBookingDateTime from "../../utils/getBookingDateTime";
 import formatDate from "../../utils/formatDate";
+import { normalizeBooking } from "../../utils/normalize";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 
 function New() {
-  // copy of this provider's bookings
-  const [myBookings, setMyBookings] = useState(
-    bookings.filter((b) => b.providerId === "PRV-0001"),
+  const fetchBookings = useCallback(
+    () =>
+      getMyBookings().then((res) => res.data.bookings.map(normalizeBooking)),
+    [],
   );
+
+  const {
+    data: myBookings,
+    loading,
+    error,
+    refetch,
+  } = useFetch(fetchBookings, { initialData: [] });
 
   const [selectedBooking, setSelectedBooking] = useState(null);
 
   const [bookingToDecline, setBookingToDecline] = useState(null);
 
-  //  only shows pending requests
-  const pendingRequests = myBookings
-    .filter(
-      (b) => b.status === "Pending" && getBookingDateTime(b) >= new Date(),
-    )
-    .sort((a, b) => {
-      return getBookingDateTime(a) - getBookingDateTime(b);
-    });
+  //  only shows pending requests that have not passed yet
+  const pendingRequests = useMemo(
+    () =>
+      (myBookings || [])
+        .filter(
+          (b) => b.status === "Pending" && getBookingDateTime(b) >= new Date(),
+        )
+        .sort((a, b) => getBookingDateTime(a) - getBookingDateTime(b)),
+    [myBookings],
+  );
 
-  // Update a booking's status
-  const updateStatus = (id, newStatus) => {
-    setMyBookings(
-      myBookings.map((b) => (b.id === id ? { ...b, status: newStatus } : b)),
+  // Update a booking's status on the server, then reload the list
+  const updateStatus = async (id, newStatus, successMessage) => {
+    try {
+      await updateBookingStatus(id, newStatus);
+      toast.success(successMessage);
+      refetch();
+      return true;
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Could not update this request."));
+      return false;
+    }
+  };
+
+  const handleAccept = async (id) => {
+    const done = await updateStatus(
+      id,
+      "confirmed",
+      "Request accepted! Booking confirmed.",
     );
-  };
-  const handleAccept = (id) => {
-    updateStatus(id, "Confirmed");
-    setSelectedBooking(null);
-    toast.success("Request accepted! Booking confirmed.");
+    if (done) setSelectedBooking(null);
   };
 
-  const handleDecline = () => {
-    updateStatus(bookingToDecline.id, "Rejected");
-    setBookingToDecline(null);
-    toast.info("Request declined.");
+  const handleDecline = async () => {
+    const done = await updateStatus(
+      bookingToDecline.id,
+      "rejected",
+      "Request declined.",
+    );
+    if (done) setBookingToDecline(null);
   };
 
   return (
@@ -71,7 +98,9 @@ function New() {
         </h2>
 
         <div className="mt-5 flex flex-col gap-4">
-          {pendingRequests.length === 0 ? (
+          {loading && <Loader label="Loading requests..." />}
+          {!loading && error && <ErrorState message={error} onRetry={refetch} />}
+          {!loading && !error && pendingRequests.length === 0 ? (
             <EmptyState
               title="No new requests right now"
               description="When customers book your services, their requests will appear here."
@@ -80,6 +109,8 @@ function New() {
               className="bg-blue-600 hover:bg-blue-700"
             />
           ) : (
+            !loading &&
+            !error &&
             pendingRequests.map((req) => (
               <div
                 key={req.id}

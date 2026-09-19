@@ -4,19 +4,27 @@ import PrimaryBtn from "../ui/PrimaryBtn";
 import { useNavigate } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import SecondaryBtn from "../ui/SecondaryBtn";
+import { toast } from "sonner";
 import { useSaved } from "../../context/savedContext";
+import { getApiErrorMessage } from "../../utils/apiError";
 
 function SavedCard({ booking }) {
-  const { savedServices, setSavedServices } = useSaved();
+  const { removeSaved } = useSaved();
   const { id, title, providerName, price, image } = booking;
   const [openBooking, setOpenBooking] = useState(false);
 
   const navigate = useNavigate();
 
   // Function to handle deleting a saved service
-  const handleDeleteSaved = (id) => {
-    const updatedSavedServices = savedServices.filter((s) => s.id !== id);
-    setSavedServices(updatedSavedServices);
+  const handleDeleteSaved = async (serviceId) => {
+    try {
+      await removeSaved(serviceId);
+      toast.success("Service removed from your saved list.");
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "Could not update your saved list."),
+      );
+    }
   };
 
   return (

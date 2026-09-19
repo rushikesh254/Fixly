@@ -1,71 +1,36 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { deleteAccount } from "../../api/users";
+import { useAuth } from "../../context/AuthContext";
+import { getApiErrorMessage } from "../../utils/apiError";
 import ConfirmDialog from "../ui/ConfirmDialog";
 
 export function SettingsTab() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [prefs, setPrefs] = useState({
-    emailNotifications: true,
-    smsNotifications: false,
-    pushNotifications: true,
-  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const togglePref = (key) => {
-    setPrefs((prev) => ({ ...prev, [key]: !prev[key] }));
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const res = await deleteAccount();
+      setShowDeleteModal(false);
+      toast.success(res.data.message || "Your account has been deleted.");
+      await logout();
+      navigate("/");
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Could not delete your account."));
+    } finally {
+      setIsDeleting(false);
+    }
   };
-
-  const preferenceItems = [
-    {
-      key: "emailNotifications",
-      title: "Email Notifications",
-      description: "Receive booking updates and offers via email",
-    },
-    {
-      key: "smsNotifications",
-      title: "SMS Notifications",
-      description: "Get text message alerts for your appointments",
-    },
-    {
-      key: "pushNotifications",
-      title: "Push Notifications",
-      description: "Get real-time updates in your browser",
-    },
-  ];
 
   return (
     <div className="max-w-xl">
-      <div className="flex flex-col gap-4">
-        {preferenceItems.map((item) => (
-          <div
-            key={item.key}
-            className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-5"
-          >
-            <div>
-              <p className="text-sm font-semibold text-gray-900">
-                {item.title}
-              </p>
-              <p className="mt-0.5 text-[13px] text-gray-500">
-                {item.description}
-              </p>
-            </div>
-
-            <button
-              onClick={() => togglePref(item.key)}
-              aria-label={item.title}
-              className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ${
-                prefs[item.key] ? "bg-blue-600" : "bg-gray-300"
-              }`}
-            >
-              <span
-                className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ${
-                  prefs[item.key] ? "translate-x-5" : ""
-                }`}
-              />
-            </button>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-5">
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-5">
         <h3 className="text-sm font-semibold text-red-600">Delete Account</h3>
         <p className="mt-1 text-[13px] text-red-500">
           Permanently delete your account and all associated data. This action
@@ -88,15 +53,15 @@ export function SettingsTab() {
                 Are you sure you want to permanently delete your account?
               </p>
               <p className="mt-1 text-sm text-gray-500">
-                Your bookings, saved addresses and account data will be
-                removed.
+                Your saved address and saved services will be removed, and any
+                upcoming bookings will be cancelled.
               </p>
             </>
           }
           cancelLabel="Cancel"
-          confirmLabel="Delete Account"
+          confirmLabel={isDeleting ? "Deleting..." : "Delete Account"}
           onCancel={() => setShowDeleteModal(false)}
-          onConfirm={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
         />
       )}
     </div>

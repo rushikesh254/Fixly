@@ -1,21 +1,26 @@
+// Combine a booking's calendar date ("2026-10-15") and slot label ("10:00 AM")
+// into a local Date. The parts are passed to the Date constructor individually
+// because new Date("2026-10-15") is parsed as UTC midnight, which shifts the day
+// for anyone not on UTC.
 const getBookingDateTime = (booking) => {
-  const dateTime = new Date(booking.date);
+  if (!booking?.date) return new Date(NaN);
 
-  const [clock, period] = booking.time.split(" ");
-  const [hours, minutes] = clock.split(":").map(Number);
+  const [year, month, day] = String(booking.date).split("-").map(Number);
+
+  const [clock = "12:00", period = ""] = String(booking.time || "").split(" ");
+  const [hours = 0, minutes = 0] = clock.split(":").map(Number);
+
   // Convert to 24-hour format
   let hours24 = hours;
-  if (period === "PM" && hours !== 12) {
+  if (/pm/i.test(period) && hours !== 12) {
     hours24 += 12;
   }
 
-  if (period === "AM" && hours === 12) {
+  if (/am/i.test(period) && hours === 12) {
     hours24 = 0;
   }
-  // Set the hours and minutes to the date object
-  dateTime.setHours(hours24, minutes, 0, 0);
 
-  return dateTime;
+  return new Date(year, (month || 1) - 1, day || 1, hours24, minutes, 0, 0);
 };
 
 export default getBookingDateTime;
