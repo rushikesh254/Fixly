@@ -52,4 +52,14 @@ const contactLimiter = rateLimit({
   },
 });
 
-export { apiLimiter, authLimiter, contactLimiter, refreshLimiter };
+// Rate limiter for creating bookings to prevent calendar abuse
+const bookingLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 20, // limit each IP to 20 booking requests per hour
+  message: {
+    success: false,
+    message: "Too many booking requests created. Please try again later.",
+  },
+});
+
+export { apiLimiter, authLimiter, bookingLimiter, contactLimiter, refreshLimiter };

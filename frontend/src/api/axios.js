@@ -3,18 +3,29 @@ import axios from "axios";
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:1337";
 
-// in-memory + localStorage copy of the access token so the axios
+// in-memory + sessionStorage copy of the access token so the axios
 // interceptor can attach it even before React state has hydrated.
-let accessToken = localStorage.getItem("accessToken") || null;
+// sessionStorage ensures tokens do not persist on disk after the browser session ends.
+let accessToken = null;
+try {
+  accessToken = sessionStorage.getItem("accessToken") || null;
+} catch {
+  accessToken = null;
+}
 
 export const getAccessToken = () => accessToken;
 
 export const setAccessToken = (token) => {
   accessToken = token || null;
-  if (accessToken) {
-    localStorage.setItem("accessToken", accessToken);
-  } else {
-    localStorage.removeItem("accessToken");
+  try {
+    if (accessToken) {
+      sessionStorage.setItem("accessToken", accessToken);
+    } else {
+      sessionStorage.removeItem("accessToken");
+      localStorage.removeItem("accessToken"); // clear legacy storage if present
+    }
+  } catch {
+    // sessionStorage not available, maintain in-memory
   }
 };
 

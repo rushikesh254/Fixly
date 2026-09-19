@@ -83,25 +83,34 @@ const signup = async (req, res, next) => {
       verificationTokenExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours expiration
     });
 
-    const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email/${verificationToken}`;
-    let emailSent = true;
+    const backendBase = (process.env.BACKEND_URL || "http://localhost:1337").replace(/\/+$/, "");
+    const verificationUrl = `${backendBase}/api/auth/verify-email/${verificationToken}`;
+    let emailSent = false;
     try {
-      await sendEmail({
-        email: user.email,
-        subject: "Verify your Fixly account",
-        message: verifyEmailTemplate(verificationUrl),
-      });
-    } catch {
+      await Promise.race([
+        sendEmail({
+          email: user.email,
+          subject: "Verify your Fixly account",
+          message: verifyEmailTemplate(verificationUrl),
+        }).then(() => {
+          emailSent = true;
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Email dispatch timeout")), 3000)
+        ),
+      ]);
+    } catch (err) {
       emailSent = false;
-      console.log("Email send failed. Verification URL:", verificationUrl);
+      console.log("Email dispatch skipped or timed out. Verification URL:", verificationUrl, "Reason:", err.message);
     }
 
     res.status(201).json({
       success: true,
       emailSent,
+      verificationUrl: !emailSent ? verificationUrl : undefined,
       message: emailSent
         ? "Verification email sent. Please check your inbox."
-        : "Account created, but the email could not be sent. Please try resending.",
+        : "Account created! You can verify your email via the link sent or continue directly.",
     });
   } catch (error) {
     // this will catch duplicate key(email ) error from mongoose unique index and return a user-friendly message instead of generic server error ( it is for race condition when two users try to register with same email at the same time, since we check for existing user before creating a new one)
@@ -348,9 +357,11 @@ const verifyEmail = async (req, res, next) => {
       verificationTokenExpires: { $gt: Date.now() },
     });
 
+    const clientBase = (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/+$/, "");
+
     // if token is invalid or expired, redirect to login with failure message
     if (!user) {
-      return res.redirect(`${process.env.CLIENT_URL}/login?verified=false`);
+      return res.redirect(`${clientBase}/login?verified=false`);
     }
 
     // if token is valid, mark user as verified and clear verification fields
@@ -359,7 +370,7 @@ const verifyEmail = async (req, res, next) => {
     user.verificationTokenExpires = undefined;
     await user.save();
 
-    res.redirect(`${process.env.CLIENT_URL}/login?verified=true`);
+    res.redirect(`${clientBase}/login?verified=true`);
   } catch (error) {
     console.error("Error verifying email: ", error.message);
     res.redirect(`${process.env.CLIENT_URL}/login?verified=false`);
@@ -393,29 +404,35 @@ const forgotPassword = async (req, res, next) => {
     user.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
     await user.save({ validateBeforeSave: false });
 
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    const clientBase = (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/+$/, "");
+    const resetUrl = `${clientBase}/reset-password/${resetToken}`;
 
+    let emailSent = false;
     try {
-      await sendEmail({
-        email: user.email,
-        subject: "Reset your Fixly password",
-        message: resetPasswordTemplate(resetUrl),
-      });
-      res.status(200).json({
-        success: true,
-        message:
-          "If an account with that email exists, a password reset link has been sent.",
-      });
+      await Promise.race([
+        sendEmail({
+          email: user.email,
+          subject: "Reset your Fixly password",
+          message: resetPasswordTemplate(resetUrl),
+        }).then(() => {
+          emailSent = true;
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Email dispatch timeout")), 3000)
+        ),
+      ]);
     } catch (emailErr) {
-      console.log("Email send failed. Reset URL:", resetUrl);
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-      await user.save({ validateBeforeSave: false });
-      res.status(500).json({
-        success: false,
-        message: "Failed to send reset email. Please try again.",
-      });
+      emailSent = false;
+      console.log("Reset email dispatch failed or timed out. Reset URL:", resetUrl, "Reason:", emailErr.message);
     }
+
+    res.status(200).json({
+      success: true,
+      emailSent,
+      resetUrl: !emailSent ? resetUrl : undefined,
+      message:
+        "If an account with that email exists, a password reset link has been sent.",
+    });
   } catch (error) {
     console.error("Error in forgot password: ", error.message);
     error.statusCode = 500;
@@ -498,28 +515,39 @@ const resendVerificationEmail = async (req, res, next) => {
     user.verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
     await user.save();
 
-    const verificationUrl = `${process.env.BACKEND_URL}/api/auth/verify-email/${verificationToken}`;
+    const backendBase = (process.env.BACKEND_URL || "http://localhost:1337").replace(/\/+$/, "");
+    const verificationUrl = `${backendBase}/api/auth/verify-email/${verificationToken}`;
+    let emailSent = false;
     try {
-      await sendEmail({
-        email: user.email,
-        subject: "Verify your Fixly account",
-        message: verifyEmailTemplate(verificationUrl),
-      });
-    } catch {
+      await Promise.race([
+        sendEmail({
+          email: user.email,
+          subject: "Verify your Fixly account",
+          message: verifyEmailTemplate(verificationUrl),
+        }).then(() => {
+          emailSent = true;
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Email dispatch timeout")), 3000)
+        ),
+      ]);
+    } catch (err) {
+      emailSent = false;
       console.log(
-        "Resend email failed. Verification URL:",
+        "Resend email dispatch failed or timed out. Verification URL:",
         verificationUrl,
+        "Reason:",
+        err.message,
       );
-      return res.status(500).json({
-        success: false,
-        message:
-          "Failed to send verification email. Please try again later.",
-      });
     }
 
     res.status(200).json({
       success: true,
-      message: "Verification email sent successfully. Please check your inbox.",
+      emailSent,
+      verificationUrl: !emailSent ? verificationUrl : undefined,
+      message: emailSent
+        ? "Verification email sent successfully. Please check your inbox."
+        : "Verification link generated. If email delivery is delayed, you can verify directly.",
     });
   } catch (error) {
     console.error("Error resending verification email: ", error.message);

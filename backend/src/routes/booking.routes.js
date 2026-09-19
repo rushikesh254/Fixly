@@ -6,10 +6,11 @@ import {
   updateBookingStatus,
 } from "../controllers/booking.controller.js";
 import { authorize, protect } from "../middleware/auth.middleware.js";
+import { bookingLimiter } from "../middleware/rate.middleware.js";
 
 const router = Router();
 
-router.post("/", protect, authorize("user"), createBooking);
+router.post("/", protect, authorize("user"), bookingLimiter, createBooking);
 
 // get bookings of the logged in user or provider
 router.get(

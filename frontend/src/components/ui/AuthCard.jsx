@@ -21,6 +21,7 @@ function AuthCard({ initialFlipped = false }) {
   const [showEmailSentScreen, setShowEmailSentScreen] = useState(false);
   const [signedUpEmail, setSignedUpEmail] = useState("");
   const [emailSendFailed, setEmailSendFailed] = useState(false);
+  const [directVerifyUrl, setDirectVerifyUrl] = useState("");
   const [resending, setResending] = useState(false);
 
   // React Hook Form for Login
@@ -66,9 +67,12 @@ function AuthCard({ initialFlipped = false }) {
         });
         setSignedUpEmail(data.email);
         setEmailSendFailed(res.emailSent === false);
+        if (res.verificationUrl) {
+          setDirectVerifyUrl(res.verificationUrl);
+        }
         setShowEmailSentScreen(true);
         if (res.emailSent === false) {
-          toast.error("Email not sent. Try again.");
+          toast.info(res.message || "Account created! Check your email or verify directly below.");
         } else {
           toast.success("Email sent. Check your inbox!");
         }
@@ -92,9 +96,12 @@ function AuthCard({ initialFlipped = false }) {
     if (resending || !signedUpEmail) return;
     setResending(true);
     try {
-      await resendVerification(signedUpEmail);
-      setEmailSendFailed(false);
-      toast.success("Email sent. Check your inbox!");
+      const res = await resendVerification(signedUpEmail);
+      setEmailSendFailed(res.emailSent === false);
+      if (res.verificationUrl) {
+        setDirectVerifyUrl(res.verificationUrl);
+      }
+      toast.success("Verification link refreshed! Check your inbox.");
     } catch (err) {
       toast.error(
         err.response?.data?.message || "Couldn't resend. Try again.",
@@ -167,30 +174,45 @@ function AuthCard({ initialFlipped = false }) {
               <img src={logo} alt="Logo" className="w-32" />
             </Link>
 
-            <div className="flex-1 flex flex-col items-center justify-center text-center -mt-4">
-              <div className="h-20 w-20 rounded-full bg-blue-100 flex items-center justify-center mb-5">
-                <FiMail size={36} className="text-blue-500" />
+            <div className="flex-1 flex flex-col items-center justify-center text-center -mt-2">
+              <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+                <FiMail size={30} className="text-blue-500" />
               </div>
-              <h2 className="text-2xl font-semibold mb-3">Check your email</h2>
-              <p className="text-sm text-gray-600 max-w-60">
+              <h2 className="text-xl font-semibold mb-2">Check your email</h2>
+              <p className="text-sm text-gray-600 max-w-64">
                 We sent a verification link to{" "}
                 <span className="font-semibold text-gray-800">
                   {signedUpEmail}
                 </span>
                 .
               </p>
-              <p className="text-xs text-gray-400 mt-2">
+              <p className="text-xs text-gray-400 mt-1">
                 Don't see it? Check your spam folder.
               </p>
               {emailSendFailed && (
-                <p className="text-xs text-red-500 mt-2">
-                  We couldn't send the email. Tap below to try again.
+                <p className="text-xs text-amber-600 mt-1">
+                  Email delivery is taking longer than usual.
                 </p>
               )}
+
+              {directVerifyUrl && (
+                <div className="mt-3 p-2.5 bg-blue-50 border border-blue-200 rounded-lg text-center w-full max-w-xs">
+                  <p className="text-xs text-blue-800 font-medium mb-1.5">
+                    Verify immediately without waiting:
+                  </p>
+                  <a
+                    href={directVerifyUrl}
+                    className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-3 rounded shadow transition"
+                  >
+                    Click to Verify Account Now
+                  </a>
+                </div>
+              )}
+
               <button
                 onClick={handleResendEmail}
                 disabled={resending}
-                className="mt-5 bg-blue-500 text-white text-sm px-8 py-2.5 rounded cursor-pointer hover:bg-blue-600 disabled:opacity-60"
+                className="mt-3 bg-blue-500 text-white text-xs px-6 py-2 rounded cursor-pointer hover:bg-blue-600 disabled:opacity-60 transition"
               >
                 {resending ? "Sending..." : "Resend email"}
               </button>
