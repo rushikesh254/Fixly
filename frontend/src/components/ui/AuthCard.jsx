@@ -55,28 +55,38 @@ function AuthCard({ initialFlipped = false }) {
     }
   });
 
-  const handleSignup = handleSignupSubmit(async (data) => {
-    try {
-      const res = await signup({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        role: data.role,
-      });
-      setSignedUpEmail(data.email);
-      setEmailSendFailed(res.emailSent === false);
-      setShowEmailSentScreen(true);
-      if (res.emailSent === false) {
-        toast.error("Email not sent. Try again.");
-      } else {
-        toast.success("Email sent. Check your inbox!");
+  const handleSignup = handleSignupSubmit(
+    async (data) => {
+      try {
+        const res = await signup({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          role: data.role,
+        });
+        setSignedUpEmail(data.email);
+        setEmailSendFailed(res.emailSent === false);
+        setShowEmailSentScreen(true);
+        if (res.emailSent === false) {
+          toast.error("Email not sent. Try again.");
+        } else {
+          toast.success("Email sent. Check your inbox!");
+        }
+      } catch (err) {
+        toast.error(
+          err.response?.data?.message || "Sign up failed. Please try again.",
+        );
       }
-    } catch (err) {
+    },
+    // fires when react-hook-form rejects the form — before, this was silent,
+    // so a validation failure looked like the button did nothing
+    (errors) => {
+      const firstError = Object.values(errors)[0]?.message;
       toast.error(
-        err.response?.data?.message || "Sign up failed. Please try again.",
+        firstError || "Please check the highlighted fields to continue.",
       );
-    }
-  });
+    },
+  );
 
   const handleResendEmail = async () => {
     if (resending || !signedUpEmail) return;
@@ -287,7 +297,10 @@ function AuthCard({ initialFlipped = false }) {
                 </div>
               </div>
 
-              <button className="w-full bg-blue-500 text-white py-2.5 rounded cursor-pointer hover:bg-blue-600 mt-4">
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white py-2.5 rounded cursor-pointer hover:bg-blue-600 mt-4"
+              >
                 Login
               </button>
             </form>
@@ -490,7 +503,10 @@ function AuthCard({ initialFlipped = false }) {
                   </p>
                 )}
               </div>
-              <button className="w-full bg-blue-500 text-white mt-4 py-2.5 rounded hover:bg-blue-600 cursor-pointer">
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white mt-4 py-2.5 rounded hover:bg-blue-600 cursor-pointer"
+              >
                 Sign Up
               </button>
             </form>
